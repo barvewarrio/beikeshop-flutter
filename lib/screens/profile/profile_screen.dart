@@ -66,18 +66,26 @@ class ProfileScreen extends StatelessWidget {
             slivers: [
               // Header with User Info
               SliverAppBar(
-                backgroundColor: Colors.white,
-                expandedHeight: 120,
+                backgroundColor: AppColors.primary,
+                expandedHeight: 140,
                 floating: false,
                 pinned: true,
+                elevation: 0,
                 flexibleSpace: FlexibleSpaceBar(
                   background: Container(
+                    decoration: const BoxDecoration(
+                      gradient: LinearGradient(
+                        colors: [AppColors.primary, AppColors.primaryDark],
+                        begin: Alignment.topCenter,
+                        end: Alignment.bottomCenter,
+                      ),
+                    ),
                     padding: const EdgeInsets.fromLTRB(20, 60, 20, 20),
                     child: Row(
                       children: [
                         CircleAvatar(
                           radius: 30,
-                          backgroundColor: Colors.grey,
+                          backgroundColor: Colors.white,
                           backgroundImage: user.avatar != null
                               ? NetworkImage(user.avatar!)
                               : null,
@@ -85,7 +93,7 @@ class ProfileScreen extends StatelessWidget {
                               ? const Icon(
                                   Icons.person,
                                   size: 40,
-                                  color: Colors.white,
+                                  color: AppColors.primary,
                                 )
                               : null,
                         ),
@@ -95,7 +103,12 @@ class ProfileScreen extends StatelessWidget {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
-                              Text(user.name, style: AppTextStyles.heading),
+                              Text(
+                                user.name,
+                                style: AppTextStyles.heading.copyWith(
+                                  color: Colors.white,
+                                ),
+                              ),
                               const SizedBox(height: 4),
                               Container(
                                 padding: const EdgeInsets.symmetric(
@@ -103,23 +116,48 @@ class ProfileScreen extends StatelessWidget {
                                   vertical: 2,
                                 ),
                                 decoration: BoxDecoration(
-                                  color: Colors.black,
+                                  color: Colors.black.withOpacity(0.2),
                                   borderRadius: BorderRadius.circular(10),
-                                ),
-                                child: const Text(
-                                  'VIP Member',
-                                  style: TextStyle(
-                                    color: Color(0xFFFFD700),
-                                    fontSize: 10,
-                                    fontWeight: FontWeight.bold,
+                                  border: Border.all(
+                                    color: Colors.white.withOpacity(0.3),
                                   ),
+                                ),
+                                child: const Row(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    Icon(
+                                      Icons.star,
+                                      color: Color(0xFFFFD700),
+                                      size: 12,
+                                    ),
+                                    SizedBox(width: 4),
+                                    Text(
+                                      'VIP Member',
+                                      style: TextStyle(
+                                        color: Colors.white,
+                                        fontSize: 10,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    ),
+                                  ],
                                 ),
                               ),
                             ],
                           ),
                         ),
                         IconButton(
-                          icon: const Icon(Icons.logout),
+                          icon: const Icon(Icons.settings, color: Colors.white),
+                          onPressed: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => const SettingsScreen(),
+                              ),
+                            );
+                          },
+                        ),
+                        IconButton(
+                          icon: const Icon(Icons.logout, color: Colors.white),
                           onPressed: () {
                             auth.logout();
                           },
@@ -133,11 +171,18 @@ class ProfileScreen extends StatelessWidget {
               // Order Status Row
               SliverToBoxAdapter(
                 child: Container(
-                  margin: const EdgeInsets.all(12),
+                  margin: const EdgeInsets.fromLTRB(12, 12, 12, 0),
                   padding: const EdgeInsets.all(16),
                   decoration: BoxDecoration(
                     color: Colors.white,
                     borderRadius: BorderRadius.circular(8),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.grey.withOpacity(0.1),
+                        blurRadius: 4,
+                        offset: const Offset(0, 2),
+                      ),
+                    ],
                   ),
                   child: Column(
                     children: [
@@ -190,6 +235,108 @@ class ProfileScreen extends StatelessWidget {
                           _OrderStatusItem(
                             icon: FontAwesomeIcons.rotateLeft,
                             label: 'Returns',
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+
+              // My Services Grid
+              SliverToBoxAdapter(
+                child: Container(
+                  margin: const EdgeInsets.all(12),
+                  padding: const EdgeInsets.all(16),
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(8),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.grey.withOpacity(0.1),
+                        blurRadius: 4,
+                        offset: const Offset(0, 2),
+                      ),
+                    ],
+                  ),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const Text(
+                        'My Services',
+                        style: AppTextStyles.subheading,
+                      ),
+                      const SizedBox(height: 16),
+                      GridView.count(
+                        shrinkWrap: true,
+                        physics: const NeverScrollableScrollPhysics(),
+                        crossAxisCount: 4,
+                        mainAxisSpacing: 16,
+                        crossAxisSpacing: 16,
+                        childAspectRatio: 1.0,
+                        children: [
+                          _ServiceItem(
+                            icon: Icons.message_outlined,
+                            label: 'Messages',
+                            color: Colors.blue,
+                            onTap: () {},
+                          ),
+                          _ServiceItem(
+                            icon: Icons.confirmation_number_outlined,
+                            label: 'Coupons',
+                            color: Colors.orange,
+                            onTap: () {},
+                          ),
+                          _ServiceItem(
+                            icon: Icons.account_balance_wallet_outlined,
+                            label: 'Credit',
+                            color: Colors.green,
+                            onTap: () {},
+                          ),
+                          _ServiceItem(
+                            icon: Icons.location_on_outlined,
+                            label: 'Address',
+                            color: Colors.red,
+                            onTap: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) =>
+                                      const AddressListScreen(),
+                                ),
+                              );
+                            },
+                          ),
+                          _ServiceItem(
+                            icon: Icons.history,
+                            label: 'History',
+                            color: Colors.purple,
+                            onTap: () {},
+                          ),
+                          _ServiceItem(
+                            icon: Icons.favorite_border,
+                            label: 'Wishlist',
+                            color: Colors.pink,
+                            onTap: () {},
+                          ),
+                          _ServiceItem(
+                            icon: Icons.help_outline,
+                            label: 'Support',
+                            color: Colors.teal,
+                            onTap: () {},
+                          ),
+                          _ServiceItem(
+                            icon: Icons.settings_outlined,
+                            label: 'Settings',
+                            color: Colors.grey,
+                            onTap: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => const SettingsScreen(),
+                                ),
+                              );
+                            },
                           ),
                         ],
                       ),
@@ -303,6 +450,39 @@ class _MenuItem extends StatelessWidget {
         color: AppColors.textHint,
       ),
       onTap: onTap,
+    );
+  }
+}
+
+class _ServiceItem extends StatelessWidget {
+  final IconData icon;
+  final String label;
+  final Color color;
+  final VoidCallback onTap;
+
+  const _ServiceItem({
+    required this.icon,
+    required this.label,
+    required this.color,
+    required this.onTap,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: onTap,
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Icon(icon, size: 28, color: color),
+          const SizedBox(height: 8),
+          Text(
+            label,
+            style: const TextStyle(fontSize: 12, color: AppColors.textPrimary),
+            textAlign: TextAlign.center,
+          ),
+        ],
+      ),
     );
   }
 }

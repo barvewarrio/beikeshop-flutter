@@ -20,7 +20,6 @@ class ProductDetailScreen extends StatefulWidget {
 class _ProductDetailScreenState extends State<ProductDetailScreen> {
   bool _isLoading = true;
   Product? _product;
-  String? _errorMessage;
 
   @override
   void initState() {
@@ -31,7 +30,6 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
   Future<void> _fetchProductDetails() async {
     setState(() {
       _isLoading = true;
-      _errorMessage = null;
     });
 
     try {

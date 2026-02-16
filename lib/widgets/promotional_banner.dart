@@ -1,14 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:carousel_slider/carousel_slider.dart';
-import '../../theme/app_theme.dart';
 
 class PromotionalBanner extends StatelessWidget {
   final List<String> imageUrls;
 
-  const PromotionalBanner({
-    super.key,
-    required this.imageUrls,
-  });
+  const PromotionalBanner({super.key, required this.imageUrls});
 
   @override
   Widget build(BuildContext context) {
@@ -20,7 +16,7 @@ class PromotionalBanner extends StatelessWidget {
         autoPlay: true,
         enlargeCenterPage: true,
         viewportFraction: 0.92,
-        aspectRatio: 16/9,
+        aspectRatio: 16 / 9,
         autoPlayCurve: Curves.fastOutSlowIn,
       ),
       items: imageUrls.map((url) {

@@ -36,6 +36,8 @@ A modern, cross-platform e-commerce mobile application built with Flutter.
     *   "Recommended for You" section.
     *   Product tags (e.g., Free Shipping, Best Seller).
     *   High-conversion color scheme (Orange/Red).
+    *   **User Center**: Gradient header, VIP badge, Order Status row, and Service Grid.
+    *   **Category Navigation**: Sidebar layout with subcategory grid.
 *   **State Management**:
     *   Powered by `provider` for efficient and reactive state updates.
     *   Local persistence using `shared_preferences`.
