@@ -3,6 +3,7 @@ import '../../theme/app_theme.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:provider/provider.dart';
+import 'package:beikeshop_flutter/l10n/app_localizations.dart';
 import '../../widgets/home_app_bar.dart';
 import '../../widgets/bottom_nav_bar.dart';
 import '../../widgets/product_card.dart';
@@ -94,6 +95,7 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   Widget _buildFlashSaleSection() {
+    final l10n = AppLocalizations.of(context)!;
     final flashSaleProducts = _products
         .where((p) => p.isFlashSale)
         .take(5)
@@ -117,9 +119,12 @@ class _HomeScreenState extends State<HomeScreen> {
                     size: 20,
                   ),
                   const SizedBox(width: 8),
-                  const Text(
-                    'Flash Sale',
-                    style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+                  Text(
+                    l10n.flashSale,
+                    style: const TextStyle(
+                      fontWeight: FontWeight.bold,
+                      fontSize: 16,
+                    ),
                   ),
                   const Spacer(),
                   Container(
@@ -137,9 +142,9 @@ class _HomeScreenState extends State<HomeScreen> {
                     ),
                   ),
                   const SizedBox(width: 8),
-                  const Text(
-                    'View All >',
-                    style: TextStyle(color: Colors.grey, fontSize: 12),
+                  Text(
+                    '${l10n.viewAll} >',
+                    style: const TextStyle(color: Colors.grey, fontSize: 12),
                   ),
                 ],
               ),
@@ -247,6 +252,7 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   Widget _buildHomeBody() {
+    final l10n = AppLocalizations.of(context)!;
     if (_isLoading) {
       return const Center(
         child: CircularProgressIndicator(color: AppColors.primary),
@@ -330,15 +336,12 @@ class _HomeScreenState extends State<HomeScreen> {
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  const Text(
-                    'Recommended for You',
-                    style: AppTextStyles.heading,
-                  ),
+                  Text(l10n.recommendedForYou, style: AppTextStyles.heading),
                   TextButton(
                     onPressed: () {},
-                    child: const Text(
-                      'See All >',
-                      style: TextStyle(color: AppColors.textSecondary),
+                    child: Text(
+                      '${l10n.seeAll} >',
+                      style: const TextStyle(color: AppColors.textSecondary),
                     ),
                   ),
                 ],
@@ -361,7 +364,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   imageUrl: product.imageUrl,
                   price: product.price,
                   originalPrice: product.originalPrice,
-                  sales: '${product.sales} sold',
+                  sales: '${product.sales} ${l10n.sold}',
                   isFlashSale: product.isFlashSale,
                   discountPercentage: product.discountPercentage,
                   tags: product.tags,

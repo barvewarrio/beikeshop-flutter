@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:beikeshop_flutter/l10n/app_localizations.dart';
 import '../../theme/app_theme.dart';
 import '../../providers/auth_provider.dart';
 import '../auth/login_screen.dart';
@@ -13,6 +14,7 @@ class ProfileScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     return Scaffold(
       body: Consumer<AuthProvider>(
         builder: (context, auth, _) {
@@ -31,8 +33,8 @@ class ProfileScreen extends StatelessWidget {
                     color: Colors.grey,
                   ),
                   const SizedBox(height: 16),
-                  const Text(
-                    'Please login to view your profile',
+                  Text(
+                    l10n.pleaseLoginToViewProfile,
                     style: AppTextStyles.subheading,
                   ),
                   const SizedBox(height: 24),
@@ -53,7 +55,7 @@ class ProfileScreen extends StatelessWidget {
                         vertical: 12,
                       ),
                     ),
-                    child: const Text('Login / Register'),
+                    child: Text(l10n.loginRegister),
                   ),
                 ],
               ),
@@ -122,18 +124,18 @@ class ProfileScreen extends StatelessWidget {
                                     color: Colors.white.withOpacity(0.3),
                                   ),
                                 ),
-                                child: const Row(
+                                child: Row(
                                   mainAxisSize: MainAxisSize.min,
                                   children: [
-                                    Icon(
+                                    const Icon(
                                       Icons.star,
                                       color: Color(0xFFFFD700),
                                       size: 12,
                                     ),
-                                    SizedBox(width: 4),
+                                    const SizedBox(width: 4),
                                     Text(
-                                      'VIP Member',
-                                      style: TextStyle(
+                                      l10n.vipMember,
+                                      style: const TextStyle(
                                         color: Colors.white,
                                         fontSize: 10,
                                         fontWeight: FontWeight.bold,
@@ -189,10 +191,7 @@ class ProfileScreen extends StatelessWidget {
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          const Text(
-                            'My Orders',
-                            style: AppTextStyles.subheading,
-                          ),
+                          Text(l10n.myOrders, style: AppTextStyles.subheading),
                           TextButton(
                             onPressed: () {
                               Navigator.push(
@@ -202,9 +201,9 @@ class ProfileScreen extends StatelessWidget {
                                 ),
                               );
                             },
-                            child: const Text(
-                              'View All >',
-                              style: TextStyle(
+                            child: Text(
+                              '${l10n.viewAll} >',
+                              style: const TextStyle(
                                 color: AppColors.textSecondary,
                                 fontSize: 12,
                               ),
@@ -218,23 +217,23 @@ class ProfileScreen extends StatelessWidget {
                         children: [
                           _OrderStatusItem(
                             icon: FontAwesomeIcons.creditCard,
-                            label: 'Unpaid',
+                            label: l10n.unpaid,
                           ),
                           _OrderStatusItem(
                             icon: FontAwesomeIcons.boxOpen,
-                            label: 'Processing',
+                            label: l10n.processing,
                           ),
                           _OrderStatusItem(
                             icon: FontAwesomeIcons.truck,
-                            label: 'Shipped',
+                            label: l10n.shipped,
                           ),
                           _OrderStatusItem(
                             icon: FontAwesomeIcons.star,
-                            label: 'Review',
+                            label: l10n.review,
                           ),
                           _OrderStatusItem(
                             icon: FontAwesomeIcons.rotateLeft,
-                            label: 'Returns',
+                            label: l10n.returns,
                           ),
                         ],
                       ),
@@ -262,10 +261,7 @@ class ProfileScreen extends StatelessWidget {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      const Text(
-                        'My Services',
-                        style: AppTextStyles.subheading,
-                      ),
+                      Text(l10n.myServices, style: AppTextStyles.subheading),
                       const SizedBox(height: 16),
                       GridView.count(
                         shrinkWrap: true,
@@ -277,25 +273,25 @@ class ProfileScreen extends StatelessWidget {
                         children: [
                           _ServiceItem(
                             icon: Icons.message_outlined,
-                            label: 'Messages',
+                            label: l10n.messages,
                             color: Colors.blue,
                             onTap: () {},
                           ),
                           _ServiceItem(
                             icon: Icons.confirmation_number_outlined,
-                            label: 'Coupons',
+                            label: l10n.coupons,
                             color: Colors.orange,
                             onTap: () {},
                           ),
                           _ServiceItem(
                             icon: Icons.account_balance_wallet_outlined,
-                            label: 'Credit',
+                            label: l10n.credit,
                             color: Colors.green,
                             onTap: () {},
                           ),
                           _ServiceItem(
                             icon: Icons.location_on_outlined,
-                            label: 'Address',
+                            label: l10n.address,
                             color: Colors.red,
                             onTap: () {
                               Navigator.push(
@@ -309,25 +305,25 @@ class ProfileScreen extends StatelessWidget {
                           ),
                           _ServiceItem(
                             icon: Icons.history,
-                            label: 'History',
+                            label: l10n.history,
                             color: Colors.purple,
                             onTap: () {},
                           ),
                           _ServiceItem(
                             icon: Icons.favorite_border,
-                            label: 'Wishlist',
+                            label: l10n.wishlist,
                             color: Colors.pink,
                             onTap: () {},
                           ),
                           _ServiceItem(
                             icon: Icons.help_outline,
-                            label: 'Support',
+                            label: l10n.support,
                             color: Colors.teal,
                             onTap: () {},
                           ),
                           _ServiceItem(
                             icon: Icons.settings_outlined,
-                            label: 'Settings',
+                            label: l10n.settings,
                             color: Colors.grey,
                             onTap: () {
                               Navigator.push(
@@ -339,63 +335,6 @@ class ProfileScreen extends StatelessWidget {
                             },
                           ),
                         ],
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-
-              // Menu Items
-              SliverToBoxAdapter(
-                child: Container(
-                  margin: const EdgeInsets.symmetric(horizontal: 12),
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(8),
-                  ),
-                  child: Column(
-                    children: [
-                      _MenuItem(
-                        icon: Icons.location_on_outlined,
-                        label: 'Address Book',
-                        onTap: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => const AddressListScreen(),
-                            ),
-                          );
-                        },
-                      ),
-                      const Divider(height: 1),
-                      _MenuItem(
-                        icon: Icons.favorite_outline,
-                        label: 'Wishlist',
-                      ),
-                      const Divider(height: 1),
-                      _MenuItem(icon: Icons.history, label: 'Recently Viewed'),
-                      const Divider(height: 1),
-                      _MenuItem(
-                        icon: Icons.support_agent,
-                        label: 'Customer Support',
-                      ),
-                      const Divider(height: 1),
-                      _MenuItem(
-                        icon: Icons.card_giftcard,
-                        label: 'Coupons & Offers',
-                      ),
-                      const Divider(height: 1),
-                      _MenuItem(
-                        icon: Icons.settings,
-                        label: 'Settings',
-                        onTap: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => const SettingsScreen(),
-                            ),
-                          );
-                        },
                       ),
                     ],
                   ),
@@ -428,28 +367,6 @@ class _OrderStatusItem extends StatelessWidget {
           style: const TextStyle(fontSize: 11, color: AppColors.textSecondary),
         ),
       ],
-    );
-  }
-}
-
-class _MenuItem extends StatelessWidget {
-  final IconData icon;
-  final String label;
-  final VoidCallback? onTap;
-
-  const _MenuItem({required this.icon, required this.label, this.onTap});
-
-  @override
-  Widget build(BuildContext context) {
-    return ListTile(
-      leading: Icon(icon, color: AppColors.textPrimary),
-      title: Text(label, style: const TextStyle(fontSize: 14)),
-      trailing: const Icon(
-        Icons.chevron_right,
-        size: 20,
-        color: AppColors.textHint,
-      ),
-      onTap: onTap,
     );
   }
 }

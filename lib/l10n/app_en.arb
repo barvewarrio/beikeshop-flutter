@@ -1,0 +1,78 @@
+{
+  "appTitle": "BeikeShop",
+  "home": "Home",
+  "category": "Category",
+  "cart": "Cart",
+  "profile": "Profile",
+  "search": "Search",
+  "login": "Login",
+  "register": "Register",
+  "settings": "Settings",
+  "language": "Language",
+  "currency": "Currency",
+  "myOrders": "My Orders",
+  "viewAll": "View All",
+  "unpaid": "Unpaid",
+  "processing": "Processing",
+  "shipped": "Shipped",
+  "review": "Review",
+  "returns": "Returns",
+  "myServices": "My Services",
+  "messages": "Messages",
+  "coupons": "Coupons",
+  "credit": "Credit",
+  "address": "Address",
+  "history": "History",
+  "wishlist": "Wishlist",
+  "support": "Support",
+  "flashSale": "Flash Sale",
+  "recommendedForYou": "Recommended for You",
+  "seeAll": "See All",
+  "sold": "sold",
+  "pleaseLoginToViewProfile": "Please login to view your profile",
+  "loginRegister": "Login / Register",
+  "vipMember": "VIP Member",
+  "searchCategories": "Search categories",
+  "topPicksIn": "Top Picks in {category}",
+  "@topPicksIn": {
+    "placeholders": {
+      "category": {
+        "type": "String"
+      }
+    }
+  },
+  "shoppingCart": "Shopping Cart",
+  "clear": "Clear",
+  "cartEmpty": "Your cart is empty",
+  "shopNow": "Shop Now",
+  "addMoreForFreeShipping": "Add {amount} more for free shipping",
+  "@addMoreForFreeShipping": {
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
+  "all": "All",
+  "total": "Total:",
+  "checkout": "Checkout",
+  "selectLanguage": "Select Language",
+  "selectCurrency": "Select Currency",
+  "trackOrder": "Track Order",
+  "payNow": "Pay Now",
+  "buyAgain": "Buy Again",
+  "writeReview": "Write Review",
+  "returnRefund": "Return/Refund",
+  "orderDetails": "Order Details",
+  "orderStatus": "Order Status",
+  "statusPending": "Pending",
+  "statusProcessing": "Processing",
+  "statusShipped": "Shipped",
+  "statusDelivered": "Delivered",
+  "statusCancelled": "Cancelled",
+  "shippingAddress": "Shipping Address",
+  "paymentMethod": "Payment Method",
+  "items": "Items",
+  "orderDate": "Order Date",
+  "orderId": "Order ID"
+}

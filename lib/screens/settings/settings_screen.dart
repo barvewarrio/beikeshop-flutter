@@ -1,41 +1,50 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:beikeshop_flutter/l10n/app_localizations.dart';
 import '../../providers/settings_provider.dart';
 import '../../theme/app_theme.dart';
 
 class SettingsScreen extends StatelessWidget {
-  const SettingsScreen({Key? key}) : super(key: key);
+  const SettingsScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+
     return Scaffold(
-      appBar: AppBar(title: const Text('Settings')),
+      appBar: AppBar(title: Text(l10n.settings)),
       body: Consumer<SettingsProvider>(
         builder: (context, settings, child) {
           return ListView(
             children: [
               const SizedBox(height: 16),
-              const Padding(
-                padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                child: Text('Preferences', style: AppTextStyles.subheading),
+              // 偏好设置
+              Padding(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 16,
+                  vertical: 8,
+                ),
+                child: Text(l10n.settings, style: AppTextStyles.subheading),
               ),
-              
-              // Language Selection
+
+              // 语言选择
               ListTile(
                 leading: const Icon(Icons.language),
-                title: const Text('Language'),
-                subtitle: Text(settings.languageCode == 'en' ? 'English' : 'Chinese'),
+                title: Text(l10n.language),
+                subtitle: Text(
+                  settings.languageCode == 'en' ? 'English' : '简体中文',
+                ),
                 trailing: const Icon(Icons.chevron_right),
                 onTap: () {
                   _showLanguageDialog(context, settings);
                 },
               ),
               const Divider(),
-              
-              // Currency Selection
+
+              // 货币选择
               ListTile(
                 leading: const Icon(Icons.attach_money),
-                title: const Text('Currency'),
+                title: Text(l10n.currency),
                 subtitle: Text(settings.currencyCode),
                 trailing: const Icon(Icons.chevron_right),
                 onTap: () {
@@ -50,10 +59,12 @@ class SettingsScreen extends StatelessWidget {
   }
 
   void _showLanguageDialog(BuildContext context, SettingsProvider settings) {
+    final l10n = AppLocalizations.of(context)!;
+    // 语言选择弹窗
     showDialog(
       context: context,
       builder: (context) => SimpleDialog(
-        title: const Text('Select Language'),
+        title: Text(l10n.selectLanguage),
         children: [
           SimpleDialogOption(
             onPressed: () {
@@ -67,7 +78,7 @@ class SettingsScreen extends StatelessWidget {
               settings.setLanguage('zh');
               Navigator.pop(context);
             },
-            child: const Text('Chinese (简体中文)'),
+            child: const Text('简体中文'),
           ),
         ],
       ),
@@ -75,10 +86,12 @@ class SettingsScreen extends StatelessWidget {
   }
 
   void _showCurrencyDialog(BuildContext context, SettingsProvider settings) {
+    final l10n = AppLocalizations.of(context)!;
+    // 货币选择弹窗
     showDialog(
       context: context,
       builder: (context) => SimpleDialog(
-        title: const Text('Select Currency'),
+        title: Text(l10n.selectCurrency),
         children: [
           SimpleDialogOption(
             onPressed: () {

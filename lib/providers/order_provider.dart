@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../models/order_model.dart';
+import '../models/models.dart';
 import '../providers/cart_provider.dart';
 import '../models/address_model.dart';
 

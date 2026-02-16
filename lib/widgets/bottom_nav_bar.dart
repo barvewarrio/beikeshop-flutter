@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../../theme/app_theme.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:beikeshop_flutter/l10n/app_localizations.dart';
 
 class BottomNavBar extends StatelessWidget {
   final int currentIndex;
@@ -14,6 +15,7 @@ class BottomNavBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     return Container(
       decoration: BoxDecoration(
         border: Border(top: BorderSide(color: AppColors.border, width: 0.5)),
@@ -28,26 +30,26 @@ class BottomNavBar extends StatelessWidget {
         selectedFontSize: 10,
         unselectedFontSize: 10,
         elevation: 0,
-        items: const [
+        items: [
           BottomNavigationBarItem(
-            icon: Icon(Icons.home_outlined),
-            activeIcon: Icon(Icons.home),
-            label: 'Home',
+            icon: const Icon(Icons.home_outlined),
+            activeIcon: const Icon(Icons.home),
+            label: l10n.home,
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.grid_view_outlined),
-            activeIcon: Icon(Icons.grid_view),
-            label: 'Categories',
+            icon: const Icon(Icons.grid_view_outlined),
+            activeIcon: const Icon(Icons.grid_view),
+            label: l10n.category,
           ),
           BottomNavigationBarItem(
-            icon: Icon(FontAwesomeIcons.circleUser),
-            activeIcon: Icon(FontAwesomeIcons.solidCircleUser),
-            label: 'You',
+            icon: const Icon(FontAwesomeIcons.circleUser),
+            activeIcon: const Icon(FontAwesomeIcons.solidCircleUser),
+            label: l10n.profile,
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.shopping_cart_outlined),
-            activeIcon: Icon(Icons.shopping_cart),
-            label: 'Cart',
+            icon: const Icon(Icons.shopping_cart_outlined),
+            activeIcon: const Icon(Icons.shopping_cart),
+            label: l10n.cart,
           ),
         ],
       ),

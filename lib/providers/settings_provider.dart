@@ -3,8 +3,8 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:intl/intl.dart';
 
 class SettingsProvider extends ChangeNotifier {
-  String _languageCode = 'en';
-  String _currencyCode = 'USD';
+  String _languageCode = 'zh'; // Default to Chinese
+  String _currencyCode = 'CNY'; // Default to CNY
 
   // Exchange rates (Mock)
   final Map<String, double> _exchangeRates = {
@@ -24,13 +24,14 @@ class SettingsProvider extends ChangeNotifier {
   }
 
   String get languageCode => _languageCode;
+  Locale get locale => Locale(_languageCode);
   String get currencyCode => _currencyCode;
   String get currencySymbol => _currencySymbols[_currencyCode] ?? '\$';
 
   Future<void> _loadSettings() async {
     final prefs = await SharedPreferences.getInstance();
-    _languageCode = prefs.getString('language_code') ?? 'en';
-    _currencyCode = prefs.getString('currency_code') ?? 'USD';
+    _languageCode = prefs.getString('language_code') ?? 'zh';
+    _currencyCode = prefs.getString('currency_code') ?? 'CNY';
     notifyListeners();
   }
 

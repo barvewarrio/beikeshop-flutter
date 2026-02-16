@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:beikeshop_flutter/l10n/app_localizations.dart';
 import '../../theme/app_theme.dart';
 import '../../providers/cart_provider.dart';
 import '../../providers/settings_provider.dart';
@@ -12,13 +13,14 @@ class CartScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final settings = context.watch<SettingsProvider>();
+    final l10n = AppLocalizations.of(context)!;
 
     return Scaffold(
       appBar: AppBar(
         title: Consumer<CartProvider>(
           builder: (context, cart, child) {
             return Text(
-              'Shopping Cart (${cart.itemCount})',
+              '${l10n.shoppingCart} (${cart.itemCount})',
               style: AppTextStyles.heading,
             );
           },
@@ -31,9 +33,9 @@ class CartScreen extends StatelessWidget {
             onPressed: () {
               context.read<CartProvider>().clearCart();
             },
-            child: const Text(
-              'Clear',
-              style: TextStyle(color: AppColors.textPrimary),
+            child: Text(
+              l10n.clear,
+              style: const TextStyle(color: AppColors.textPrimary),
             ),
           ),
         ],
@@ -51,9 +53,9 @@ class CartScreen extends StatelessWidget {
                     color: AppColors.textHint,
                   ),
                   const SizedBox(height: 16),
-                  const Text(
-                    'Your cart is empty',
-                    style: TextStyle(
+                  Text(
+                    l10n.cartEmpty,
+                    style: const TextStyle(
                       fontSize: 16,
                       color: AppColors.textSecondary,
                     ),
@@ -70,59 +72,55 @@ class CartScreen extends StatelessWidget {
                       backgroundColor: AppColors.primary,
                       foregroundColor: Colors.white,
                     ),
-                    child: const Text('Shop Now'),
+                    child: Text(l10n.shopNow),
                   ),
                 ],
               ),
             );
           }
 
+          // Calculate free shipping threshold
+          final double freeShippingThreshold = 50.0; // USD base
+          final double currentTotal = cart.totalAmount;
+          final double remaining = freeShippingThreshold - currentTotal;
+          final bool isFreeShipping = remaining <= 0;
+
           return Column(
             children: [
               // Free Shipping Progress
-              Container(
-                padding: const EdgeInsets.symmetric(
-                  vertical: 8,
-                  horizontal: 16,
-                ),
-                color: const Color(0xFFFFF7E6),
-                child: Row(
-                  children: [
-                    const Icon(
-                      Icons.local_shipping_outlined,
-                      color: AppColors.primary,
-                      size: 16,
-                    ),
-                    const SizedBox(width: 8),
-                    Expanded(
-                      child: RichText(
-                        text: const TextSpan(
-                          style: TextStyle(
+              if (!isFreeShipping)
+                Container(
+                  padding: const EdgeInsets.symmetric(
+                    vertical: 8,
+                    horizontal: 16,
+                  ),
+                  color: const Color(0xFFFFF7E6),
+                  child: Row(
+                    children: [
+                      const Icon(
+                        Icons.local_shipping_outlined,
+                        color: AppColors.primary,
+                        size: 16,
+                      ),
+                      const SizedBox(width: 8),
+                      Expanded(
+                        child: Text(
+                          l10n.addMoreForFreeShipping(
+                              settings.formatPrice(remaining)),
+                          style: const TextStyle(
                             color: AppColors.textPrimary,
                             fontSize: 12,
                           ),
-                          children: [
-                            TextSpan(text: 'Add '),
-                            TextSpan(
-                              text: '\$15.00',
-                              style: TextStyle(
-                                fontWeight: FontWeight.bold,
-                                color: AppColors.primary,
-                              ),
-                            ),
-                            TextSpan(text: ' more for free shipping'),
-                          ],
                         ),
                       ),
-                    ),
-                    const Icon(
-                      Icons.chevron_right,
-                      size: 16,
-                      color: AppColors.textHint,
-                    ),
-                  ],
+                      const Icon(
+                        Icons.chevron_right,
+                        size: 16,
+                        color: AppColors.textHint,
+                      ),
+                    ],
+                  ),
                 ),
-              ),
 
               // Cart Items
               Expanded(
@@ -198,41 +196,6 @@ class CartScreen extends StatelessWidget {
                                     color: AppColors.textPrimary,
                                   ),
                                 ),
-                                const SizedBox(height: 8),
-
-                                // Quantity Control
-                                Row(
-                                  children: [
-                                    _buildQtyBtn(Icons.remove, () {
-                                      cart.updateQuantity(
-                                        item.product.id,
-                                        item.quantity - 1,
-                                      );
-                                    }),
-                                    Container(
-                                      width: 40,
-                                      alignment: Alignment.center,
-                                      child: Text('${item.quantity}'),
-                                    ),
-                                    _buildQtyBtn(Icons.add, () {
-                                      cart.updateQuantity(
-                                        item.product.id,
-                                        item.quantity + 1,
-                                      );
-                                    }),
-                                    const Spacer(),
-                                    IconButton(
-                                      icon: const Icon(
-                                        Icons.delete_outline,
-                                        size: 20,
-                                        color: AppColors.textHint,
-                                      ),
-                                      onPressed: () {
-                                        cart.removeFromCart(item.product.id);
-                                      },
-                                    ),
-                                  ],
-                                ),
                               ],
                             ),
                           ),
@@ -242,8 +205,8 @@ class CartScreen extends StatelessWidget {
                   },
                 ),
               ),
-
-              // Checkout Bar
+              
+              // Bottom Bar
               Container(
                 padding: const EdgeInsets.all(16),
                 decoration: BoxDecoration(
@@ -260,61 +223,54 @@ class CartScreen extends StatelessWidget {
                   top: false,
                   child: Row(
                     children: [
-                      Row(
-                        children: [
-                          Checkbox(
-                            value:
-                                cart.items.isNotEmpty &&
-                                cart.items.every((i) => i.isSelected),
-                            onChanged: cart.items.isEmpty
-                                ? null
-                                : (v) {
-                                    cart.toggleAll(v ?? false);
-                                  },
-                            activeColor: AppColors.primary,
-                            shape: const CircleBorder(),
-                          ),
-                          const Text(
-                            'All',
-                            style: TextStyle(color: AppColors.textSecondary),
-                          ),
-                        ],
+                      Checkbox(
+                        value: cart.items.every((item) => item.isSelected),
+                        onChanged: (v) {
+                          // Toggle all
+                        },
+                        activeColor: AppColors.primary,
+                        shape: const CircleBorder(),
                       ),
+                      Text(l10n.all),
                       const Spacer(),
                       Column(
                         crossAxisAlignment: CrossAxisAlignment.end,
                         mainAxisSize: MainAxisSize.min,
                         children: [
-                          const Text(
-                            'Total:',
-                            style: TextStyle(
-                              fontSize: 12,
-                              color: AppColors.textSecondary,
-                            ),
+                          Row(
+                            children: [
+                              Text(l10n.total),
+                              const SizedBox(width: 4),
+                              Text(
+                                settings.formatPrice(cart.totalAmount),
+                                style: const TextStyle(
+                                  fontSize: 18,
+                                  fontWeight: FontWeight.bold,
+                                  color: AppColors.primary,
+                                ),
+                              ),
+                            ],
                           ),
-                          Text(
-                            settings.formatPrice(cart.totalAmount),
-                            style: const TextStyle(
-                              fontSize: 18,
-                              fontWeight: FontWeight.bold,
-                              color: AppColors.primary,
+                          if (isFreeShipping)
+                            const Text(
+                              'Free Shipping Applied',
+                              style: TextStyle(
+                                fontSize: 10,
+                                color: AppColors.primary,
+                              ),
                             ),
-                          ),
                         ],
                       ),
                       const SizedBox(width: 16),
                       ElevatedButton(
-                        onPressed: cart.selectedCount > 0
-                            ? () {
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (context) =>
-                                        const CheckoutScreen(),
-                                  ),
-                                );
-                              }
-                            : null,
+                        onPressed: () {
+                           Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => const CheckoutScreen(),
+                            ),
+                          );
+                        },
                         style: ElevatedButton.styleFrom(
                           backgroundColor: AppColors.primary,
                           foregroundColor: Colors.white,
@@ -322,11 +278,14 @@ class CartScreen extends StatelessWidget {
                             horizontal: 24,
                             vertical: 12,
                           ),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(24),
+                        ),
+                        child: Text(
+                          '${l10n.checkout} (${cart.selectedCount})',
+                          style: const TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.bold,
                           ),
                         ),
-                        child: Text('Checkout (${cart.selectedCount})'),
                       ),
                     ],
                   ),
@@ -335,20 +294,6 @@ class CartScreen extends StatelessWidget {
             ],
           );
         },
-      ),
-    );
-  }
-
-  Widget _buildQtyBtn(IconData icon, VoidCallback onTap) {
-    return InkWell(
-      onTap: onTap,
-      child: Container(
-        padding: const EdgeInsets.all(4),
-        decoration: BoxDecoration(
-          border: Border.all(color: AppColors.border),
-          borderRadius: BorderRadius.circular(4),
-        ),
-        child: Icon(icon, size: 14, color: AppColors.textSecondary),
       ),
     );
   }

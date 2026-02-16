@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../../theme/app_theme.dart';
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:beikeshop_flutter/l10n/app_localizations.dart';
 import '../../api/api_service.dart';
 import '../../models/models.dart';
 import '../product/product_detail_screen.dart';
@@ -67,6 +68,7 @@ class _CategoryScreenState extends State<CategoryScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     if (_isLoading) {
       return const Scaffold(
         body: Center(
@@ -89,8 +91,8 @@ class _CategoryScreenState extends State<CategoryScreen> {
               const Icon(Icons.search, color: AppColors.textHint, size: 20),
               const SizedBox(width: 8),
               Text(
-                'Search categories',
-                style: TextStyle(
+                l10n.searchCategories,
+                style: const TextStyle(
                   color: AppColors.textHint,
                   fontSize: 14,
                   fontWeight: FontWeight.normal,
@@ -190,7 +192,11 @@ class _CategoryScreenState extends State<CategoryScreen> {
                       alignment: Alignment.bottomLeft,
                       padding: const EdgeInsets.all(8),
                       child: Text(
-                        'Top Picks in ${_categories.isNotEmpty ? _categories[_selectedIndex].name : ""}',
+                        l10n.topPicksIn(
+                          _categories.isNotEmpty
+                              ? _categories[_selectedIndex].name
+                              : "",
+                        ),
                         style: const TextStyle(
                           color: Colors.white,
                           fontWeight: FontWeight.bold,
