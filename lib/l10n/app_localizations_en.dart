@@ -197,4 +197,97 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get orderId => 'Order ID';
+
+  @override
+  String get myAddresses => 'My Addresses';
+
+  @override
+  String get addAddress => 'Add Address';
+
+  @override
+  String get editAddress => 'Edit Address';
+
+  @override
+  String get deleteAddress => 'Delete Address';
+
+  @override
+  String get deleteAddressConfirm =>
+      'Are you sure you want to delete this address?';
+
+  @override
+  String get fullName => 'Full Name';
+
+  @override
+  String get phoneNumber => 'Phone Number';
+
+  @override
+  String get country => 'Country';
+
+  @override
+  String get provinceState => 'Province/State';
+
+  @override
+  String get city => 'City';
+
+  @override
+  String get zipCode => 'Zip Code';
+
+  @override
+  String get addressLine => 'Address Line';
+
+  @override
+  String get setAsDefault => 'Set as Default Address';
+
+  @override
+  String get save => 'Save';
+
+  @override
+  String get cancel => 'Cancel';
+
+  @override
+  String get delete => 'Delete';
+
+  @override
+  String get noAddressesFound => 'No addresses found';
+
+  @override
+  String get edit => 'Edit';
+
+  @override
+  String get defaultTag => 'Default';
+
+  @override
+  String get change => 'Change';
+
+  @override
+  String get placeOrder => 'Place Order';
+
+  @override
+  String get orderPlaced => 'Order Placed!';
+
+  @override
+  String get orderPlacedMessage => 'Your order has been successfully placed.';
+
+  @override
+  String get selectShippingAddress => 'Please select a shipping address';
+
+  @override
+  String errorPlacingOrder(String error) {
+    return 'Error placing order: $error';
+  }
+
+  @override
+  String get subtotal => 'Subtotal';
+
+  @override
+  String get shipping => 'Shipping';
+
+  @override
+  String get creditCard => 'Credit Card';
+
+  @override
+  String get paypal => 'PayPal';
+
+  @override
+  String get cod => 'Cash on Delivery';
 }

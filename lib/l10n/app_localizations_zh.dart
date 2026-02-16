@@ -197,4 +197,96 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get orderId => '订单编号';
+
+  @override
+  String get myAddresses => '收货地址';
+
+  @override
+  String get addAddress => '添加新地址';
+
+  @override
+  String get editAddress => '编辑地址';
+
+  @override
+  String get deleteAddress => '删除地址';
+
+  @override
+  String get deleteAddressConfirm => '确定要删除这个地址吗？';
+
+  @override
+  String get fullName => '收货人姓名';
+
+  @override
+  String get phoneNumber => '手机号码';
+
+  @override
+  String get country => '国家/地区';
+
+  @override
+  String get provinceState => '省/州';
+
+  @override
+  String get city => '城市';
+
+  @override
+  String get zipCode => '邮政编码';
+
+  @override
+  String get addressLine => '详细地址';
+
+  @override
+  String get setAsDefault => '设为默认地址';
+
+  @override
+  String get save => '保存';
+
+  @override
+  String get cancel => '取消';
+
+  @override
+  String get delete => '删除';
+
+  @override
+  String get noAddressesFound => '暂无收货地址';
+
+  @override
+  String get edit => '编辑';
+
+  @override
+  String get defaultTag => '默认';
+
+  @override
+  String get change => '修改';
+
+  @override
+  String get placeOrder => '提交订单';
+
+  @override
+  String get orderPlaced => '订单已提交';
+
+  @override
+  String get orderPlacedMessage => '您的订单已成功提交。';
+
+  @override
+  String get selectShippingAddress => '请选择收货地址';
+
+  @override
+  String errorPlacingOrder(String error) {
+    return '提交订单失败: $error';
+  }
+
+  @override
+  String get subtotal => '商品小计';
+
+  @override
+  String get shipping => '运费';
+
+  @override
+  String get creditCard => '信用卡';
+
+  @override
+  String get paypal => 'PayPal';
+
+  @override
+  String get cod => '货到付款';
 }

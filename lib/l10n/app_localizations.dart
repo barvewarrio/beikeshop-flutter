@@ -469,6 +469,186 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Order ID'**
   String get orderId;
+
+  /// No description provided for @myAddresses.
+  ///
+  /// In en, this message translates to:
+  /// **'My Addresses'**
+  String get myAddresses;
+
+  /// No description provided for @addAddress.
+  ///
+  /// In en, this message translates to:
+  /// **'Add Address'**
+  String get addAddress;
+
+  /// No description provided for @editAddress.
+  ///
+  /// In en, this message translates to:
+  /// **'Edit Address'**
+  String get editAddress;
+
+  /// No description provided for @deleteAddress.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete Address'**
+  String get deleteAddress;
+
+  /// No description provided for @deleteAddressConfirm.
+  ///
+  /// In en, this message translates to:
+  /// **'Are you sure you want to delete this address?'**
+  String get deleteAddressConfirm;
+
+  /// No description provided for @fullName.
+  ///
+  /// In en, this message translates to:
+  /// **'Full Name'**
+  String get fullName;
+
+  /// No description provided for @phoneNumber.
+  ///
+  /// In en, this message translates to:
+  /// **'Phone Number'**
+  String get phoneNumber;
+
+  /// No description provided for @country.
+  ///
+  /// In en, this message translates to:
+  /// **'Country'**
+  String get country;
+
+  /// No description provided for @provinceState.
+  ///
+  /// In en, this message translates to:
+  /// **'Province/State'**
+  String get provinceState;
+
+  /// No description provided for @city.
+  ///
+  /// In en, this message translates to:
+  /// **'City'**
+  String get city;
+
+  /// No description provided for @zipCode.
+  ///
+  /// In en, this message translates to:
+  /// **'Zip Code'**
+  String get zipCode;
+
+  /// No description provided for @addressLine.
+  ///
+  /// In en, this message translates to:
+  /// **'Address Line'**
+  String get addressLine;
+
+  /// No description provided for @setAsDefault.
+  ///
+  /// In en, this message translates to:
+  /// **'Set as Default Address'**
+  String get setAsDefault;
+
+  /// No description provided for @save.
+  ///
+  /// In en, this message translates to:
+  /// **'Save'**
+  String get save;
+
+  /// No description provided for @cancel.
+  ///
+  /// In en, this message translates to:
+  /// **'Cancel'**
+  String get cancel;
+
+  /// No description provided for @delete.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete'**
+  String get delete;
+
+  /// No description provided for @noAddressesFound.
+  ///
+  /// In en, this message translates to:
+  /// **'No addresses found'**
+  String get noAddressesFound;
+
+  /// No description provided for @edit.
+  ///
+  /// In en, this message translates to:
+  /// **'Edit'**
+  String get edit;
+
+  /// No description provided for @defaultTag.
+  ///
+  /// In en, this message translates to:
+  /// **'Default'**
+  String get defaultTag;
+
+  /// No description provided for @change.
+  ///
+  /// In en, this message translates to:
+  /// **'Change'**
+  String get change;
+
+  /// No description provided for @placeOrder.
+  ///
+  /// In en, this message translates to:
+  /// **'Place Order'**
+  String get placeOrder;
+
+  /// No description provided for @orderPlaced.
+  ///
+  /// In en, this message translates to:
+  /// **'Order Placed!'**
+  String get orderPlaced;
+
+  /// No description provided for @orderPlacedMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Your order has been successfully placed.'**
+  String get orderPlacedMessage;
+
+  /// No description provided for @selectShippingAddress.
+  ///
+  /// In en, this message translates to:
+  /// **'Please select a shipping address'**
+  String get selectShippingAddress;
+
+  /// No description provided for @errorPlacingOrder.
+  ///
+  /// In en, this message translates to:
+  /// **'Error placing order: {error}'**
+  String errorPlacingOrder(String error);
+
+  /// No description provided for @subtotal.
+  ///
+  /// In en, this message translates to:
+  /// **'Subtotal'**
+  String get subtotal;
+
+  /// No description provided for @shipping.
+  ///
+  /// In en, this message translates to:
+  /// **'Shipping'**
+  String get shipping;
+
+  /// No description provided for @creditCard.
+  ///
+  /// In en, this message translates to:
+  /// **'Credit Card'**
+  String get creditCard;
+
+  /// No description provided for @paypal.
+  ///
+  /// In en, this message translates to:
+  /// **'PayPal'**
+  String get paypal;
+
+  /// No description provided for @cod.
+  ///
+  /// In en, this message translates to:
+  /// **'Cash on Delivery'**
+  String get cod;
 }
 
 class _AppLocalizationsDelegate

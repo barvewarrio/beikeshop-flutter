@@ -74,5 +74,43 @@
   "paymentMethod": "Payment Method",
   "items": "Items",
   "orderDate": "Order Date",
-  "orderId": "Order ID"
+  "orderId": "Order ID",
+  "myAddresses": "My Addresses",
+  "addAddress": "Add Address",
+  "editAddress": "Edit Address",
+  "deleteAddress": "Delete Address",
+  "deleteAddressConfirm": "Are you sure you want to delete this address?",
+  "fullName": "Full Name",
+  "phoneNumber": "Phone Number",
+  "country": "Country",
+  "provinceState": "Province/State",
+  "city": "City",
+  "zipCode": "Zip Code",
+  "addressLine": "Address Line",
+  "setAsDefault": "Set as Default Address",
+  "save": "Save",
+  "cancel": "Cancel",
+  "delete": "Delete",
+  "noAddressesFound": "No addresses found",
+  "edit": "Edit",
+  "defaultTag": "Default",
+  "change": "Change",
+  "placeOrder": "Place Order",
+  "orderPlaced": "Order Placed!",
+  "orderPlacedMessage": "Your order has been successfully placed.",
+  "selectShippingAddress": "Please select a shipping address",
+  "errorPlacingOrder": "Error placing order: {error}",
+  "@errorPlacingOrder": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "subtotal": "Subtotal",
+  "shipping": "Shipping",
+  "creditCard": "Credit Card",
+  "paypal": "PayPal",
+  "cod": "Cash on Delivery"
 }
+

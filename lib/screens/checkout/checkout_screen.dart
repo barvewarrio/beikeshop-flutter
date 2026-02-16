@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:beikeshop_flutter/l10n/app_localizations.dart';
 import '../../providers/cart_provider.dart';
 import '../../providers/address_provider.dart';
 import '../../providers/order_provider.dart';
@@ -61,10 +62,11 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
   }
 
   void _placeOrder() async {
+    final l10n = AppLocalizations.of(context)!;
     if (_selectedAddress == null) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Please select a shipping address')),
-      );
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text(l10n.selectShippingAddress)));
       return;
     }
 
@@ -78,7 +80,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
       final total = cart.totalAmount;
 
       if (selectedItems.isEmpty) {
-        throw Exception('No items selected');
+        throw Exception(l10n.cartEmpty);
       }
 
       // Create Order
@@ -99,8 +101,8 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
           context: context,
           barrierDismissible: false,
           builder: (ctx) => AlertDialog(
-            title: const Text('Order Placed!'),
-            content: const Text('Your order has been successfully placed.'),
+            title: Text(l10n.orderPlaced),
+            content: Text(l10n.orderPlacedMessage),
             actions: [
               TextButton(
                 onPressed: () {
@@ -116,9 +118,9 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
       }
     } catch (e) {
       if (mounted) {
-        ScaffoldMessenger.of(
-          context,
-        ).showSnackBar(SnackBar(content: Text('Error placing order: $e')));
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(l10n.errorPlacingOrder(e.toString()))),
+        );
       }
     } finally {
       if (mounted) {
@@ -129,19 +131,20 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     final cart = context.watch<CartProvider>();
     final settings = context.watch<SettingsProvider>();
     final selectedItems = cart.items.where((item) => item.isSelected).toList();
 
     if (selectedItems.isEmpty) {
       return Scaffold(
-        appBar: AppBar(title: const Text('Checkout')),
-        body: const Center(child: Text('No items to checkout')),
+        appBar: AppBar(title: Text(l10n.checkout)),
+        body: Center(child: Text(l10n.cartEmpty)),
       );
     }
 
     return Scaffold(
-      appBar: AppBar(title: const Text('Checkout')),
+      appBar: AppBar(title: Text(l10n.checkout)),
       body: _isLoading
           ? const Center(child: CircularProgressIndicator())
           : SingleChildScrollView(
@@ -159,14 +162,16 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
                           Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
-                              const Text(
-                                'Shipping Address',
+                              Text(
+                                l10n.shippingAddress,
                                 style: AppTextStyles.subheading,
                               ),
                               TextButton(
                                 onPressed: _selectAddress,
                                 child: Text(
-                                  _selectedAddress == null ? 'Add' : 'Change',
+                                  _selectedAddress == null
+                                      ? l10n.addAddress
+                                      : l10n.change,
                                 ),
                               ),
                             ],
@@ -185,9 +190,9 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
                               '${_selectedAddress!.addressLine}, ${_selectedAddress!.city}, ${_selectedAddress!.province}, ${_selectedAddress!.country}',
                             ),
                           ] else
-                            const Text(
-                              'No address selected',
-                              style: TextStyle(color: Colors.red),
+                            Text(
+                              l10n.selectShippingAddress,
+                              style: const TextStyle(color: Colors.red),
                             ),
                         ],
                       ),
@@ -202,10 +207,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          const Text(
-                            'Order Items',
-                            style: AppTextStyles.subheading,
-                          ),
+                          Text(l10n.items, style: AppTextStyles.subheading),
                           const SizedBox(height: 8),
                           ListView.separated(
                             shrinkWrap: true,
@@ -267,13 +269,13 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          const Text(
-                            'Payment Method',
+                          Text(
+                            l10n.paymentMethod,
                             style: AppTextStyles.subheading,
                           ),
                           const SizedBox(height: 8),
                           RadioListTile<String>(
-                            title: const Text('Credit Card'),
+                            title: Text(l10n.creditCard),
                             value: 'Credit Card',
                             groupValue: _paymentMethod,
                             onChanged: (value) =>
@@ -282,7 +284,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
                             activeColor: AppColors.primary,
                           ),
                           RadioListTile<String>(
-                            title: const Text('PayPal'),
+                            title: Text(l10n.paypal),
                             value: 'PayPal',
                             groupValue: _paymentMethod,
                             onChanged: (value) =>
@@ -291,7 +293,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
                             activeColor: AppColors.primary,
                           ),
                           RadioListTile<String>(
-                            title: const Text('Cash on Delivery (COD)'),
+                            title: Text(l10n.cod),
                             value: 'COD',
                             groupValue: _paymentMethod,
                             onChanged: (value) =>
@@ -312,16 +314,16 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
                       child: Column(
                         children: [
                           _SummaryRow(
-                            label: 'Subtotal',
+                            label: l10n.subtotal,
                             value: settings.formatPrice(cart.totalAmount),
                           ),
                           _SummaryRow(
-                            label: 'Shipping',
+                            label: l10n.shipping,
                             value: settings.formatPrice(0.0),
                           ), // Free shipping for now
                           const Divider(),
                           _SummaryRow(
-                            label: 'Total',
+                            label: l10n.total,
                             value: settings.formatPrice(cart.totalAmount),
                             isBold: true,
                           ),
@@ -342,9 +344,9 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
                         borderRadius: BorderRadius.circular(8),
                       ),
                     ),
-                    child: const Text(
-                      'Place Order',
-                      style: TextStyle(
+                    child: Text(
+                      l10n.placeOrder,
+                      style: const TextStyle(
                         fontSize: 18,
                         fontWeight: FontWeight.bold,
                       ),

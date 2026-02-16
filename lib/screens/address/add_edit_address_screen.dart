@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:beikeshop_flutter/l10n/app_localizations.dart';
 import '../../models/address_model.dart';
 import '../../theme/app_theme.dart';
 
 class AddEditAddressScreen extends StatefulWidget {
   final Address? address;
 
-  const AddEditAddressScreen({Key? key, this.address}) : super(key: key);
+  const AddEditAddressScreen({super.key, this.address});
 
   @override
   State<AddEditAddressScreen> createState() => _AddEditAddressScreenState();
@@ -28,19 +29,11 @@ class _AddEditAddressScreenState extends State<AddEditAddressScreen> {
     super.initState();
     _nameController = TextEditingController(text: widget.address?.name ?? '');
     _phoneController = TextEditingController(text: widget.address?.phone ?? '');
-    _countryController = TextEditingController(
-      text: widget.address?.country ?? '',
-    );
-    _provinceController = TextEditingController(
-      text: widget.address?.province ?? '',
-    );
+    _countryController = TextEditingController(text: widget.address?.country ?? '');
+    _provinceController = TextEditingController(text: widget.address?.province ?? '');
     _cityController = TextEditingController(text: widget.address?.city ?? '');
-    _addressLineController = TextEditingController(
-      text: widget.address?.addressLine ?? '',
-    );
-    _zipCodeController = TextEditingController(
-      text: widget.address?.zipCode ?? '',
-    );
+    _addressLineController = TextEditingController(text: widget.address?.addressLine ?? '');
+    _zipCodeController = TextEditingController(text: widget.address?.zipCode ?? '');
     _isDefault = widget.address?.isDefault ?? false;
   }
 
@@ -76,9 +69,13 @@ class _AddEditAddressScreenState extends State<AddEditAddressScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+    
     return Scaffold(
+      backgroundColor: AppColors.background,
       appBar: AppBar(
-        title: Text(widget.address == null ? 'Add Address' : 'Edit Address'),
+        title: Text(widget.address == null ? l10n.addAddress : l10n.editAddress),
+        centerTitle: true,
       ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(16),
@@ -87,74 +84,81 @@ class _AddEditAddressScreenState extends State<AddEditAddressScreen> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              TextFormField(
-                controller: _nameController,
-                decoration: const InputDecoration(labelText: 'Full Name'),
-                validator: (value) => value!.isEmpty ? 'Required' : null,
-              ),
-              const SizedBox(height: 16),
-              TextFormField(
-                controller: _phoneController,
-                decoration: const InputDecoration(labelText: 'Phone Number'),
-                keyboardType: TextInputType.phone,
-                validator: (value) => value!.isEmpty ? 'Required' : null,
-              ),
-              const SizedBox(height: 16),
-              Row(
+              _buildSection(
                 children: [
-                  Expanded(
-                    child: TextFormField(
-                      controller: _countryController,
-                      decoration: const InputDecoration(labelText: 'Country'),
-                      validator: (value) => value!.isEmpty ? 'Required' : null,
-                    ),
+                  _buildTextField(
+                    controller: _nameController,
+                    label: l10n.fullName,
+                    icon: Icons.person_outline,
                   ),
-                  const SizedBox(width: 16),
-                  Expanded(
-                    child: TextFormField(
-                      controller: _provinceController,
-                      decoration: const InputDecoration(
-                        labelText: 'Province/State',
+                  const Divider(),
+                  _buildTextField(
+                    controller: _phoneController,
+                    label: l10n.phoneNumber,
+                    icon: Icons.phone_outlined,
+                    keyboardType: TextInputType.phone,
+                  ),
+                ],
+              ),
+              const SizedBox(height: 16),
+              _buildSection(
+                children: [
+                  Row(
+                    children: [
+                      Expanded(
+                        child: _buildTextField(
+                          controller: _countryController,
+                          label: l10n.country,
+                        ),
                       ),
-                      validator: (value) => value!.isEmpty ? 'Required' : null,
-                    ),
+                      const SizedBox(width: 16),
+                      Expanded(
+                        child: _buildTextField(
+                          controller: _provinceController,
+                          label: l10n.provinceState,
+                        ),
+                      ),
+                    ],
+                  ),
+                  const Divider(),
+                  Row(
+                    children: [
+                      Expanded(
+                        child: _buildTextField(
+                          controller: _cityController,
+                          label: l10n.city,
+                        ),
+                      ),
+                      const SizedBox(width: 16),
+                      Expanded(
+                        child: _buildTextField(
+                          controller: _zipCodeController,
+                          label: l10n.zipCode,
+                          keyboardType: TextInputType.number,
+                        ),
+                      ),
+                    ],
+                  ),
+                  const Divider(),
+                  _buildTextField(
+                    controller: _addressLineController,
+                    label: l10n.addressLine,
+                    icon: Icons.location_on_outlined,
                   ),
                 ],
               ),
               const SizedBox(height: 16),
-              Row(
-                children: [
-                  Expanded(
-                    child: TextFormField(
-                      controller: _cityController,
-                      decoration: const InputDecoration(labelText: 'City'),
-                      validator: (value) => value!.isEmpty ? 'Required' : null,
-                    ),
-                  ),
-                  const SizedBox(width: 16),
-                  Expanded(
-                    child: TextFormField(
-                      controller: _zipCodeController,
-                      decoration: const InputDecoration(labelText: 'Zip Code'),
-                      keyboardType: TextInputType.number,
-                      validator: (value) => value!.isEmpty ? 'Required' : null,
-                    ),
-                  ),
-                ],
-              ),
-              const SizedBox(height: 16),
-              TextFormField(
-                controller: _addressLineController,
-                decoration: const InputDecoration(
-                  labelText: 'Address Line (Street, Apt, etc.)',
+              Container(
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(8),
                 ),
-                validator: (value) => value!.isEmpty ? 'Required' : null,
-              ),
-              const SizedBox(height: 24),
-              SwitchListTile(
-                title: const Text('Set as Default Address'),
-                value: _isDefault,
-                onChanged: (val) => setState(() => _isDefault = val),
+                child: SwitchListTile(
+                  title: Text(l10n.setAsDefault),
+                  value: _isDefault,
+                  activeColor: AppColors.primary,
+                  onChanged: (val) => setState(() => _isDefault = val),
+                ),
               ),
               const SizedBox(height: 32),
               ElevatedButton(
@@ -163,13 +167,52 @@ class _AddEditAddressScreenState extends State<AddEditAddressScreen> {
                   backgroundColor: AppColors.primary,
                   foregroundColor: Colors.white,
                   padding: const EdgeInsets.symmetric(vertical: 16),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(8),
+                  ),
                 ),
-                child: const Text('Save Address'),
+                child: Text(
+                  l10n.save,
+                  style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                ),
               ),
             ],
           ),
         ),
       ),
+    );
+  }
+
+  Widget _buildSection({required List<Widget> children}) {
+    return Container(
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(8),
+      ),
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+      child: Column(
+        children: children,
+      ),
+    );
+  }
+
+  Widget _buildTextField({
+    required TextEditingController controller,
+    required String label,
+    IconData? icon,
+    TextInputType? keyboardType,
+  }) {
+    return TextFormField(
+      controller: controller,
+      keyboardType: keyboardType,
+      decoration: InputDecoration(
+        labelText: label,
+        prefixIcon: icon != null ? Icon(icon, color: AppColors.textSecondary, size: 20) : null,
+        border: InputBorder.none,
+        contentPadding: const EdgeInsets.symmetric(vertical: 12),
+        isDense: true,
+      ),
+      validator: (value) => value!.isEmpty ? 'Required' : null, // Could localize validation message too
     );
   }
 }
