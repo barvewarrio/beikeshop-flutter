@@ -24,11 +24,18 @@ class OrderDetailScreen extends StatelessWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text('Order #${order.id}', style: const TextStyle(fontWeight: FontWeight.bold)),
+                    Text(
+                      'Order #${order.id}',
+                      style: const TextStyle(fontWeight: FontWeight.bold),
+                    ),
                     const SizedBox(height: 8),
-                    Text('Date: ${DateFormat('MMM dd, yyyy HH:mm').format(order.date)}'),
+                    Text(
+                      'Date: ${DateFormat('MMM dd, yyyy HH:mm').format(order.date)}',
+                    ),
                     const SizedBox(height: 8),
                     Text('Status: ${order.status}'),
+                    const SizedBox(height: 8),
+                    Text('Payment Method: ${order.paymentMethod}'),
                   ],
                 ),
               ),
@@ -44,11 +51,16 @@ class OrderDetailScreen extends StatelessWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(order.shippingAddress.name, style: const TextStyle(fontWeight: FontWeight.bold)),
+                    Text(
+                      order.shippingAddress.name,
+                      style: const TextStyle(fontWeight: FontWeight.bold),
+                    ),
                     const SizedBox(height: 4),
                     Text(order.shippingAddress.phone),
                     const SizedBox(height: 4),
-                    Text('${order.shippingAddress.addressLine}, ${order.shippingAddress.city}, ${order.shippingAddress.province}, ${order.shippingAddress.country}'),
+                    Text(
+                      '${order.shippingAddress.addressLine}, ${order.shippingAddress.city}, ${order.shippingAddress.province}, ${order.shippingAddress.country}',
+                    ),
                   ],
                 ),
               ),
@@ -83,8 +95,15 @@ class OrderDetailScreen extends StatelessWidget {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Text(item.product.title, maxLines: 1, overflow: TextOverflow.ellipsis),
-                          Text('x${item.quantity}', style: const TextStyle(color: Colors.grey)),
+                          Text(
+                            item.product.title,
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                          Text(
+                            'x${item.quantity}',
+                            style: const TextStyle(color: Colors.grey),
+                          ),
                         ],
                       ),
                     ),
@@ -99,10 +118,17 @@ class OrderDetailScreen extends StatelessWidget {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                const Text('Total Amount', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+                const Text(
+                  'Total Amount',
+                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                ),
                 Text(
                   '\$${order.totalAmount.toStringAsFixed(2)}',
-                  style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: AppColors.primary),
+                  style: const TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                    color: AppColors.primary,
+                  ),
                 ),
               ],
             ),

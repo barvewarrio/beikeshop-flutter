@@ -17,6 +17,7 @@ class CheckoutScreen extends StatefulWidget {
 class _CheckoutScreenState extends State<CheckoutScreen> {
   Address? _selectedAddress;
   bool _isLoading = false;
+  String _paymentMethod = 'Credit Card';
 
   @override
   void initState() {
@@ -34,27 +35,27 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
     // Navigate to address list and wait for selection
     await Navigator.push(
       context,
-      MaterialPageRoute(
-        builder: (context) => const AddressListScreen(),
-      ),
+      MaterialPageRoute(builder: (context) => const AddressListScreen()),
     );
-    
-    // If user returns, we should refresh the selected address 
+
+    // If user returns, we should refresh the selected address
     // In a real app, we might pass the selected address back
     if (mounted) {
-       final addressProvider = context.read<AddressProvider>();
-       setState(() {
-         // If we had an address, try to keep it (if it still exists), otherwise use default
-         if (_selectedAddress != null) {
-            try {
-              _selectedAddress = addressProvider.addresses.firstWhere((a) => a.id == _selectedAddress!.id);
-            } catch (e) {
-              _selectedAddress = addressProvider.defaultAddress;
-            }
-         } else {
-           _selectedAddress = addressProvider.defaultAddress;
-         }
-       });
+      final addressProvider = context.read<AddressProvider>();
+      setState(() {
+        // If we had an address, try to keep it (if it still exists), otherwise use default
+        if (_selectedAddress != null) {
+          try {
+            _selectedAddress = addressProvider.addresses.firstWhere(
+              (a) => a.id == _selectedAddress!.id,
+            );
+          } catch (e) {
+            _selectedAddress = addressProvider.defaultAddress;
+          }
+        } else {
+          _selectedAddress = addressProvider.defaultAddress;
+        }
+      });
     }
   }
 
@@ -70,7 +71,9 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
 
     try {
       final cart = context.read<CartProvider>();
-      final selectedItems = cart.items.where((item) => item.isSelected).toList();
+      final selectedItems = cart.items
+          .where((item) => item.isSelected)
+          .toList();
       final total = cart.totalAmount;
 
       if (selectedItems.isEmpty) {
@@ -82,6 +85,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
         selectedItems,
         total,
         _selectedAddress!,
+        _paymentMethod,
       );
 
       // Clear purchased items from cart
@@ -111,9 +115,9 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
       }
     } catch (e) {
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Error placing order: $e')),
-        );
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text('Error placing order: $e')));
       }
     } finally {
       if (mounted) {
@@ -136,124 +140,219 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
 
     return Scaffold(
       appBar: AppBar(title: const Text('Checkout')),
-      body: _isLoading 
-        ? const Center(child: CircularProgressIndicator())
-        : SingleChildScrollView(
-          padding: const EdgeInsets.all(16),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              // Address Section
-              Card(
-                child: Padding(
-                  padding: const EdgeInsets.all(16),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      body: _isLoading
+          ? const Center(child: CircularProgressIndicator())
+          : SingleChildScrollView(
+              padding: const EdgeInsets.all(16),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  // Address Section
+                  Card(
+                    child: Padding(
+                      padding: const EdgeInsets.all(16),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          const Text('Shipping Address', style: AppTextStyles.subheading),
-                          TextButton(
-                            onPressed: _selectAddress,
-                            child: Text(_selectedAddress == null ? 'Add' : 'Change'),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              const Text(
+                                'Shipping Address',
+                                style: AppTextStyles.subheading,
+                              ),
+                              TextButton(
+                                onPressed: _selectAddress,
+                                child: Text(
+                                  _selectedAddress == null ? 'Add' : 'Change',
+                                ),
+                              ),
+                            ],
+                          ),
+                          if (_selectedAddress != null) ...[
+                            Text(
+                              _selectedAddress!.name,
+                              style: const TextStyle(
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                            const SizedBox(height: 4),
+                            Text(_selectedAddress!.phone),
+                            const SizedBox(height: 4),
+                            Text(
+                              '${_selectedAddress!.addressLine}, ${_selectedAddress!.city}, ${_selectedAddress!.province}, ${_selectedAddress!.country}',
+                            ),
+                          ] else
+                            const Text(
+                              'No address selected',
+                              style: TextStyle(color: Colors.red),
+                            ),
+                        ],
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 16),
+
+                  // Items Section
+                  Card(
+                    child: Padding(
+                      padding: const EdgeInsets.all(16),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          const Text(
+                            'Order Items',
+                            style: AppTextStyles.subheading,
+                          ),
+                          const SizedBox(height: 8),
+                          ListView.separated(
+                            shrinkWrap: true,
+                            physics: const NeverScrollableScrollPhysics(),
+                            itemCount: selectedItems.length,
+                            separatorBuilder: (_, __) => const Divider(),
+                            itemBuilder: (context, index) {
+                              final item = selectedItems[index];
+                              return Row(
+                                children: [
+                                  Container(
+                                    width: 50,
+                                    height: 50,
+                                    decoration: BoxDecoration(
+                                      borderRadius: BorderRadius.circular(4),
+                                      image: DecorationImage(
+                                        image: NetworkImage(
+                                          item.product.imageUrl,
+                                        ),
+                                        fit: BoxFit.cover,
+                                      ),
+                                    ),
+                                  ),
+                                  const SizedBox(width: 12),
+                                  Expanded(
+                                    child: Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        Text(
+                                          item.product.title,
+                                          maxLines: 1,
+                                          overflow: TextOverflow.ellipsis,
+                                        ),
+                                        Text(
+                                          'x${item.quantity}',
+                                          style: const TextStyle(
+                                            color: Colors.grey,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                  Text(
+                                    '\$${item.totalPrice.toStringAsFixed(2)}',
+                                  ),
+                                ],
+                              );
+                            },
                           ),
                         ],
                       ),
-                      if (_selectedAddress != null) ...[
-                        Text(_selectedAddress!.name, style: const TextStyle(fontWeight: FontWeight.bold)),
-                        const SizedBox(height: 4),
-                        Text(_selectedAddress!.phone),
-                        const SizedBox(height: 4),
-                        Text('${_selectedAddress!.addressLine}, ${_selectedAddress!.city}, ${_selectedAddress!.province}, ${_selectedAddress!.country}'),
-                      ] else
-                        const Text('No address selected', style: TextStyle(color: Colors.red)),
-                    ],
+                    ),
                   ),
-                ),
-              ),
-              const SizedBox(height: 16),
+                  const SizedBox(height: 16),
 
-              // Items Section
-              Card(
-                child: Padding(
-                  padding: const EdgeInsets.all(16),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      const Text('Order Items', style: AppTextStyles.subheading),
-                      const SizedBox(height: 8),
-                      ListView.separated(
-                        shrinkWrap: true,
-                        physics: const NeverScrollableScrollPhysics(),
-                        itemCount: selectedItems.length,
-                        separatorBuilder: (_, __) => const Divider(),
-                        itemBuilder: (context, index) {
-                          final item = selectedItems[index];
-                          return Row(
-                            children: [
-                              Container(
-                                width: 50,
-                                height: 50,
-                                decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(4),
-                                  image: DecorationImage(
-                                    image: NetworkImage(item.product.imageUrl),
-                                    fit: BoxFit.cover,
-                                  ),
-                                ),
-                              ),
-                              const SizedBox(width: 12),
-                              Expanded(
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Text(item.product.title, maxLines: 1, overflow: TextOverflow.ellipsis),
-                                    Text('x${item.quantity}', style: const TextStyle(color: Colors.grey)),
-                                  ],
-                                ),
-                              ),
-                              Text('\$${item.totalPrice.toStringAsFixed(2)}'),
-                            ],
-                          );
-                        },
+                  // Payment Method
+                  Card(
+                    child: Padding(
+                      padding: const EdgeInsets.all(16),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          const Text(
+                            'Payment Method',
+                            style: AppTextStyles.subheading,
+                          ),
+                          const SizedBox(height: 8),
+                          RadioListTile<String>(
+                            title: const Text('Credit Card'),
+                            value: 'Credit Card',
+                            groupValue: _paymentMethod,
+                            onChanged: (value) =>
+                                setState(() => _paymentMethod = value!),
+                            contentPadding: EdgeInsets.zero,
+                            activeColor: AppColors.primary,
+                          ),
+                          RadioListTile<String>(
+                            title: const Text('PayPal'),
+                            value: 'PayPal',
+                            groupValue: _paymentMethod,
+                            onChanged: (value) =>
+                                setState(() => _paymentMethod = value!),
+                            contentPadding: EdgeInsets.zero,
+                            activeColor: AppColors.primary,
+                          ),
+                          RadioListTile<String>(
+                            title: const Text('Cash on Delivery (COD)'),
+                            value: 'COD',
+                            groupValue: _paymentMethod,
+                            onChanged: (value) =>
+                                setState(() => _paymentMethod = value!),
+                            contentPadding: EdgeInsets.zero,
+                            activeColor: AppColors.primary,
+                          ),
+                        ],
                       ),
-                    ],
+                    ),
                   ),
-                ),
-              ),
-              const SizedBox(height: 16),
+                  const SizedBox(height: 16),
 
-              // Payment Summary
-              Card(
-                child: Padding(
-                  padding: const EdgeInsets.all(16),
-                  child: Column(
-                    children: [
-                      _SummaryRow(label: 'Subtotal', value: cart.totalAmount),
-                      const _SummaryRow(label: 'Shipping', value: 0.0), // Free shipping for now
-                      const Divider(),
-                      _SummaryRow(label: 'Total', value: cart.totalAmount, isBold: true),
-                    ],
+                  // Payment Summary
+                  Card(
+                    child: Padding(
+                      padding: const EdgeInsets.all(16),
+                      child: Column(
+                        children: [
+                          _SummaryRow(
+                            label: 'Subtotal',
+                            value: cart.totalAmount,
+                          ),
+                          const _SummaryRow(
+                            label: 'Shipping',
+                            value: 0.0,
+                          ), // Free shipping for now
+                          const Divider(),
+                          _SummaryRow(
+                            label: 'Total',
+                            value: cart.totalAmount,
+                            isBold: true,
+                          ),
+                        ],
+                      ),
+                    ),
                   ),
-                ),
-              ),
-              const SizedBox(height: 24),
+                  const SizedBox(height: 24),
 
-              // Place Order Button
-              ElevatedButton(
-                onPressed: _placeOrder,
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: AppColors.primary,
-                  foregroundColor: Colors.white,
-                  padding: const EdgeInsets.symmetric(vertical: 16),
-                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
-                ),
-                child: const Text('Place Order', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+                  // Place Order Button
+                  ElevatedButton(
+                    onPressed: _placeOrder,
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: AppColors.primary,
+                      foregroundColor: Colors.white,
+                      padding: const EdgeInsets.symmetric(vertical: 16),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                    ),
+                    child: const Text(
+                      'Place Order',
+                      style: TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ),
+                ],
               ),
-            ],
-          ),
-        ),
+            ),
     );
   }
 }
@@ -263,7 +362,11 @@ class _SummaryRow extends StatelessWidget {
   final double value;
   final bool isBold;
 
-  const _SummaryRow({required this.label, required this.value, this.isBold = false});
+  const _SummaryRow({
+    required this.label,
+    required this.value,
+    this.isBold = false,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -272,8 +375,20 @@ class _SummaryRow extends StatelessWidget {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          Text(label, style: TextStyle(fontWeight: isBold ? FontWeight.bold : FontWeight.normal, fontSize: isBold ? 16 : 14)),
-          Text('\$${value.toStringAsFixed(2)}', style: TextStyle(fontWeight: isBold ? FontWeight.bold : FontWeight.normal, fontSize: isBold ? 16 : 14)),
+          Text(
+            label,
+            style: TextStyle(
+              fontWeight: isBold ? FontWeight.bold : FontWeight.normal,
+              fontSize: isBold ? 16 : 14,
+            ),
+          ),
+          Text(
+            '\$${value.toStringAsFixed(2)}',
+            style: TextStyle(
+              fontWeight: isBold ? FontWeight.bold : FontWeight.normal,
+              fontSize: isBold ? 16 : 14,
+            ),
+          ),
         ],
       ),
     );

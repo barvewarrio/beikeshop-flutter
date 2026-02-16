@@ -7,7 +7,9 @@ class Order {
   final double totalAmount;
   final Address shippingAddress;
   final DateTime date;
-  final String status; // 'Pending', 'Processing', 'Shipped', 'Delivered', 'Cancelled'
+  final String
+  status; // 'Pending', 'Processing', 'Shipped', 'Delivered', 'Cancelled'
+  final String paymentMethod; // 'Credit Card', 'PayPal', 'COD'
 
   Order({
     required this.id,
@@ -16,6 +18,7 @@ class Order {
     required this.shippingAddress,
     required this.date,
     this.status = 'Pending',
+    required this.paymentMethod,
   });
 
   factory Order.fromJson(Map<String, dynamic> json) {
@@ -28,6 +31,7 @@ class Order {
       shippingAddress: Address.fromJson(json['shippingAddress']),
       date: DateTime.parse(json['date']),
       status: json['status'],
+      paymentMethod: json['paymentMethod'] ?? 'Credit Card',
     );
   }
 
@@ -39,6 +43,7 @@ class Order {
       'shippingAddress': shippingAddress.toJson(),
       'date': date.toIso8601String(),
       'status': status,
+      'paymentMethod': paymentMethod,
     };
   }
 }
