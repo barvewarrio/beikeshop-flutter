@@ -8,6 +8,7 @@ import '../../widgets/home_app_bar.dart';
 import '../../widgets/bottom_nav_bar.dart';
 import '../../widgets/product_card.dart';
 import '../../widgets/promotional_banner.dart';
+import '../../widgets/age_verification_modal.dart';
 import '../category/category_screen.dart';
 import '../cart/cart_screen.dart';
 import '../profile/profile_screen.dart';
@@ -40,6 +41,11 @@ class _HomeScreenState extends State<HomeScreen> {
   void initState() {
     super.initState();
     _fetchData();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (mounted) {
+        AgeVerificationModal.checkAndShow(context);
+      }
+    });
   }
 
   Future<void> _fetchData() async {

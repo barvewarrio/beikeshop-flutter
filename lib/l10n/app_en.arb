@@ -96,6 +96,7 @@
   "zipCode": "Zip Code",
   "addressLine": "Address Line",
   "setAsDefault": "Set as Default Address",
+  "defaultLabel": "Default",
   "save": "Save",
   "cancel": "Cancel",
   "delete": "Delete",
@@ -133,7 +134,14 @@
       }
     }
   },
-  "productNotFound": "Product not found"
+  "productNotFound": "Product not found",
+  "freeShipping": "Free",
+  "ageVerificationTitle": "Age Verification",
+  "ageVerificationContent": "This app contains adult-oriented content. You must be 18 years or older to enter.",
+  "iAmOver18": "I am over 18",
+  "exitApp": "Exit",
+  "discretePackaging": "Discrete Packaging",
+  "discretePackagingNote": "All orders are shipped in plain boxes with no branding."
 }
 
 

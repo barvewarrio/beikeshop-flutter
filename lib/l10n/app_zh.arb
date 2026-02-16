@@ -82,6 +82,7 @@
   "zipCode": "邮政编码",
   "addressLine": "详细地址",
   "setAsDefault": "设为默认地址",
+  "defaultLabel": "默认",
   "save": "保存",
   "cancel": "取消",
   "delete": "删除",
@@ -112,7 +113,14 @@
       }
     }
   },
-  "productNotFound": "未找到相关商品"
+  "productNotFound": "未找到相关商品",
+  "freeShipping": "免运费",
+  "ageVerificationTitle": "年龄确认",
+  "ageVerificationContent": "本应用包含成人内容。您必须年满18岁才能访问。",
+  "iAmOver18": "我已满18岁",
+  "exitApp": "离开",
+  "discretePackaging": "保密发货",
+  "discretePackagingNote": "所有订单均使用无品牌标识的包装箱发货，保护您的隐私。"
 }
 
 

@@ -554,6 +554,12 @@ abstract class AppLocalizations {
   /// **'Set as Default Address'**
   String get setAsDefault;
 
+  /// No description provided for @defaultLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Default'**
+  String get defaultLabel;
+
   /// No description provided for @save.
   ///
   /// In en, this message translates to:
@@ -697,6 +703,48 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Product not found'**
   String get productNotFound;
+
+  /// No description provided for @freeShipping.
+  ///
+  /// In en, this message translates to:
+  /// **'Free'**
+  String get freeShipping;
+
+  /// No description provided for @ageVerificationTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Age Verification'**
+  String get ageVerificationTitle;
+
+  /// No description provided for @ageVerificationContent.
+  ///
+  /// In en, this message translates to:
+  /// **'This app contains adult-oriented content. You must be 18 years or older to enter.'**
+  String get ageVerificationContent;
+
+  /// No description provided for @iAmOver18.
+  ///
+  /// In en, this message translates to:
+  /// **'I am over 18'**
+  String get iAmOver18;
+
+  /// No description provided for @exitApp.
+  ///
+  /// In en, this message translates to:
+  /// **'Exit'**
+  String get exitApp;
+
+  /// No description provided for @discretePackaging.
+  ///
+  /// In en, this message translates to:
+  /// **'Discrete Packaging'**
+  String get discretePackaging;
+
+  /// No description provided for @discretePackagingNote.
+  ///
+  /// In en, this message translates to:
+  /// **'All orders are shipped in plain boxes with no branding.'**
+  String get discretePackagingNote;
 }
 
 class _AppLocalizationsDelegate

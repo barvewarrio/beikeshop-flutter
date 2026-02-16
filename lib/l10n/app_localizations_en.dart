@@ -244,6 +244,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get setAsDefault => 'Set as Default Address';
 
   @override
+  String get defaultLabel => 'Default';
+
+  @override
   String get save => 'Save';
 
   @override
@@ -318,4 +321,27 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get productNotFound => 'Product not found';
+
+  @override
+  String get freeShipping => 'Free';
+
+  @override
+  String get ageVerificationTitle => 'Age Verification';
+
+  @override
+  String get ageVerificationContent =>
+      'This app contains adult-oriented content. You must be 18 years or older to enter.';
+
+  @override
+  String get iAmOver18 => 'I am over 18';
+
+  @override
+  String get exitApp => 'Exit';
+
+  @override
+  String get discretePackaging => 'Discrete Packaging';
+
+  @override
+  String get discretePackagingNote =>
+      'All orders are shipped in plain boxes with no branding.';
 }

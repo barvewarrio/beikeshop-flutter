@@ -30,13 +30,18 @@
 ### 隐私与合规 (Privacy & Compliance)
 **隐私政策 (Privacy Policy)**: http://mvpagent.cn/PureDesire
 
+### 已完成 (Completed)
+- [x] **年龄验证 (Age Verification)**: 已实现 APP 启动时的年龄确认弹窗 (Home Screen Modal)。
+- [x] **隐私政策 (Privacy Policy)**: 已更新 URL。
+- [x] **保密发货 (Discrete Packaging)**: 已在结算页增加保密发货说明。
+
 ### 补充建议 (Strategic Suggestions)
 1. **合规性 (Compliance)**
-   - **年龄验证 (Age Verification)**: 针对成人用品行业，建议在进入 APP 或网站时增加严格的年龄验证弹窗，确保符合各地区法律法规。
+   - **年龄验证 (Age Verification)**: (已完成) 针对成人用品行业，建议在进入 APP 或网站时增加严格的年龄验证弹窗，确保符合各地区法律法规。
    - **数据隐私**: 鉴于目标地区包含欧美，需严格遵守 GDPR (欧洲/加拿大) 和 CCPA (美国加州) 等隐私法规。
 
 2. **用户信任与隐私 (Trust & Privacy)**
-   - **保密发货 (Discrete Packaging)**: 强调“无敏感字眼、无品牌标识”的包裹包装，保护用户隐私，作为核心服务卖点。
+   - **保密发货 (Discrete Packaging)**: (已完成) 强调“无敏感字眼、无品牌标识”的包裹包装，保护用户隐私，作为核心服务卖点。
    - **匿名评价**: 允许用户匿名发布评价，鼓励真实反馈同时消除顾虑。
 
 3. **本地化策略 (Localization Strategy)**

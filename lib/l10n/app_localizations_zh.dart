@@ -243,6 +243,9 @@ class AppLocalizationsZh extends AppLocalizations {
   String get setAsDefault => '设为默认地址';
 
   @override
+  String get defaultLabel => '默认';
+
+  @override
   String get save => '保存';
 
   @override
@@ -317,4 +320,25 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get productNotFound => '未找到相关商品';
+
+  @override
+  String get freeShipping => '免运费';
+
+  @override
+  String get ageVerificationTitle => '年龄确认';
+
+  @override
+  String get ageVerificationContent => '本应用包含成人内容。您必须年满18岁才能访问。';
+
+  @override
+  String get iAmOver18 => '我已满18岁';
+
+  @override
+  String get exitApp => '离开';
+
+  @override
+  String get discretePackaging => '保密发货';
+
+  @override
+  String get discretePackagingNote => '所有订单均使用无品牌标识的包装箱发货，保护您的隐私。';
 }
