@@ -38,12 +38,78 @@ class OrderDetailScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     final settings = context.watch<SettingsProvider>();
     final l10n = AppLocalizations.of(context)!;
-    
+
     return Scaffold(
       backgroundColor: AppColors.background,
-      appBar: AppBar(
-        title: Text(l10n.orderDetails),
-        centerTitle: true,
+      appBar: AppBar(title: Text(l10n.orderDetails), centerTitle: true),
+      bottomNavigationBar: Container(
+        padding: const EdgeInsets.all(16),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withValues(alpha: 0.05),
+              blurRadius: 10,
+              offset: const Offset(0, -5),
+            ),
+          ],
+        ),
+        child: SafeArea(
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.end,
+            children: [
+              if (order.status == 'Pending') ...[
+                OutlinedButton(
+                  onPressed: () {},
+                  style: OutlinedButton.styleFrom(
+                    foregroundColor: AppColors.textSecondary,
+                    side: const BorderSide(color: AppColors.border),
+                  ),
+                  child: Text(l10n.cancel),
+                ),
+                const SizedBox(width: 8),
+                ElevatedButton(
+                  onPressed: () {},
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: AppColors.primary,
+                    foregroundColor: Colors.white,
+                  ),
+                  child: Text(l10n.payNow),
+                ),
+              ] else if (order.status == 'Shipped' ||
+                  order.status == 'Delivered') ...[
+                OutlinedButton(
+                  onPressed: () {},
+                  style: OutlinedButton.styleFrom(
+                    foregroundColor: AppColors.textPrimary,
+                    side: const BorderSide(color: AppColors.border),
+                  ),
+                  child: Text(l10n.trackOrder),
+                ),
+                const SizedBox(width: 8),
+                if (order.status == 'Delivered') ...[
+                  OutlinedButton(
+                    onPressed: () {},
+                    style: OutlinedButton.styleFrom(
+                      foregroundColor: AppColors.textPrimary,
+                      side: const BorderSide(color: AppColors.border),
+                    ),
+                    child: Text(l10n.review),
+                  ),
+                  const SizedBox(width: 8),
+                  OutlinedButton(
+                    onPressed: () {},
+                    style: OutlinedButton.styleFrom(
+                      foregroundColor: AppColors.primary,
+                      side: const BorderSide(color: AppColors.primary),
+                    ),
+                    child: Text(l10n.buyAgain),
+                  ),
+                ],
+              ],
+            ],
+          ),
+        ),
       ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(12),
@@ -65,7 +131,10 @@ class OrderDetailScreen extends StatelessWidget {
                     children: [
                       Text(
                         '${l10n.orderId}: ${order.id}',
-                        style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+                        style: const TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontSize: 16,
+                        ),
                       ),
                       Text(
                         _getStatusText(context, order.status),
@@ -78,7 +147,10 @@ class OrderDetailScreen extends StatelessWidget {
                     ],
                   ),
                   const Divider(height: 24),
-                  _buildInfoRow(l10n.orderDate, DateFormat('yyyy-MM-dd HH:mm').format(order.date)),
+                  _buildInfoRow(
+                    l10n.orderDate,
+                    DateFormat('yyyy-MM-dd HH:mm').format(order.date),
+                  ),
                   const SizedBox(height: 8),
                   _buildInfoRow(l10n.paymentMethod, order.paymentMethod),
                 ],
@@ -98,20 +170,35 @@ class OrderDetailScreen extends StatelessWidget {
                 children: [
                   Row(
                     children: [
-                      const Icon(Icons.location_on_outlined, color: AppColors.textSecondary),
+                      const Icon(
+                        Icons.location_on_outlined,
+                        color: AppColors.textSecondary,
+                      ),
                       const SizedBox(width: 8),
-                      Text(l10n.shippingAddress, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
+                      Text(
+                        l10n.shippingAddress,
+                        style: const TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontSize: 16,
+                        ),
+                      ),
                     ],
                   ),
                   const SizedBox(height: 12),
                   Text(
                     '${order.shippingAddress.name}  ${order.shippingAddress.phone}',
-                    style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 14),
+                    style: const TextStyle(
+                      fontWeight: FontWeight.bold,
+                      fontSize: 14,
+                    ),
                   ),
                   const SizedBox(height: 4),
                   Text(
                     '${order.shippingAddress.province} ${order.shippingAddress.city} ${order.shippingAddress.addressLine}',
-                    style: const TextStyle(color: AppColors.textSecondary, fontSize: 14),
+                    style: const TextStyle(
+                      color: AppColors.textSecondary,
+                      fontSize: 14,
+                    ),
                   ),
                 ],
               ),
@@ -130,9 +217,18 @@ class OrderDetailScreen extends StatelessWidget {
                 children: [
                   Row(
                     children: [
-                      const Icon(Icons.shopping_bag_outlined, color: AppColors.textSecondary),
+                      const Icon(
+                        Icons.shopping_bag_outlined,
+                        color: AppColors.textSecondary,
+                      ),
                       const SizedBox(width: 8),
-                      Text(l10n.items, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
+                      Text(
+                        l10n.items,
+                        style: const TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontSize: 16,
+                        ),
+                      ),
                     ],
                   ),
                   const SizedBox(height: 12),
@@ -153,8 +249,10 @@ class OrderDetailScreen extends StatelessWidget {
                               width: 60,
                               height: 60,
                               fit: BoxFit.cover,
-                              placeholder: (context, url) => Container(color: Colors.grey[200]),
-                              errorWidget: (context, url, error) => const Icon(Icons.error),
+                              placeholder: (context, url) =>
+                                  Container(color: Colors.grey[200]),
+                              errorWidget: (context, url, error) =>
+                                  const Icon(Icons.error),
                             ),
                           ),
                           const SizedBox(width: 12),
@@ -171,7 +269,9 @@ class OrderDetailScreen extends StatelessWidget {
                                 const SizedBox(height: 4),
                                 Text(
                                   'x${item.quantity}',
-                                  style: const TextStyle(color: AppColors.textSecondary),
+                                  style: const TextStyle(
+                                    color: AppColors.textSecondary,
+                                  ),
                                 ),
                               ],
                             ),
@@ -198,7 +298,11 @@ class OrderDetailScreen extends StatelessWidget {
               padding: const EdgeInsets.all(16),
               child: Column(
                 children: [
-                  _buildSummaryRow(l10n.total, settings.formatPrice(order.totalAmount), isTotal: true),
+                  _buildSummaryRow(
+                    l10n.total,
+                    settings.formatPrice(order.totalAmount),
+                    isTotal: true,
+                  ),
                 ],
               ),
             ),

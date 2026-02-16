@@ -193,6 +193,11 @@ class AppLocalizationsEn extends AppLocalizations {
   String get items => 'Items';
 
   @override
+  String itemCount(int count) {
+    return '$count items';
+  }
+
+  @override
   String get orderDate => 'Order Date';
 
   @override
@@ -290,4 +295,27 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get cod => 'Cash on Delivery';
+
+  @override
+  String get searchHint => 'Search products';
+
+  @override
+  String get recentSearches => 'Recent Searches';
+
+  @override
+  String get trending => 'Trending';
+
+  @override
+  String get clearHistory => 'Clear History';
+
+  @override
+  String get noResults => 'No results found';
+
+  @override
+  String endsIn(String time) {
+    return 'Ends in $time';
+  }
+
+  @override
+  String get productNotFound => 'Product not found';
 }

@@ -226,7 +226,7 @@ class _OrderCard extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.end,
               children: [
                 Text(
-                  '${order.items.length} items', // Could localize "items" too if needed
+                  l10n.itemCount(order.items.length),
                   style: const TextStyle(
                     color: AppColors.textSecondary,
                     fontSize: 12,
@@ -257,42 +257,45 @@ class _OrderCard extends StatelessWidget {
             Row(
               mainAxisAlignment: MainAxisAlignment.end,
               children: [
-                OutlinedButton(
-                  onPressed: () {
-                    // Track order logic
-                  },
-                  style: OutlinedButton.styleFrom(
-                    foregroundColor: AppColors.textPrimary,
-                    side: const BorderSide(color: AppColors.border),
-                    padding: const EdgeInsets.symmetric(horizontal: 16),
+                if (order.status == 'Pending') ...[
+                  OutlinedButton(
+                    onPressed: () {},
+                    style: OutlinedButton.styleFrom(
+                      foregroundColor: AppColors.textSecondary,
+                      side: const BorderSide(color: AppColors.border),
+                    ),
+                    child: Text(l10n.cancel),
                   ),
-                  child: Text(l10n.trackOrder),
-                ),
-                const SizedBox(width: 8),
-                if (order.status == 'Pending')
+                  const SizedBox(width: 8),
                   ElevatedButton(
-                    onPressed: () {
-                      // Pay now logic
-                    },
+                    onPressed: () {},
                     style: ElevatedButton.styleFrom(
                       backgroundColor: AppColors.primary,
                       foregroundColor: Colors.white,
-                      padding: const EdgeInsets.symmetric(horizontal: 16),
                     ),
                     child: Text(l10n.payNow),
-                  )
-                else
-                  OutlinedButton(
-                    onPressed: () {
-                      // Buy again logic
-                    },
-                    style: OutlinedButton.styleFrom(
-                      foregroundColor: AppColors.primary,
-                      side: const BorderSide(color: AppColors.primary),
-                      padding: const EdgeInsets.symmetric(horizontal: 16),
-                    ),
-                    child: Text(l10n.buyAgain),
                   ),
+                ] else if (order.status == 'Shipped' ||
+                    order.status == 'Delivered') ...[
+                  OutlinedButton(
+                    onPressed: () {},
+                    style: OutlinedButton.styleFrom(
+                      foregroundColor: AppColors.textPrimary,
+                      side: const BorderSide(color: AppColors.border),
+                    ),
+                    child: Text(l10n.trackOrder),
+                  ),
+                  const SizedBox(width: 8),
+                  if (order.status == 'Delivered')
+                    OutlinedButton(
+                      onPressed: () {},
+                      style: OutlinedButton.styleFrom(
+                        foregroundColor: AppColors.primary,
+                        side: const BorderSide(color: AppColors.primary),
+                      ),
+                      child: Text(l10n.buyAgain),
+                    ),
+                ],
               ],
             ),
           ],

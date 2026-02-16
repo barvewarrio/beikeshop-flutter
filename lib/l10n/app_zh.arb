@@ -58,7 +58,15 @@
   "statusCancelled": "已取消",
   "shippingAddress": "收货地址",
   "paymentMethod": "支付方式",
-  "items": "商品明细",
+  "items": "商品",
+  "itemCount": "共 {count} 件商品",
+  "@itemCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
   "orderDate": "下单时间",
   "orderId": "订单编号",
   "myAddresses": "收货地址",
@@ -90,6 +98,21 @@
   "shipping": "运费",
   "creditCard": "信用卡",
   "paypal": "PayPal",
-  "cod": "货到付款"
+  "cod": "货到付款",
+  "searchHint": "搜索商品",
+  "recentSearches": "最近搜索",
+  "trending": "热门搜索",
+  "clearHistory": "清除历史",
+  "noResults": "未找到相关商品",
+  "endsIn": "距离结束 {time}",
+  "@endsIn": {
+    "placeholders": {
+      "time": {
+        "type": "String"
+      }
+    }
+  },
+  "productNotFound": "未找到相关商品"
 }
+
 

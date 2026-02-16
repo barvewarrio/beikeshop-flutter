@@ -190,7 +190,12 @@ class AppLocalizationsZh extends AppLocalizations {
   String get paymentMethod => '支付方式';
 
   @override
-  String get items => '商品明细';
+  String get items => '商品';
+
+  @override
+  String itemCount(int count) {
+    return '共 $count 件商品';
+  }
 
   @override
   String get orderDate => '下单时间';
@@ -289,4 +294,27 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get cod => '货到付款';
+
+  @override
+  String get searchHint => '搜索商品';
+
+  @override
+  String get recentSearches => '最近搜索';
+
+  @override
+  String get trending => '热门搜索';
+
+  @override
+  String get clearHistory => '清除历史';
+
+  @override
+  String get noResults => '未找到相关商品';
+
+  @override
+  String endsIn(String time) {
+    return '距离结束 $time';
+  }
+
+  @override
+  String get productNotFound => '未找到相关商品';
 }

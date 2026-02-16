@@ -5,6 +5,7 @@ import '../../api/api_service.dart';
 import '../../models/models.dart';
 
 import 'package:provider/provider.dart';
+import 'package:beikeshop_flutter/l10n/app_localizations.dart';
 import '../../providers/cart_provider.dart';
 import '../../providers/settings_provider.dart';
 
@@ -68,6 +69,7 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
   @override
   Widget build(BuildContext context) {
     final settings = context.watch<SettingsProvider>();
+    final l10n = AppLocalizations.of(context)!;
 
     if (_isLoading) {
       return const Scaffold(
@@ -80,7 +82,7 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
     if (_product == null) {
       return Scaffold(
         appBar: AppBar(),
-        body: const Center(child: Text('Product not found')),
+        body: Center(child: Text(l10n.productNotFound)),
       );
     }
 
@@ -163,18 +165,18 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                               children: [
                                 const Icon(Icons.flash_on, color: Colors.white),
                                 const SizedBox(width: 8),
-                                const Text(
-                                  'Flash Sale',
-                                  style: TextStyle(
+                                Text(
+                                  l10n.flashSale,
+                                  style: const TextStyle(
                                     color: Colors.white,
                                     fontWeight: FontWeight.bold,
                                     fontSize: 18,
                                   ),
                                 ),
                                 const Spacer(),
-                                const Text(
-                                  'Ends in 02:15:30',
-                                  style: TextStyle(
+                                Text(
+                                  l10n.endsIn('02:15:30'),
+                                  style: const TextStyle(
                                     color: Colors.white,
                                     fontWeight: FontWeight.w500,
                                   ),
@@ -226,7 +228,7 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                                 vertical: 2,
                               ),
                               decoration: BoxDecoration(
-                                color: AppColors.primary.withOpacity(0.1),
+                                color: AppColors.primary.withValues(alpha: 0.1),
                                 borderRadius: BorderRadius.circular(4),
                               ),
                               child: Text(

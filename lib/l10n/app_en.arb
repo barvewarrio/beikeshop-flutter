@@ -73,6 +73,14 @@
   "shippingAddress": "Shipping Address",
   "paymentMethod": "Payment Method",
   "items": "Items",
+  "itemCount": "{count} items",
+  "@itemCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
   "orderDate": "Order Date",
   "orderId": "Order ID",
   "myAddresses": "My Addresses",
@@ -111,6 +119,21 @@
   "shipping": "Shipping",
   "creditCard": "Credit Card",
   "paypal": "PayPal",
-  "cod": "Cash on Delivery"
+  "cod": "Cash on Delivery",
+  "searchHint": "Search products",
+  "recentSearches": "Recent Searches",
+  "trending": "Trending",
+  "clearHistory": "Clear History",
+  "noResults": "No results found",
+  "endsIn": "Ends in {time}",
+  "@endsIn": {
+    "placeholders": {
+      "time": {
+        "type": "String"
+      }
+    }
+  },
+  "productNotFound": "Product not found"
 }
+
 
