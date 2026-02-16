@@ -6,6 +6,7 @@ import '../../models/models.dart';
 
 import 'package:provider/provider.dart';
 import '../../providers/cart_provider.dart';
+import '../../providers/settings_provider.dart';
 
 class ProductDetailScreen extends StatefulWidget {
   final String productId;
@@ -66,6 +67,8 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final settings = context.watch<SettingsProvider>();
+
     if (_isLoading) {
       return const Scaffold(
         body: Center(
@@ -156,7 +159,7 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                         textBaseline: TextBaseline.alphabetic,
                         children: [
                           Text(
-                            '\$${_product!.price.toStringAsFixed(2)}',
+                            settings.formatPrice(_product!.price),
                             style: const TextStyle(
                               fontSize: 24,
                               fontWeight: FontWeight.bold,
@@ -166,7 +169,7 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                           const SizedBox(width: 8),
                           if (_product!.originalPrice != null)
                             Text(
-                              '\$${_product!.originalPrice!.toStringAsFixed(2)}',
+                              settings.formatPrice(_product!.originalPrice!),
                               style: const TextStyle(
                                 fontSize: 14,
                                 decoration: TextDecoration.lineThrough,

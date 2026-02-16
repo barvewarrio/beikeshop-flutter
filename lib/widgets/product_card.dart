@@ -1,12 +1,14 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import '../../theme/app_theme.dart';
 import 'package:cached_network_image/cached_network_image.dart';
+import '../providers/settings_provider.dart';
 
 class ProductCard extends StatelessWidget {
   final String title;
   final String imageUrl;
-  final String price;
-  final String? originalPrice;
+  final double price;
+  final double? originalPrice;
   final String sales;
   final VoidCallback onTap;
 
@@ -22,6 +24,7 @@ class ProductCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final settings = context.watch<SettingsProvider>();
     return GestureDetector(
       onTap: onTap,
       child: Container(
@@ -35,7 +38,9 @@ class ProductCard extends StatelessWidget {
           children: [
             // Image Section
             ClipRRect(
-              borderRadius: const BorderRadius.vertical(top: Radius.circular(8)),
+              borderRadius: const BorderRadius.vertical(
+                top: Radius.circular(8),
+              ),
               child: AspectRatio(
                 aspectRatio: 1.0,
                 child: CachedNetworkImage(
@@ -43,7 +48,9 @@ class ProductCard extends StatelessWidget {
                   fit: BoxFit.cover,
                   placeholder: (context, url) => Container(
                     color: Colors.grey[200],
-                    child: const Center(child: CircularProgressIndicator(strokeWidth: 2)),
+                    child: const Center(
+                      child: CircularProgressIndicator(strokeWidth: 2),
+                    ),
                   ),
                   errorWidget: (context, url, error) => Container(
                     color: Colors.grey[200],
@@ -52,7 +59,7 @@ class ProductCard extends StatelessWidget {
                 ),
               ),
             ),
-            
+
             // Content Section
             Padding(
               padding: const EdgeInsets.all(8.0),
@@ -71,13 +78,13 @@ class ProductCard extends StatelessWidget {
                     textBaseline: TextBaseline.alphabetic,
                     children: [
                       Text(
-                        price,
+                        settings.formatPrice(price),
                         style: AppTextStyles.price,
                       ),
                       if (originalPrice != null) ...[
                         const SizedBox(width: 4),
                         Text(
-                          originalPrice!,
+                          settings.formatPrice(originalPrice!),
                           style: AppTextStyles.originalPrice,
                         ),
                       ],
@@ -85,14 +92,20 @@ class ProductCard extends StatelessWidget {
                   ),
                   const SizedBox(height: 4),
                   Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 2),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 4,
+                      vertical: 2,
+                    ),
                     decoration: BoxDecoration(
                       color: Colors.grey[100],
                       borderRadius: BorderRadius.circular(4),
                     ),
                     child: Text(
                       sales,
-                      style: const TextStyle(fontSize: 10, color: AppColors.textSecondary),
+                      style: const TextStyle(
+                        fontSize: 10,
+                        color: AppColors.textSecondary,
+                      ),
                     ),
                   ),
                   const SizedBox(height: 8),
@@ -109,7 +122,13 @@ class ProductCard extends StatelessWidget {
                         padding: EdgeInsets.zero,
                         elevation: 0,
                       ),
-                      child: const Text('Add to cart', style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold)),
+                      child: const Text(
+                        'Add to cart',
+                        style: TextStyle(
+                          fontSize: 12,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
                     ),
                   ),
                 ],

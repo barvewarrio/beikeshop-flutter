@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 import '../../providers/cart_provider.dart';
 import '../../providers/address_provider.dart';
 import '../../providers/order_provider.dart';
+import '../../providers/settings_provider.dart';
 import '../../models/address_model.dart';
 import '../../theme/app_theme.dart';
 import '../address/address_list_screen.dart';
@@ -129,6 +130,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
   @override
   Widget build(BuildContext context) {
     final cart = context.watch<CartProvider>();
+    final settings = context.watch<SettingsProvider>();
     final selectedItems = cart.items.where((item) => item.isSelected).toList();
 
     if (selectedItems.isEmpty) {
@@ -247,9 +249,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
                                       ],
                                     ),
                                   ),
-                                  Text(
-                                    '\$${item.totalPrice.toStringAsFixed(2)}',
-                                  ),
+                                  Text(settings.formatPrice(item.totalPrice)),
                                 ],
                               );
                             },
@@ -313,16 +313,16 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
                         children: [
                           _SummaryRow(
                             label: 'Subtotal',
-                            value: cart.totalAmount,
+                            value: settings.formatPrice(cart.totalAmount),
                           ),
-                          const _SummaryRow(
+                          _SummaryRow(
                             label: 'Shipping',
-                            value: 0.0,
+                            value: settings.formatPrice(0.0),
                           ), // Free shipping for now
                           const Divider(),
                           _SummaryRow(
                             label: 'Total',
-                            value: cart.totalAmount,
+                            value: settings.formatPrice(cart.totalAmount),
                             isBold: true,
                           ),
                         ],
@@ -359,7 +359,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
 
 class _SummaryRow extends StatelessWidget {
   final String label;
-  final double value;
+  final String value;
   final bool isBold;
 
   const _SummaryRow({
@@ -383,7 +383,7 @@ class _SummaryRow extends StatelessWidget {
             ),
           ),
           Text(
-            '\$${value.toStringAsFixed(2)}',
+            value,
             style: TextStyle(
               fontWeight: isBold ? FontWeight.bold : FontWeight.normal,
               fontSize: isBold ? 16 : 14,

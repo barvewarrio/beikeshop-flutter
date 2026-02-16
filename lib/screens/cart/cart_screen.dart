@@ -3,7 +3,7 @@ import 'package:provider/provider.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import '../../theme/app_theme.dart';
 import '../../providers/cart_provider.dart';
-
+import '../../providers/settings_provider.dart';
 import '../checkout/checkout_screen.dart';
 
 class CartScreen extends StatelessWidget {
@@ -11,6 +11,8 @@ class CartScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final settings = context.watch<SettingsProvider>();
+
     return Scaffold(
       appBar: AppBar(
         title: Consumer<CartProvider>(
@@ -189,7 +191,7 @@ class CartScreen extends StatelessWidget {
                                 ),
                                 const SizedBox(height: 8),
                                 Text(
-                                  '\$${item.product.price.toStringAsFixed(2)}',
+                                  settings.formatPrice(item.product.price),
                                   style: const TextStyle(
                                     fontSize: 16,
                                     fontWeight: FontWeight.bold,
@@ -291,7 +293,7 @@ class CartScreen extends StatelessWidget {
                             ),
                           ),
                           Text(
-                            '\$${cart.totalAmount.toStringAsFixed(2)}',
+                            settings.formatPrice(cart.totalAmount),
                             style: const TextStyle(
                               fontSize: 18,
                               fontWeight: FontWeight.bold,

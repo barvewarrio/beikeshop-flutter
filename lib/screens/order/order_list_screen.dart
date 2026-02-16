@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:intl/intl.dart';
 import '../../providers/order_provider.dart';
+import '../../providers/settings_provider.dart';
 import '../../theme/app_theme.dart';
 import 'order_detail_screen.dart';
 
@@ -10,6 +11,7 @@ class OrderListScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final settings = context.watch<SettingsProvider>();
     return Scaffold(
       appBar: AppBar(title: const Text('My Orders')),
       body: Consumer<OrderProvider>(
@@ -23,7 +25,11 @@ class OrderListScreen extends StatelessWidget {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Icon(Icons.shopping_bag_outlined, size: 64, color: Colors.grey),
+                  Icon(
+                    Icons.shopping_bag_outlined,
+                    size: 64,
+                    color: Colors.grey,
+                  ),
                   SizedBox(height: 16),
                   Text('No orders yet', style: TextStyle(color: Colors.grey)),
                 ],
@@ -57,11 +63,16 @@ class OrderListScreen extends StatelessWidget {
                           children: [
                             Text(
                               'Order #${order.id.substring(order.id.length - 6)}',
-                              style: const TextStyle(fontWeight: FontWeight.bold),
+                              style: const TextStyle(
+                                fontWeight: FontWeight.bold,
+                              ),
                             ),
                             Text(
                               DateFormat('MMM dd, yyyy').format(order.date),
-                              style: const TextStyle(color: Colors.grey, fontSize: 12),
+                              style: const TextStyle(
+                                color: Colors.grey,
+                                fontSize: 12,
+                              ),
                             ),
                           ],
                         ),
@@ -71,7 +82,7 @@ class OrderListScreen extends StatelessWidget {
                           children: [
                             Text('${order.items.length} items'),
                             Text(
-                              '\$${order.totalAmount.toStringAsFixed(2)}',
+                              settings.formatPrice(order.totalAmount),
                               style: const TextStyle(
                                 fontWeight: FontWeight.bold,
                                 color: AppColors.primary,
@@ -81,15 +92,22 @@ class OrderListScreen extends StatelessWidget {
                         ),
                         const SizedBox(height: 8),
                         Container(
-                          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 8,
+                            vertical: 4,
+                          ),
                           decoration: BoxDecoration(
-                            color: order.status == 'Pending' ? Colors.orange.withOpacity(0.1) : Colors.green.withOpacity(0.1),
+                            color: order.status == 'Pending'
+                                ? Colors.orange.withOpacity(0.1)
+                                : Colors.green.withOpacity(0.1),
                             borderRadius: BorderRadius.circular(4),
                           ),
                           child: Text(
                             order.status,
                             style: TextStyle(
-                              color: order.status == 'Pending' ? Colors.orange : Colors.green,
+                              color: order.status == 'Pending'
+                                  ? Colors.orange
+                                  : Colors.green,
                               fontSize: 12,
                               fontWeight: FontWeight.bold,
                             ),

@@ -196,10 +196,8 @@ class _HomeScreenState extends State<HomeScreen> {
                 return ProductCard(
                   title: product.title,
                   imageUrl: product.imageUrl,
-                  price: '\$${product.price.toStringAsFixed(2)}',
-                  originalPrice: product.originalPrice != null
-                      ? '\$${product.originalPrice!.toStringAsFixed(2)}'
-                      : null,
+                  price: product.price,
+                  originalPrice: product.originalPrice,
                   sales: '${product.sales} sold',
                   onTap: () {
                     Navigator.push(

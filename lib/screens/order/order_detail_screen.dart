@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import '../../models/order_model.dart';
 import '../../theme/app_theme.dart';
 import 'package:intl/intl.dart';
+import '../../providers/settings_provider.dart';
 
 class OrderDetailScreen extends StatelessWidget {
   final Order order;
@@ -10,6 +12,7 @@ class OrderDetailScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final settings = context.watch<SettingsProvider>();
     return Scaffold(
       appBar: AppBar(title: const Text('Order Details')),
       body: SingleChildScrollView(
@@ -107,7 +110,7 @@ class OrderDetailScreen extends StatelessWidget {
                         ],
                       ),
                     ),
-                    Text('\$${item.totalPrice.toStringAsFixed(2)}'),
+                    Text(settings.formatPrice(item.totalPrice)),
                   ],
                 );
               },
@@ -123,7 +126,7 @@ class OrderDetailScreen extends StatelessWidget {
                   style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                 ),
                 Text(
-                  '\$${order.totalAmount.toStringAsFixed(2)}',
+                  settings.formatPrice(order.totalAmount),
                   style: const TextStyle(
                     fontSize: 18,
                     fontWeight: FontWeight.bold,

@@ -26,6 +26,10 @@ A modern, cross-platform e-commerce mobile application built with Flutter.
     *   Payment method selection (Credit Card, PayPal, COD).
     *   Order placement and history tracking.
     *   Order detail view with status updates.
+*   **Settings & Localization**:
+    *   Multi-currency support (USD, CNY, EUR).
+    *   Language switching (English, Chinese).
+    *   Persistent user preferences.
 *   **State Management**:
     *   Powered by `provider` for efficient and reactive state updates.
     *   Local persistence using `shared_preferences`.

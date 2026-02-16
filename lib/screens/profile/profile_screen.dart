@@ -6,6 +6,7 @@ import '../../providers/auth_provider.dart';
 import '../auth/login_screen.dart';
 import '../address/address_list_screen.dart';
 import '../order/order_list_screen.dart';
+import '../settings/settings_screen.dart';
 
 class ProfileScreen extends StatelessWidget {
   const ProfileScreen({super.key});
@@ -235,6 +236,19 @@ class ProfileScreen extends StatelessWidget {
                       _MenuItem(
                         icon: Icons.card_giftcard,
                         label: 'Coupons & Offers',
+                      ),
+                      const Divider(height: 1),
+                      _MenuItem(
+                        icon: Icons.settings,
+                        label: 'Settings',
+                        onTap: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => const SettingsScreen(),
+                            ),
+                          );
+                        },
                       ),
                     ],
                   ),
