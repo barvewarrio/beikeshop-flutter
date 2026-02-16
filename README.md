@@ -23,6 +23,7 @@ A modern, cross-platform e-commerce mobile application built with Flutter.
     *   Address selection during checkout.
 *   **Order System**:
     *   Streamlined Checkout process.
+    *   Payment method selection (Credit Card, PayPal, COD).
     *   Order placement and history tracking.
     *   Order detail view with status updates.
 *   **State Management**:
