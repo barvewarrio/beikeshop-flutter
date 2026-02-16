@@ -50,3 +50,51 @@
      - **非洲**: 接入 M-Pesa (肯尼亚/东非), OPay (尼日利亚)。
      - **东南亚**: GrabPay, ShopeePay。
    - **多语言支持**: 确保覆盖目标地区的主要语言 (英语, 越南语, 法语等)。
+
+### 后端接口与支付方式审查 (Backend API Audit & Payment Methods)
+
+#### 1. 现有支付方式 (Detected Payment Methods)
+根据后端代码库 (`beikeshop/beikeshop/public/image` 及 `plugins` 目录推断)，系统目前支持或预留了以下支付方式：
+- **Alipay (支付宝)**: 国际版或国内版
+- **WeChat Pay (微信支付)**
+- **Stripe**: 适合欧美、加拿大市场 (信用卡/借记卡)
+- **LianLian Pay (连连支付)**: 跨境支付
+- **WinToPay**: 信用卡收款
+- **PayPal**: (推测存在于 Composer 依赖 `srmklive/paypal`)
+- **COD (货到付款)**: 基础插件功能
+
+#### 2. 缺失接口列表 (Missing API Endpoints)
+前端 `ApiService.dart` 目前仅实现了极少部分接口。以下为完整电商流程所需的缺失接口：
+
+**用户认证 (Authentication)**
+- [ ] `POST /login` (登录)
+- [ ] `POST /register` (注册)
+- [ ] `GET /logout` (登出)
+- [ ] `POST /forgotten/send_code` & `password` (找回密码)
+- [ ] `GET /auth/user` (获取用户信息)
+
+**购物车 (Cart)**
+- [ ] `GET /carts` (获取购物车列表)
+- [ ] `POST /carts` (添加商品)
+- [ ] `PUT /carts/{cart_id}` (更新数量)
+- [ ] `DELETE /carts/{cart_id}` (删除商品)
+- [ ] `POST /carts/select` & `unselect` (选中/取消选中)
+
+**结算与订单 (Checkout & Order)**
+- [ ] `GET /checkout` (获取结算页信息：地址、支付方式、配送方式)
+- [ ] `PUT /checkout` (更新结算信息)
+- [ ] `POST /checkout/confirm` (提交订单)
+- [ ] `GET /account/orders` (订单列表)
+- [ ] `GET /account/orders/{order_number}` (订单详情)
+- [ ] `GET /orders/{order_number}/pay` (支付页面/参数)
+
+**地址管理 (Address)**
+- [ ] `GET /account/addresses` (地址列表)
+- [ ] `POST /account/addresses` (新增地址)
+- [ ] `PUT /account/addresses/{id}` (编辑地址)
+- [ ] `DELETE /account/addresses/{id}` (删除地址)
+
+#### 3. 后端适配建议 (Backend Adaptation)
+- **API 模式改造**: BeikeShop 后端主要设计为返回 HTML 视图 (MVC)。
+  - 需确认后端控制器是否支持 `Accept: application/json` 请求头自动返回 JSON。
+  - 若不支持，需修改 `Shop/Http/Controllers` 下的控制器（如 `CheckoutController`），在检测到 API 请求时返回 `json_success($data)` 而非 `view(...)`。
