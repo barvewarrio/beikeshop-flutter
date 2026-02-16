@@ -7,6 +7,8 @@ class Product {
   final double? originalPrice;
   final int sales;
   final double rating;
+  final bool isFlashSale;
+  final List<String> tags;
 
   Product({
     required this.id,
@@ -17,7 +19,14 @@ class Product {
     this.originalPrice,
     this.sales = 0,
     this.rating = 0.0,
+    this.isFlashSale = false,
+    this.tags = const [],
   });
+
+  double get discountPercentage {
+    if (originalPrice == null || originalPrice! <= price) return 0;
+    return ((originalPrice! - price) / originalPrice!) * 100;
+  }
 
   factory Product.fromJson(Map<String, dynamic> json) {
     return Product(
@@ -31,6 +40,8 @@ class Product {
           : null,
       sales: int.tryParse(json['sales_count']?.toString() ?? '0') ?? 0,
       rating: double.tryParse(json['rating']?.toString() ?? '0') ?? 0.0,
+      isFlashSale: json['is_flash_sale'] ?? false,
+      tags: (json['tags'] as List?)?.map((e) => e.toString()).toList() ?? [],
     );
   }
 
@@ -44,6 +55,8 @@ class Product {
       'original_price': originalPrice,
       'sales_count': sales,
       'rating': rating,
+      'is_flash_sale': isFlashSale,
+      'tags': tags,
     };
   }
 }

@@ -30,6 +30,12 @@ A modern, cross-platform e-commerce mobile application built with Flutter.
     *   Multi-currency support (USD, CNY, EUR).
     *   Language switching (English, Chinese).
     *   Persistent user preferences.
+*   **Temu-Style UI Enhancements**:
+    *   Flash Sale countdown and banner.
+    *   Discount badges and original price strikethrough.
+    *   "Recommended for You" section.
+    *   Product tags (e.g., Free Shipping, Best Seller).
+    *   High-conversion color scheme (Orange/Red).
 *   **State Management**:
     *   Powered by `provider` for efficient and reactive state updates.
     *   Local persistence using `shared_preferences`.

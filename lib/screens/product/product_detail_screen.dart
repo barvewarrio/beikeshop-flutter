@@ -58,6 +58,8 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
             originalPrice: 129.99,
             sales: 500,
             rating: 4.5,
+            isFlashSale: true,
+            tags: ['Free Shipping', 'Returns Accepted', 'Best Seller'],
           );
           _isLoading = false;
         });
@@ -135,13 +137,55 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                   ),
                 ],
                 flexibleSpace: FlexibleSpaceBar(
-                  background: CachedNetworkImage(
-                    imageUrl: _product!.imageUrl,
-                    fit: BoxFit.cover,
-                    placeholder: (context, url) =>
-                        Container(color: Colors.grey[200]),
-                    errorWidget: (context, url, error) =>
-                        const Icon(Icons.error),
+                  background: Stack(
+                    fit: StackFit.expand,
+                    children: [
+                      CachedNetworkImage(
+                        imageUrl: _product!.imageUrl,
+                        fit: BoxFit.cover,
+                        placeholder: (context, url) =>
+                            Container(color: Colors.grey[200]),
+                        errorWidget: (context, url, error) =>
+                            const Icon(Icons.error),
+                      ),
+                      if (_product!.isFlashSale)
+                        Positioned(
+                          bottom: 0,
+                          left: 0,
+                          right: 0,
+                          child: Container(
+                            height: 40,
+                            padding: const EdgeInsets.symmetric(horizontal: 16),
+                            decoration: const BoxDecoration(
+                              gradient: LinearGradient(
+                                colors: [Color(0xFFFB7701), Color(0xFFE02020)],
+                              ),
+                            ),
+                            child: Row(
+                              children: [
+                                const Icon(Icons.flash_on, color: Colors.white),
+                                const SizedBox(width: 8),
+                                const Text(
+                                  'Flash Sale',
+                                  style: TextStyle(
+                                    color: Colors.white,
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 18,
+                                  ),
+                                ),
+                                const Spacer(),
+                                const Text(
+                                  'Ends in 02:15:30',
+                                  style: TextStyle(
+                                    color: Colors.white,
+                                    fontWeight: FontWeight.w500,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                    ],
                   ),
                 ),
               ),
@@ -176,6 +220,26 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                                 color: AppColors.textHint,
                               ),
                             ),
+                          if (_product!.discountPercentage > 0)
+                            Container(
+                              margin: const EdgeInsets.only(left: 8),
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 6,
+                                vertical: 2,
+                              ),
+                              decoration: BoxDecoration(
+                                color: AppColors.primary.withOpacity(0.1),
+                                borderRadius: BorderRadius.circular(4),
+                              ),
+                              child: Text(
+                                '-${_product!.discountPercentage.toStringAsFixed(0)}%',
+                                style: const TextStyle(
+                                  color: AppColors.primary,
+                                  fontSize: 12,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                            ),
                         ],
                       ),
 
@@ -190,6 +254,41 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                           color: AppColors.textPrimary,
                         ),
                       ),
+
+                      const SizedBox(height: 8),
+
+                      // Tags
+                      if (_product!.tags.isNotEmpty)
+                        Padding(
+                          padding: const EdgeInsets.only(bottom: 12),
+                          child: Wrap(
+                            spacing: 8,
+                            children: _product!.tags
+                                .map(
+                                  (tag) => Chip(
+                                    label: Text(tag),
+                                    labelStyle: const TextStyle(
+                                      fontSize: 12,
+                                      color: AppColors.primary,
+                                    ),
+                                    backgroundColor: AppColors.primary
+                                        .withOpacity(0.05),
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(4),
+                                      side: BorderSide(
+                                        color: AppColors.primary.withOpacity(
+                                          0.2,
+                                        ),
+                                      ),
+                                    ),
+                                    visualDensity: VisualDensity.compact,
+                                    materialTapTargetSize:
+                                        MaterialTapTargetSize.shrinkWrap,
+                                  ),
+                                )
+                                .toList(),
+                          ),
+                        ),
 
                       const SizedBox(height: 12),
 

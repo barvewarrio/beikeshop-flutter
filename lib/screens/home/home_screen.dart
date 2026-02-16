@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import '../../theme/app_theme.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
+import 'package:cached_network_image/cached_network_image.dart';
+import 'package:provider/provider.dart';
 import '../../widgets/home_app_bar.dart';
 import '../../widgets/bottom_nav_bar.dart';
 import '../../widgets/product_card.dart';
@@ -11,6 +13,7 @@ import '../profile/profile_screen.dart';
 import '../product/product_detail_screen.dart';
 import '../../api/api_service.dart';
 import '../../models/models.dart';
+import '../../providers/settings_provider.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -66,24 +69,181 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   void _generateMockProducts() {
-    _products = List.generate(
-      20,
-      (index) => Product(
+    _products = List.generate(20, (index) {
+      final isFlash = index % 3 == 0;
+      final original = 20 + index * 3.0;
+      final price = isFlash ? original * 0.5 : original * 0.8;
+      return Product(
         id: index.toString(),
         title:
             'High Quality Wireless Headphones with Noise Cancellation $index',
         imageUrl: 'https://picsum.photos/300/300?random=$index',
-        price: 10 + index * 2.5,
-        originalPrice: 20 + index * 3.0,
+        price: price,
+        originalPrice: original,
         sales: 100 + index * 10,
-      ),
-    );
+        isFlashSale: isFlash,
+        tags: index % 2 == 0 ? ['Free Shipping', 'Low Stock'] : ['Best Seller'],
+      );
+    });
   }
 
   void _onNavTap(int index) {
     setState(() {
       _currentIndex = index;
     });
+  }
+
+  Widget _buildFlashSaleSection() {
+    final flashSaleProducts = _products
+        .where((p) => p.isFlashSale)
+        .take(5)
+        .toList();
+    if (flashSaleProducts.isEmpty)
+      return const SliverToBoxAdapter(child: SizedBox.shrink());
+
+    return SliverToBoxAdapter(
+      child: Container(
+        margin: const EdgeInsets.symmetric(vertical: 8),
+        color: Colors.white,
+        child: Column(
+          children: [
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+              child: Row(
+                children: [
+                  const Icon(
+                    Icons.flash_on,
+                    color: AppColors.primary,
+                    size: 20,
+                  ),
+                  const SizedBox(width: 8),
+                  const Text(
+                    'Flash Sale',
+                    style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+                  ),
+                  const Spacer(),
+                  Container(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 8,
+                      vertical: 4,
+                    ),
+                    decoration: BoxDecoration(
+                      color: Colors.black,
+                      borderRadius: BorderRadius.circular(4),
+                    ),
+                    child: const Text(
+                      '02:15:30',
+                      style: TextStyle(color: Colors.white, fontSize: 12),
+                    ),
+                  ),
+                  const SizedBox(width: 8),
+                  const Text(
+                    'View All >',
+                    style: TextStyle(color: Colors.grey, fontSize: 12),
+                  ),
+                ],
+              ),
+            ),
+            SizedBox(
+              height: 140,
+              child: ListView.separated(
+                padding: const EdgeInsets.symmetric(horizontal: 12),
+                scrollDirection: Axis.horizontal,
+                itemCount: flashSaleProducts.length,
+                separatorBuilder: (_, __) => const SizedBox(width: 12),
+                itemBuilder: (context, index) {
+                  final product = flashSaleProducts[index];
+                  return Consumer<SettingsProvider>(
+                    builder: (context, settings, _) {
+                      return GestureDetector(
+                        onTap: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) =>
+                                  ProductDetailScreen(productId: product.id),
+                            ),
+                          );
+                        },
+                        child: SizedBox(
+                          width: 100,
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Expanded(
+                                child: Stack(
+                                  children: [
+                                    ClipRRect(
+                                      borderRadius: BorderRadius.circular(8),
+                                      child: CachedNetworkImage(
+                                        imageUrl: product.imageUrl,
+                                        fit: BoxFit.cover,
+                                        width: 100,
+                                        height: 100,
+                                        placeholder: (context, url) =>
+                                            Container(color: Colors.grey[200]),
+                                        errorWidget: (context, url, error) =>
+                                            const Icon(Icons.error),
+                                      ),
+                                    ),
+                                    Positioned(
+                                      bottom: 0,
+                                      left: 0,
+                                      right: 0,
+                                      child: Container(
+                                        color: AppColors.primary.withOpacity(
+                                          0.8,
+                                        ),
+                                        padding: const EdgeInsets.symmetric(
+                                          vertical: 2,
+                                        ),
+                                        child: Text(
+                                          '-${product.discountPercentage.toStringAsFixed(0)}%',
+                                          textAlign: TextAlign.center,
+                                          style: const TextStyle(
+                                            color: Colors.white,
+                                            fontSize: 10,
+                                            fontWeight: FontWeight.bold,
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                              const SizedBox(height: 4),
+                              Text(
+                                settings.formatPrice(product.price),
+                                style: const TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                  color: AppColors.primary,
+                                  fontSize: 12,
+                                ),
+                              ),
+                              Text(
+                                settings.formatPrice(
+                                  product.originalPrice ?? 0,
+                                ),
+                                style: const TextStyle(
+                                  decoration: TextDecoration.lineThrough,
+                                  color: Colors.grey,
+                                  fontSize: 10,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      );
+                    },
+                  );
+                },
+              ),
+            ),
+            const SizedBox(height: 12),
+          ],
+        ),
+      ),
+    );
   }
 
   Widget _buildHomeBody() {
@@ -160,7 +320,10 @@ class _HomeScreenState extends State<HomeScreen> {
               ),
             ),
 
-          // Flash Sale / Featured Header
+          // Flash Sale Section
+          _buildFlashSaleSection(),
+
+          // Recommended Header
           SliverToBoxAdapter(
             child: Padding(
               padding: const EdgeInsets.all(12.0),
@@ -199,6 +362,9 @@ class _HomeScreenState extends State<HomeScreen> {
                   price: product.price,
                   originalPrice: product.originalPrice,
                   sales: '${product.sales} sold',
+                  isFlashSale: product.isFlashSale,
+                  discountPercentage: product.discountPercentage,
+                  tags: product.tags,
                   onTap: () {
                     Navigator.push(
                       context,
