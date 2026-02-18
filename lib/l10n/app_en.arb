@@ -258,6 +258,7 @@
     }
   },
   "requiredField": "Required",
+  "emptyWishlist": "Your wishlist is empty",
   "errorAddingToCart": "Error adding to cart: {error}",
   "@errorAddingToCart": {
     "placeholders": {

@@ -555,6 +555,9 @@ class AppLocalizationsZh extends AppLocalizations {
   String get requiredField => '必填';
 
   @override
+  String get emptyWishlist => '您的心愿单是空的';
+
+  @override
   String errorAddingToCart(String error) {
     return '加入购物车失败: $error';
   }

@@ -185,6 +185,7 @@
   "soldCount": "已售 {count}",
   "youSaved": "已省 {amount}",
   "requiredField": "必填",
+  "emptyWishlist": "您的心愿单是空的",
   "errorAddingToCart": "加入购物车失败: {error}"
 }
 

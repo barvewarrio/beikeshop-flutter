@@ -559,6 +559,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get requiredField => 'Required';
 
   @override
+  String get emptyWishlist => 'Your wishlist is empty';
+
+  @override
   String errorAddingToCart(String error) {
     return 'Error adding to cart: $error';
   }

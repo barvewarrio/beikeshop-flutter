@@ -1130,6 +1130,12 @@ abstract class AppLocalizations {
   /// **'Required'**
   String get requiredField;
 
+  /// No description provided for @emptyWishlist.
+  ///
+  /// In en, this message translates to:
+  /// **'Your wishlist is empty'**
+  String get emptyWishlist;
+
   /// No description provided for @errorAddingToCart.
   ///
   /// In en, this message translates to:
