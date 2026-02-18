@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import '../../providers/auth_provider.dart';
 import '../../theme/app_theme.dart';
 import 'login_screen.dart';
@@ -34,15 +35,15 @@ class _RegisterScreenState extends State<RegisterScreen> {
       setState(() => _isLoading = true);
 
       final success = await context.read<AuthProvider>().register(
-        _nameController.text,
-        _emailController.text,
-        _passwordController.text,
-      );
+            _nameController.text,
+            _emailController.text,
+            _passwordController.text,
+          );
 
       if (mounted) {
         setState(() => _isLoading = false);
         if (success) {
-          Navigator.pop(context); // Go back to profile
+          Navigator.pop(context); // Go back to profile or login
         } else {
           ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(
@@ -57,13 +58,14 @@ class _RegisterScreenState extends State<RegisterScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.white,
       appBar: AppBar(
         leading: IconButton(
-          icon: const Icon(Icons.close),
+          icon: const Icon(Icons.close, color: Colors.black),
           onPressed: () => Navigator.pop(context),
         ),
         elevation: 0,
-        backgroundColor: Colors.transparent,
+        backgroundColor: Colors.white,
       ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(24.0),
@@ -72,30 +74,46 @@ class _RegisterScreenState extends State<RegisterScreen> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              const SizedBox(height: 20),
+              const SizedBox(height: 10),
               const Text(
                 'Create Account',
                 style: TextStyle(
                   fontSize: 28,
                   fontWeight: FontWeight.bold,
-                  color: AppColors.textPrimary,
+                  color: Colors.black,
                 ),
+                textAlign: TextAlign.center,
               ),
               const SizedBox(height: 8),
               const Text(
                 'Join us to get exclusive offers',
-                style: TextStyle(fontSize: 16, color: AppColors.textSecondary),
+                style: TextStyle(fontSize: 14, color: Color(0xFF666666)),
+                textAlign: TextAlign.center,
               ),
-              const SizedBox(height: 48),
+              const SizedBox(height: 40),
 
               // Name
               TextFormField(
                 controller: _nameController,
                 decoration: InputDecoration(
                   labelText: 'Full Name',
-                  prefixIcon: const Icon(Icons.person_outline),
+                  labelStyle: const TextStyle(color: Color(0xFF999999)),
+                  floatingLabelBehavior: FloatingLabelBehavior.auto,
+                  contentPadding: const EdgeInsets.symmetric(
+                    horizontal: 16,
+                    vertical: 16,
+                  ),
                   border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(12),
+                    borderRadius: BorderRadius.circular(25),
+                    borderSide: const BorderSide(color: Color(0xFFDDDDDD)),
+                  ),
+                  enabledBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(25),
+                    borderSide: const BorderSide(color: Color(0xFFDDDDDD)),
+                  ),
+                  focusedBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(25),
+                    borderSide: const BorderSide(color: Colors.black),
                   ),
                 ),
                 validator: (value) {
@@ -105,7 +123,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                   return null;
                 },
               ),
-              const SizedBox(height: 20),
+              const SizedBox(height: 16),
 
               // Email
               TextFormField(
@@ -113,9 +131,23 @@ class _RegisterScreenState extends State<RegisterScreen> {
                 keyboardType: TextInputType.emailAddress,
                 decoration: InputDecoration(
                   labelText: 'Email',
-                  prefixIcon: const Icon(Icons.email_outlined),
+                  labelStyle: const TextStyle(color: Color(0xFF999999)),
+                  floatingLabelBehavior: FloatingLabelBehavior.auto,
+                  contentPadding: const EdgeInsets.symmetric(
+                    horizontal: 16,
+                    vertical: 16,
+                  ),
                   border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(12),
+                    borderRadius: BorderRadius.circular(25),
+                    borderSide: const BorderSide(color: Color(0xFFDDDDDD)),
+                  ),
+                  enabledBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(25),
+                    borderSide: const BorderSide(color: Color(0xFFDDDDDD)),
+                  ),
+                  focusedBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(25),
+                    borderSide: const BorderSide(color: Colors.black),
                   ),
                 ),
                 validator: (value) {
@@ -128,7 +160,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                   return null;
                 },
               ),
-              const SizedBox(height: 20),
+              const SizedBox(height: 16),
 
               // Password
               TextFormField(
@@ -136,12 +168,17 @@ class _RegisterScreenState extends State<RegisterScreen> {
                 obscureText: _obscurePassword,
                 decoration: InputDecoration(
                   labelText: 'Password',
-                  prefixIcon: const Icon(Icons.lock_outline),
+                  labelStyle: const TextStyle(color: Color(0xFF999999)),
+                  contentPadding: const EdgeInsets.symmetric(
+                    horizontal: 16,
+                    vertical: 16,
+                  ),
                   suffixIcon: IconButton(
                     icon: Icon(
                       _obscurePassword
                           ? Icons.visibility_off
                           : Icons.visibility,
+                      color: const Color(0xFF999999),
                     ),
                     onPressed: () {
                       setState(() {
@@ -150,7 +187,16 @@ class _RegisterScreenState extends State<RegisterScreen> {
                     },
                   ),
                   border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(12),
+                    borderRadius: BorderRadius.circular(25),
+                    borderSide: const BorderSide(color: Color(0xFFDDDDDD)),
+                  ),
+                  enabledBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(25),
+                    borderSide: const BorderSide(color: Color(0xFFDDDDDD)),
+                  ),
+                  focusedBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(25),
+                    borderSide: const BorderSide(color: Colors.black),
                   ),
                 ),
                 validator: (value) {
@@ -163,7 +209,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                   return null;
                 },
               ),
-              const SizedBox(height: 20),
+              const SizedBox(height: 16),
 
               // Confirm Password
               TextFormField(
@@ -171,9 +217,22 @@ class _RegisterScreenState extends State<RegisterScreen> {
                 obscureText: _obscurePassword,
                 decoration: InputDecoration(
                   labelText: 'Confirm Password',
-                  prefixIcon: const Icon(Icons.lock_outline),
+                  labelStyle: const TextStyle(color: Color(0xFF999999)),
+                  contentPadding: const EdgeInsets.symmetric(
+                    horizontal: 16,
+                    vertical: 16,
+                  ),
                   border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(12),
+                    borderRadius: BorderRadius.circular(25),
+                    borderSide: const BorderSide(color: Color(0xFFDDDDDD)),
+                  ),
+                  enabledBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(25),
+                    borderSide: const BorderSide(color: Color(0xFFDDDDDD)),
+                  ),
+                  focusedBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(25),
+                    borderSide: const BorderSide(color: Colors.black),
                   ),
                 ),
                 validator: (value) {
@@ -195,9 +254,9 @@ class _RegisterScreenState extends State<RegisterScreen> {
                 style: ElevatedButton.styleFrom(
                   backgroundColor: AppColors.primary,
                   foregroundColor: Colors.white,
-                  padding: const EdgeInsets.symmetric(vertical: 16),
+                  padding: const EdgeInsets.symmetric(vertical: 14),
                   shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(12),
+                    borderRadius: BorderRadius.circular(25),
                   ),
                   elevation: 0,
                 ),
@@ -211,7 +270,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                         ),
                       )
                     : const Text(
-                        'Sign Up',
+                        'Register',
                         style: TextStyle(
                           fontSize: 16,
                           fontWeight: FontWeight.bold,
@@ -219,7 +278,41 @@ class _RegisterScreenState extends State<RegisterScreen> {
                       ),
               ),
 
+              const SizedBox(height: 32),
+
+              // Divider
+              Row(
+                children: [
+                  const Expanded(child: Divider(color: Color(0xFFEEEEEE))),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 16),
+                    child: Text(
+                      'Or continue with',
+                      style: TextStyle(
+                        color: Colors.grey[600],
+                        fontSize: 12,
+                      ),
+                    ),
+                  ),
+                  const Expanded(child: Divider(color: Color(0xFFEEEEEE))),
+                ],
+              ),
+
               const SizedBox(height: 24),
+
+              // Social Login
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  _buildSocialButton(FontAwesomeIcons.google, Colors.red),
+                  const SizedBox(width: 20),
+                  _buildSocialButton(FontAwesomeIcons.facebook, Colors.blue),
+                  const SizedBox(width: 20),
+                  _buildSocialButton(FontAwesomeIcons.apple, Colors.black),
+                ],
+              ),
+
+              const SizedBox(height: 40),
 
               // Login Link
               Row(
@@ -227,10 +320,10 @@ class _RegisterScreenState extends State<RegisterScreen> {
                 children: [
                   const Text(
                     "Already have an account? ",
-                    style: TextStyle(color: AppColors.textSecondary),
+                    style: TextStyle(color: Color(0xFF666666)),
                   ),
-                  TextButton(
-                    onPressed: () {
+                  GestureDetector(
+                    onTap: () {
                       Navigator.pushReplacement(
                         context,
                         MaterialPageRoute(
@@ -239,15 +332,41 @@ class _RegisterScreenState extends State<RegisterScreen> {
                       );
                     },
                     child: const Text(
-                      'Log In',
-                      style: TextStyle(fontWeight: FontWeight.bold),
+                      'Sign in',
+                      style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        color: Colors.black,
+                        decoration: TextDecoration.underline,
+                      ),
                     ),
                   ),
                 ],
               ),
+
+              const SizedBox(height: 24),
+              const Text(
+                'By registering, you agree to our Terms of Use and Privacy Policy.',
+                style: TextStyle(fontSize: 11, color: Color(0xFF999999)),
+                textAlign: TextAlign.center,
+              ),
             ],
           ),
         ),
+      ),
+    );
+  }
+
+  Widget _buildSocialButton(IconData icon, Color color) {
+    return Container(
+      width: 50,
+      height: 50,
+      decoration: BoxDecoration(
+        shape: BoxShape.circle,
+        border: Border.all(color: const Color(0xFFEEEEEE)),
+      ),
+      child: IconButton(
+        icon: FaIcon(icon, color: color, size: 24),
+        onPressed: () {},
       ),
     );
   }

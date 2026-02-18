@@ -107,15 +107,18 @@ class _SearchScreenState extends State<SearchScreen> {
           onPressed: () => Navigator.pop(context),
         ),
         title: Container(
-          height: 36,
+          height: 40,
           decoration: BoxDecoration(
-            color: Colors.grey[100],
-            borderRadius: BorderRadius.circular(18),
+            color: const Color(0xFFF5F5F5),
+            borderRadius: BorderRadius.circular(20),
+            border: Border.all(color: Colors.grey[300]!),
           ),
           child: TextField(
             controller: _searchController,
             autofocus: true,
+            textAlignVertical: TextAlignVertical.center,
             decoration: InputDecoration(
+              isDense: true,
               hintText: l10n.searchHint,
               hintStyle: const TextStyle(
                 color: AppColors.textHint,
@@ -125,10 +128,13 @@ class _SearchScreenState extends State<SearchScreen> {
               prefixIcon: const Icon(
                 Icons.search,
                 color: AppColors.textHint,
-                size: 20,
+                size: 22,
               ),
-              suffixIcon: _searchController.text.isNotEmpty
-                  ? IconButton(
+              suffixIcon: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  if (_searchController.text.isNotEmpty)
+                    IconButton(
                       icon: const Icon(
                         Icons.clear,
                         color: AppColors.textHint,
@@ -141,9 +147,17 @@ class _SearchScreenState extends State<SearchScreen> {
                           _searchResults = [];
                         });
                       },
-                    )
-                  : null,
-              contentPadding: const EdgeInsets.symmetric(vertical: 8),
+                    ),
+                  const SizedBox(width: 4),
+                  const Icon(
+                    Icons.camera_alt_outlined,
+                    color: AppColors.textHint,
+                    size: 22,
+                  ),
+                  const SizedBox(width: 12),
+                ],
+              ),
+              contentPadding: EdgeInsets.zero,
             ),
             textInputAction: TextInputAction.search,
             onSubmitted: _performSearch,
@@ -152,6 +166,9 @@ class _SearchScreenState extends State<SearchScreen> {
                 setState(() {
                   _hasSearched = false;
                 });
+              } else {
+                // Force rebuild to show/hide clear icon
+                setState(() {});
               }
             },
           ),
@@ -314,11 +331,31 @@ class _SearchScreenState extends State<SearchScreen> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            const Icon(Icons.search_off, size: 64, color: AppColors.textHint),
+            Container(
+              padding: const EdgeInsets.all(20),
+              decoration: BoxDecoration(
+                color: Colors.grey[100],
+                shape: BoxShape.circle,
+              ),
+              child: const Icon(
+                Icons.search_off,
+                size: 48,
+                color: AppColors.textHint,
+              ),
+            ),
             const SizedBox(height: 16),
             Text(
               l10n.noResults,
-              style: const TextStyle(color: AppColors.textSecondary),
+              style: const TextStyle(
+                color: AppColors.textSecondary,
+                fontSize: 16,
+                fontWeight: FontWeight.w500,
+              ),
+            ),
+            const SizedBox(height: 8),
+            Text(
+              'Try checking your spelling or use different keywords',
+              style: TextStyle(color: AppColors.textHint, fontSize: 14),
             ),
           ],
         ),

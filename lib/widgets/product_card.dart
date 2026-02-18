@@ -209,16 +209,22 @@ class ProductCard extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.baseline,
                     textBaseline: TextBaseline.alphabetic,
                     children: [
-                      Text(
-                        settings.formatPrice(product.price),
-                        style: AppTextStyles.price.copyWith(fontSize: 16),
+                      Flexible(
+                        child: Text(
+                          settings.formatPrice(product.price),
+                          style: AppTextStyles.price.copyWith(fontSize: 16),
+                          overflow: TextOverflow.ellipsis,
+                        ),
                       ),
                       const SizedBox(width: 4),
                       if (product.originalPrice != null)
-                        Text(
-                          settings.formatPrice(product.originalPrice!),
-                          style: AppTextStyles.originalPrice.copyWith(
-                            fontSize: 11,
+                        Flexible(
+                          child: Text(
+                            settings.formatPrice(product.originalPrice!),
+                            style: AppTextStyles.originalPrice.copyWith(
+                              fontSize: 11,
+                            ),
+                            overflow: TextOverflow.ellipsis,
                           ),
                         ),
                     ],
@@ -251,11 +257,14 @@ class ProductCard extends StatelessWidget {
                           ),
                           const SizedBox(width: 8),
                           if (product.sales > 0 && l10n != null)
-                            Text(
-                              l10n.soldCount(product.sales.toString()),
-                              style: TextStyle(
-                                fontSize: 10,
-                                color: Colors.grey[600],
+                            Flexible(
+                              child: Text(
+                                l10n.soldCount(product.sales.toString()),
+                                style: TextStyle(
+                                  fontSize: 10,
+                                  color: Colors.grey[600],
+                                ),
+                                overflow: TextOverflow.ellipsis,
                               ),
                             ),
                         ],
