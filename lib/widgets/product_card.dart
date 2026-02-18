@@ -86,38 +86,63 @@ class ProductCard extends StatelessWidget {
                     ),
                   ),
                 Positioned(
-                  top: 4,
-                  right: 4,
+                  bottom: 8,
+                  right: 8,
                   child: Container(
-                    decoration: const BoxDecoration(
+                    width: 32,
+                    height: 32,
+                    decoration: BoxDecoration(
                       color: Colors.white,
                       shape: BoxShape.circle,
+                      border: Border.all(
+                        color: AppColors.primary.withOpacity(0.2),
+                      ),
                       boxShadow: [
                         BoxShadow(
-                          color: Colors.black12,
+                          color: Colors.black.withOpacity(0.05),
                           blurRadius: 4,
-                          offset: Offset(0, 2),
+                          offset: const Offset(0, 2),
                         ),
                       ],
                     ),
                     child: IconButton(
-                      icon: Icon(
-                        isInWishlist ? Icons.favorite : Icons.favorite_border,
-                        color: isInWishlist ? Colors.red : Colors.grey,
-                        size: 20,
+                      icon: const Icon(
+                        Icons.add_shopping_cart,
+                        color: AppColors.primary,
+                        size: 18,
                       ),
-                      onPressed: () {
-                        if (isInWishlist) {
-                          wishlistProvider.removeFromWishlist(product.id);
-                        } else {
-                          wishlistProvider.addToWishlist(product);
+                      onPressed: () async {
+                        try {
+                          await context.read<CartProvider>().addToCart(product);
+                          if (context.mounted) {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(
+                                content: Text(
+                                  l10n?.addedToCart ?? 'Added to Cart',
+                                ),
+                                duration: const Duration(seconds: 2),
+                                behavior: SnackBarBehavior.floating,
+                                backgroundColor: Colors.green,
+                              ),
+                            );
+                          }
+                        } catch (e) {
+                          if (context.mounted) {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(
+                                content: Text(
+                                  l10n?.errorAddingToCart(e.toString()) ??
+                                      'Error: $e',
+                                ),
+                                backgroundColor: Colors.red,
+                                behavior: SnackBarBehavior.floating,
+                              ),
+                            );
+                          }
                         }
                       },
                       padding: EdgeInsets.zero,
-                      constraints: const BoxConstraints(
-                        minWidth: 32,
-                        minHeight: 32,
-                      ),
+                      constraints: const BoxConstraints(),
                     ),
                   ),
                 ),
@@ -134,7 +159,10 @@ class ProductCard extends StatelessWidget {
                     product.title,
                     maxLines: 2,
                     overflow: TextOverflow.ellipsis,
-                    style: AppTextStyles.body.copyWith(height: 1.2),
+                    style: AppTextStyles.body.copyWith(
+                      height: 1.2,
+                      fontSize: 13,
+                    ),
                   ),
                   const SizedBox(height: 4),
 
@@ -233,69 +261,6 @@ class ProductCard extends StatelessWidget {
                         ],
                       ),
                     ),
-
-                  const SizedBox(height: 8),
-                  // Add to Cart Button (Small)
-                  SizedBox(
-                    width: double.infinity,
-                    height: 32,
-                    child: ElevatedButton(
-                      onPressed: () async {
-                        try {
-                          await context.read<CartProvider>().addToCart(product);
-                          if (context.mounted) {
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              SnackBar(
-                                content: Text(
-                                  l10n?.addedToCart ?? 'Added to Cart',
-                                ),
-                                duration: const Duration(seconds: 2),
-                                behavior: SnackBarBehavior.floating,
-                                backgroundColor: Colors.green,
-                              ),
-                            );
-                          }
-                        } catch (e) {
-                          if (context.mounted) {
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              SnackBar(
-                                content: Text(
-                                  l10n?.errorAddingToCart(e.toString()) ??
-                                      'Error: $e',
-                                ),
-                                backgroundColor: Colors.red,
-                                behavior: SnackBarBehavior.floating,
-                              ),
-                            );
-                          }
-                        }
-                      },
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.white,
-                        foregroundColor: AppColors.primary,
-                        side: const BorderSide(color: AppColors.primary),
-                        padding: EdgeInsets.zero,
-                        elevation: 0,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(16),
-                        ),
-                      ),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          const Icon(Icons.add_shopping_cart, size: 16),
-                          const SizedBox(width: 4),
-                          Text(
-                            l10n?.addToCart ?? 'Add',
-                            style: const TextStyle(
-                              fontSize: 12,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
                 ],
               ),
             ),

@@ -100,29 +100,41 @@ class _CategoryScreenState extends State<CategoryScreen> {
     return Scaffold(
       appBar: AppBar(
         title: Container(
-          height: 36,
-          padding: const EdgeInsets.symmetric(horizontal: 12),
+          height: 40,
+          padding: const EdgeInsets.symmetric(horizontal: 16),
           decoration: BoxDecoration(
             color: Colors.grey[100],
-            borderRadius: BorderRadius.circular(18),
+            borderRadius: BorderRadius.circular(20),
+            border: Border.all(color: Colors.grey[300]!, width: 0.5),
           ),
           child: Row(
             children: [
-              const Icon(Icons.search, color: AppColors.textHint, size: 20),
+              const Icon(Icons.search, color: Colors.black54, size: 22),
               const SizedBox(width: 8),
-              Text(
-                l10n.searchCategories,
-                style: const TextStyle(
-                  color: AppColors.textHint,
-                  fontSize: 14,
-                  fontWeight: FontWeight.normal,
+              Expanded(
+                child: Text(
+                  l10n.searchCategories,
+                  style: const TextStyle(
+                    color: Colors.black38,
+                    fontSize: 15,
+                    fontWeight: FontWeight.normal,
+                  ),
+                  overflow: TextOverflow.ellipsis,
                 ),
               ),
+              const Icon(Icons.camera_alt_outlined, color: Colors.black54, size: 22),
             ],
           ),
         ),
         backgroundColor: Colors.white,
         elevation: 0,
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.mail_outline, color: Colors.black87, size: 26),
+            onPressed: () {},
+          ),
+          const SizedBox(width: 4),
+        ],
       ),
       body: Row(
         children: [

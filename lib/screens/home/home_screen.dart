@@ -86,6 +86,8 @@ class _HomeScreenState extends State<HomeScreen> {
           _products = results[0] as List<Product>;
           _categories = results[1] as List<Category>;
           _isLoading = false;
+          if (_products.isEmpty) _generateMockProducts();
+          if (_categories.isEmpty) _generateMockCategories();
         });
       }
     } catch (e) {
@@ -95,9 +97,27 @@ class _HomeScreenState extends State<HomeScreen> {
           _isLoading = false;
           // Use fallback mock data if API fails (e.g. server offline)
           if (_products.isEmpty) _generateMockProducts();
+          if (_categories.isEmpty) _generateMockCategories();
         });
       }
     }
+  }
+
+  void _generateMockCategories() {
+    final names = [
+      'Women',
+      'Men',
+      'Home',
+      'Electronics',
+      'Beauty',
+      'Shoes',
+      'Bags',
+      'Kids',
+    ];
+    _categories = List.generate(
+      names.length,
+      (index) => Category(id: index.toString(), name: names[index]),
+    );
   }
 
   void _generateMockProducts() {
@@ -142,8 +162,18 @@ class _HomeScreenState extends State<HomeScreen> {
 
     return SliverToBoxAdapter(
       child: Container(
-        margin: const EdgeInsets.symmetric(vertical: 8),
-        color: Colors.white,
+        margin: const EdgeInsets.symmetric(vertical: 8, horizontal: 8),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(12),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withValues(alpha: 0.05),
+              blurRadius: 8,
+              offset: const Offset(0, 2),
+            ),
+          ],
+        ),
         child: Column(
           children: [
             Padding(
@@ -162,80 +192,11 @@ class _HomeScreenState extends State<HomeScreen> {
                     ),
                   ),
                   const SizedBox(width: 12),
-                  Container(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 6,
-                      vertical: 4,
-                    ),
-                    decoration: BoxDecoration(
-                      color: Colors.black,
-                      borderRadius: BorderRadius.circular(4),
-                    ),
-                    child: Text(
-                      hours,
-                      style: const TextStyle(
-                        color: Colors.white,
-                        fontWeight: FontWeight.bold,
-                        fontSize: 12,
-                      ),
-                    ),
-                  ),
-                  const Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 4),
-                    child: Text(
-                      ':',
-                      style: TextStyle(
-                        fontWeight: FontWeight.bold,
-                        color: Colors.black,
-                      ),
-                    ),
-                  ),
-                  Container(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 6,
-                      vertical: 4,
-                    ),
-                    decoration: BoxDecoration(
-                      color: Colors.black,
-                      borderRadius: BorderRadius.circular(4),
-                    ),
-                    child: Text(
-                      minutes,
-                      style: const TextStyle(
-                        color: Colors.white,
-                        fontWeight: FontWeight.bold,
-                        fontSize: 12,
-                      ),
-                    ),
-                  ),
-                  const Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 4),
-                    child: Text(
-                      ':',
-                      style: TextStyle(
-                        fontWeight: FontWeight.bold,
-                        color: Colors.black,
-                      ),
-                    ),
-                  ),
-                  Container(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 6,
-                      vertical: 4,
-                    ),
-                    decoration: BoxDecoration(
-                      color: Colors.black,
-                      borderRadius: BorderRadius.circular(4),
-                    ),
-                    child: Text(
-                      seconds,
-                      style: const TextStyle(
-                        color: Colors.white,
-                        fontWeight: FontWeight.bold,
-                        fontSize: 12,
-                      ),
-                    ),
-                  ),
+                  _buildTimerBox(hours),
+                  _buildTimerSeparator(),
+                  _buildTimerBox(minutes),
+                  _buildTimerSeparator(),
+                  _buildTimerBox(seconds),
                   const Spacer(),
                   GestureDetector(
                     onTap: () {},
@@ -244,14 +205,15 @@ class _HomeScreenState extends State<HomeScreen> {
                         Text(
                           l10n.viewAll,
                           style: const TextStyle(
-                            color: Colors.grey,
-                            fontSize: 12,
+                            color: AppColors.textSecondary,
+                            fontSize: 13,
+                            fontWeight: FontWeight.w500,
                           ),
                         ),
                         const Icon(
                           Icons.keyboard_arrow_right,
                           size: 16,
-                          color: Colors.grey,
+                          color: AppColors.textSecondary,
                         ),
                       ],
                     ),
@@ -260,9 +222,9 @@ class _HomeScreenState extends State<HomeScreen> {
               ),
             ),
             SizedBox(
-              height: 190,
+              height: 200,
               child: ListView.separated(
-                padding: const EdgeInsets.symmetric(horizontal: 12),
+                padding: const EdgeInsets.fromLTRB(12, 0, 12, 16),
                 scrollDirection: Axis.horizontal,
                 itemCount: flashSaleProducts.length,
                 separatorBuilder: (_, __) => const SizedBox(width: 12),
@@ -280,20 +242,26 @@ class _HomeScreenState extends State<HomeScreen> {
                             ),
                           );
                         },
-                        child: SizedBox(
-                          width: 110,
+                        child: Container(
+                          width: 120,
+                          decoration: BoxDecoration(
+                            border: Border.all(color: Colors.grey[200]!),
+                            borderRadius: BorderRadius.circular(8),
+                          ),
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Stack(
                                 children: [
                                   ClipRRect(
-                                    borderRadius: BorderRadius.circular(8),
+                                    borderRadius: const BorderRadius.vertical(
+                                      top: Radius.circular(8),
+                                    ),
                                     child: CachedNetworkImage(
                                       imageUrl: product.imageUrl,
                                       fit: BoxFit.cover,
-                                      width: 110,
-                                      height: 110,
+                                      width: 120,
+                                      height: 120,
                                       placeholder: (context, url) =>
                                           Container(color: Colors.grey[200]),
                                       errorWidget: (context, url, error) =>
@@ -308,7 +276,6 @@ class _HomeScreenState extends State<HomeScreen> {
                                         color: Color(0xFFFF5000),
                                         borderRadius: BorderRadius.only(
                                           topRight: Radius.circular(8),
-                                          bottomLeft: Radius.circular(8),
                                         ),
                                       ),
                                       padding: const EdgeInsets.symmetric(
@@ -327,48 +294,67 @@ class _HomeScreenState extends State<HomeScreen> {
                                   ),
                                 ],
                               ),
-                              const SizedBox(height: 8),
-                              Text(
-                                settings.formatPrice(product.price),
-                                style: const TextStyle(
-                                  fontWeight: FontWeight.bold,
-                                  color: AppColors.primary,
-                                  fontSize: 15,
+                              Padding(
+                                padding: const EdgeInsets.all(8.0),
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(
+                                      settings.formatPrice(product.price),
+                                      style: const TextStyle(
+                                        fontWeight: FontWeight.bold,
+                                        color: AppColors.primary,
+                                        fontSize: 15,
+                                      ),
+                                    ),
+                                    const SizedBox(height: 4),
+                                    Stack(
+                                      children: [
+                                        Container(
+                                          height: 14,
+                                          decoration: BoxDecoration(
+                                            color: Colors.grey[200],
+                                            borderRadius: BorderRadius.circular(
+                                              7,
+                                            ),
+                                          ),
+                                        ),
+                                        FractionallySizedBox(
+                                          widthFactor: 0.7, // Mock progress
+                                          child: Container(
+                                            height: 14,
+                                            decoration: BoxDecoration(
+                                              gradient: const LinearGradient(
+                                                colors: [
+                                                  Color(0xFFFF5000),
+                                                  Color(0xFFFF8C00),
+                                                ],
+                                              ),
+                                              borderRadius:
+                                                  BorderRadius.circular(7),
+                                            ),
+                                          ),
+                                        ),
+                                        Center(
+                                          child: Text(
+                                            '${product.sales} ${l10n.sold}',
+                                            style: const TextStyle(
+                                              fontSize: 9,
+                                              color: Colors.white,
+                                              fontWeight: FontWeight.bold,
+                                              shadows: [
+                                                Shadow(
+                                                  blurRadius: 2,
+                                                  color: Colors.black26,
+                                                ),
+                                              ],
+                                            ),
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ],
                                 ),
-                              ),
-                              const SizedBox(height: 4),
-                              Stack(
-                                children: [
-                                  Container(
-                                    height: 14,
-                                    decoration: BoxDecoration(
-                                      color: Colors.grey[200],
-                                      borderRadius: BorderRadius.circular(7),
-                                    ),
-                                  ),
-                                  FractionallySizedBox(
-                                    widthFactor: 0.7, // Mock progress
-                                    child: Container(
-                                      height: 14,
-                                      decoration: BoxDecoration(
-                                        color: const Color(
-                                          0xFFFF5000,
-                                        ).withValues(alpha: 0.6),
-                                        borderRadius: BorderRadius.circular(7),
-                                      ),
-                                    ),
-                                  ),
-                                  const Center(
-                                    child: Text(
-                                      '12 sold', // Mock sold count
-                                      style: TextStyle(
-                                        fontSize: 9,
-                                        color: Colors.black54,
-                                        fontWeight: FontWeight.w500,
-                                      ),
-                                    ),
-                                  ),
-                                ],
                               ),
                             ],
                           ),
@@ -379,9 +365,36 @@ class _HomeScreenState extends State<HomeScreen> {
                 },
               ),
             ),
-            const SizedBox(height: 12),
           ],
         ),
+      ),
+    );
+  }
+
+  Widget _buildTimerBox(String text) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 4),
+      decoration: BoxDecoration(
+        color: Colors.black,
+        borderRadius: BorderRadius.circular(4),
+      ),
+      child: Text(
+        text,
+        style: const TextStyle(
+          color: Colors.white,
+          fontWeight: FontWeight.bold,
+          fontSize: 12,
+        ),
+      ),
+    );
+  }
+
+  Widget _buildTimerSeparator() {
+    return const Padding(
+      padding: EdgeInsets.symmetric(horizontal: 4),
+      child: Text(
+        ':',
+        style: TextStyle(fontWeight: FontWeight.bold, color: Colors.black),
       ),
     );
   }
@@ -411,22 +424,34 @@ class _HomeScreenState extends State<HomeScreen> {
           if (_categories.isNotEmpty)
             SliverToBoxAdapter(
               child: SizedBox(
-                height: 90,
-                child: ListView.builder(
+                height: 220,
+                child: GridView.builder(
                   scrollDirection: Axis.horizontal,
-                  padding: const EdgeInsets.symmetric(horizontal: 12),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 16,
+                    vertical: 8,
+                  ),
+                  gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                    crossAxisCount: 2,
+                    mainAxisSpacing: 16,
+                    crossAxisSpacing: 16,
+                    childAspectRatio: 0.85,
+                  ),
                   itemCount: _categories.length,
                   itemBuilder: (context, index) {
                     final category = _categories[index];
-                    return Padding(
-                      padding: const EdgeInsets.only(right: 16),
+                    return GestureDetector(
+                      onTap: () {
+                        // Navigate to category
+                      },
                       child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
                         children: [
                           Container(
-                            width: 50,
-                            height: 50,
+                            width: 56,
+                            height: 56,
                             decoration: BoxDecoration(
-                              color: Colors.white,
+                              color: const Color(0xFFF5F5F5),
                               shape: BoxShape.circle,
                               image: category.imageUrl != null
                                   ? DecorationImage(
@@ -439,17 +464,18 @@ class _HomeScreenState extends State<HomeScreen> {
                                 ? const Icon(Icons.category, color: Colors.grey)
                                 : null,
                           ),
-                          const SizedBox(height: 4),
+                          const SizedBox(height: 6),
                           SizedBox(
-                            width: 60,
+                            width: 70,
                             child: Text(
                               category.name,
                               style: const TextStyle(
-                                fontSize: 12,
-                                color: AppColors.textSecondary,
+                                fontSize: 11,
+                                color: Color(0xFF333333),
+                                height: 1.1,
                               ),
                               textAlign: TextAlign.center,
-                              maxLines: 1,
+                              maxLines: 2,
                               overflow: TextOverflow.ellipsis,
                             ),
                           ),
@@ -467,16 +493,41 @@ class _HomeScreenState extends State<HomeScreen> {
           // Recommended Header
           SliverToBoxAdapter(
             child: Padding(
-              padding: const EdgeInsets.all(12.0),
+              padding: const EdgeInsets.fromLTRB(16, 24, 16, 12),
               child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Text(l10n.recommendedForYou, style: AppTextStyles.heading),
-                  TextButton(
-                    onPressed: () {},
-                    child: Text(
-                      '${l10n.seeAll} >',
-                      style: const TextStyle(color: AppColors.textSecondary),
+                  const Icon(
+                    Icons.recommend,
+                    color: AppColors.primary,
+                    size: 24,
+                  ),
+                  const SizedBox(width: 8),
+                  Text(
+                    l10n.recommendedForYou,
+                    style: const TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                      color: Color(0xFF222222),
+                    ),
+                  ),
+                  const Spacer(),
+                  GestureDetector(
+                    onTap: () {},
+                    child: Row(
+                      children: [
+                        Text(
+                          l10n.seeAll,
+                          style: const TextStyle(
+                            color: AppColors.textSecondary,
+                            fontSize: 13,
+                          ),
+                        ),
+                        const Icon(
+                          Icons.keyboard_arrow_right,
+                          size: 16,
+                          color: AppColors.textSecondary,
+                        ),
+                      ],
                     ),
                   ),
                 ],
