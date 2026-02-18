@@ -12,6 +12,7 @@ class ApiClient {
             headers: {
               'Accept': 'application/json',
               'Content-Type': 'application/json',
+              'Accept-Language': 'zh-CN',
             },
           ),
         )

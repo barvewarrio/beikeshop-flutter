@@ -35,7 +35,12 @@ class ApiService {
     try {
       final response = await _dio.post(
         ApiEndpoints.register,
-        data: {'name': name, 'email': email, 'password': password},
+        data: {
+          'name': name,
+          'email': email,
+          'password': password,
+          'locale': 'zh_CN',
+        },
       );
       final data = response.data;
       final userJson = data['user'];
