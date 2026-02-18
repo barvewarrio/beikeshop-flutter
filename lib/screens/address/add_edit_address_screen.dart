@@ -393,6 +393,7 @@ class _AddEditAddressScreenState extends State<AddEditAddressScreen> {
     TextInputType? keyboardType,
     int maxLines = 1,
   }) {
+    final l10n = AppLocalizations.of(context)!;
     return TextFormField(
       controller: controller,
       keyboardType: keyboardType,
@@ -405,7 +406,7 @@ class _AddEditAddressScreenState extends State<AddEditAddressScreen> {
         contentPadding: const EdgeInsets.symmetric(vertical: 12),
         isDense: true,
       ),
-      validator: (value) => value!.isEmpty ? 'Required' : null,
+      validator: (value) => value!.isEmpty ? l10n.requiredField : null,
     );
   }
 
@@ -416,6 +417,7 @@ class _AddEditAddressScreenState extends State<AddEditAddressScreen> {
     required ValueChanged<int?> onChanged,
     bool isLoading = false,
   }) {
+    final l10n = AppLocalizations.of(context)!;
     // Ensure value is null if items is empty or value not in items
     final effectiveValue =
         (items.isEmpty || !items.any((item) => item.value == value))
@@ -444,7 +446,7 @@ class _AddEditAddressScreenState extends State<AddEditAddressScreen> {
       ),
       items: items,
       onChanged: onChanged,
-      validator: (val) => val == null && items.isNotEmpty ? 'Required' : null,
+      validator: (val) => val == null && items.isNotEmpty ? l10n.requiredField : null,
       icon: const Icon(Icons.arrow_drop_down, color: AppColors.textSecondary),
       style: const TextStyle(fontSize: 15, color: AppColors.textPrimary),
       isExpanded: true,

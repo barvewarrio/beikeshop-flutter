@@ -72,7 +72,10 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
     final selectedAddress = await Navigator.push<Address>(
       context,
       MaterialPageRoute(
-        builder: (context) => const AddressListScreen(selectMode: true),
+        builder: (context) => AddressListScreen(
+          selectMode: true,
+          selectedAddressId: _selectedAddress?.id,
+        ),
       ),
     );
 

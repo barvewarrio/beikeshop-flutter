@@ -8,8 +8,13 @@ import 'add_edit_address_screen.dart';
 
 class AddressListScreen extends StatelessWidget {
   final bool selectMode;
+  final String? selectedAddressId;
 
-  const AddressListScreen({super.key, this.selectMode = false});
+  const AddressListScreen({
+    super.key,
+    this.selectMode = false,
+    this.selectedAddressId,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -80,9 +85,12 @@ class AddressListScreen extends StatelessWidget {
                       const SizedBox(height: 12),
                   itemBuilder: (context, index) {
                     final address = provider.addresses[index];
+                    final isSelected =
+                        selectMode && address.id == selectedAddressId;
                     return _AddressCard(
                       address: address,
                       isSelectionMode: selectMode,
+                      isSelected: isSelected,
                       onTap: selectMode
                           ? () => Navigator.pop(context, address)
                           : null,
@@ -200,13 +208,16 @@ class AddressListScreen extends StatelessWidget {
 class _AddressCard extends StatelessWidget {
   final Address address;
   final bool isSelectionMode;
+  final bool isSelected;
   final VoidCallback? onTap;
   final VoidCallback onEdit;
   final VoidCallback onDelete;
 
   const _AddressCard({
+    super.key,
     required this.address,
     this.isSelectionMode = false,
+    this.isSelected = false,
     this.onTap,
     required this.onEdit,
     required this.onDelete,
@@ -216,18 +227,28 @@ class _AddressCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
 
+    // Temu-style active border color
+    final borderColor = isSelected
+        ? AppColors.primary
+        : (address.isDefault
+              ? AppColors.primary.withValues(alpha: 0.5)
+              : Colors.grey[200]!);
+
+    final borderWidth = isSelected ? 2.0 : (address.isDefault ? 1.0 : 1.0);
+    final backgroundColor = isSelected
+        ? AppColors.primary.withValues(alpha: 0.03)
+        : Colors.white;
+
     return GestureDetector(
       onTap: isSelectionMode ? onTap : null,
       child: Container(
         decoration: BoxDecoration(
-          color: Colors.white,
+          color: backgroundColor,
           borderRadius: BorderRadius.circular(12),
-          border: address.isDefault
-              ? Border.all(color: AppColors.primary, width: 1.5)
-              : Border.all(color: Colors.transparent),
+          border: Border.all(color: borderColor, width: borderWidth),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withValues(alpha: 0.05),
+              color: Colors.black.withValues(alpha: 0.03),
               blurRadius: 8,
               offset: const Offset(0, 2),
             ),
@@ -238,61 +259,80 @@ class _AddressCard extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
+                if (isSelectionMode)
+                  Padding(
+                    padding: const EdgeInsets.only(right: 12, top: 4),
+                    child: Icon(
+                      isSelected
+                          ? Icons.check_circle
+                          : Icons.radio_button_unchecked,
+                      color: isSelected
+                          ? AppColors.primary
+                          : AppColors.textHint,
+                      size: 22,
+                    ),
+                  ),
                 Expanded(
-                  child: Row(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text(
-                        address.name,
-                        style: const TextStyle(
-                          fontWeight: FontWeight.bold,
-                          fontSize: 16,
-                          color: AppColors.textPrimary,
-                        ),
-                      ),
-                      const SizedBox(width: 12),
-                      Text(
-                        address.phone,
-                        style: const TextStyle(
-                          fontWeight: FontWeight.bold,
-                          fontSize: 16,
-                          color: AppColors.textPrimary,
-                        ),
-                      ),
-                      if (address.isDefault) ...[
-                        const SizedBox(width: 8),
-                        Container(
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 6,
-                            vertical: 2,
-                          ),
-                          decoration: BoxDecoration(
-                            color: AppColors.primary,
-                            borderRadius: BorderRadius.circular(4),
-                          ),
-                          child: Text(
-                            l10n.defaultLabel,
+                      Row(
+                        children: [
+                          Text(
+                            address.name,
                             style: const TextStyle(
-                              color: Colors.white,
-                              fontSize: 10,
                               fontWeight: FontWeight.bold,
+                              fontSize: 16,
+                              color: AppColors.textPrimary,
                             ),
                           ),
+                          const SizedBox(width: 12),
+                          Text(
+                            address.phone,
+                            style: const TextStyle(
+                              fontWeight: FontWeight.bold,
+                              fontSize: 16,
+                              color: AppColors.textPrimary,
+                            ),
+                          ),
+                          if (address.isDefault) ...[
+                            const SizedBox(width: 8),
+                            Container(
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 6,
+                                vertical: 2,
+                              ),
+                              decoration: BoxDecoration(
+                                color: AppColors.primary,
+                                borderRadius: BorderRadius.circular(4),
+                              ),
+                              child: Text(
+                                l10n.defaultLabel,
+                                style: const TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 10,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                            ),
+                          ],
+                        ],
+                      ),
+                      const SizedBox(height: 8),
+                      Text(
+                        '${address.province} ${address.city} ${address.addressLine}',
+                        style: const TextStyle(
+                          color: AppColors.textSecondary,
+                          fontSize: 14,
+                          height: 1.4,
                         ),
-                      ],
+                      ),
                     ],
                   ),
                 ),
               ],
-            ),
-            const SizedBox(height: 8),
-            Text(
-              '${address.province} ${address.city} ${address.addressLine}',
-              style: const TextStyle(
-                color: AppColors.textSecondary,
-                fontSize: 14,
-                height: 1.4,
-              ),
             ),
             const SizedBox(height: 12),
             const Divider(height: 1, color: AppColors.border),
@@ -311,7 +351,7 @@ class _AddressCard extends StatelessWidget {
                         const Icon(
                           Icons.check_circle_outline,
                           size: 16,
-                          color: AppColors.textHint,
+                          color: AppColors.textSecondary,
                         ),
                         const SizedBox(width: 4),
                         Text(
@@ -325,45 +365,57 @@ class _AddressCard extends StatelessWidget {
                     ),
                   ),
                 const Spacer(),
-                TextButton.icon(
-                  onPressed: onEdit,
-                  icon: const Icon(
-                    Icons.edit_outlined,
-                    size: 16,
-                    color: AppColors.textSecondary,
-                  ),
-                  label: Text(
-                    l10n.edit,
-                    style: const TextStyle(
-                      color: AppColors.textSecondary,
-                      fontSize: 13,
+                InkWell(
+                  onTap: onEdit,
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 8,
+                      vertical: 4,
                     ),
-                  ),
-                  style: TextButton.styleFrom(
-                    padding: const EdgeInsets.symmetric(horizontal: 8),
-                    minimumSize: const Size(0, 30),
-                    tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                    child: Row(
+                      children: [
+                        const Icon(
+                          Icons.edit_outlined,
+                          size: 16,
+                          color: AppColors.textSecondary,
+                        ),
+                        const SizedBox(width: 4),
+                        Text(
+                          l10n.edit,
+                          style: const TextStyle(
+                            color: AppColors.textSecondary,
+                            fontSize: 13,
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
                 ),
                 const SizedBox(width: 8),
-                TextButton.icon(
-                  onPressed: onDelete,
-                  icon: const Icon(
-                    Icons.delete_outline,
-                    size: 16,
-                    color: AppColors.textSecondary,
-                  ),
-                  label: Text(
-                    l10n.delete,
-                    style: const TextStyle(
-                      color: AppColors.textSecondary,
-                      fontSize: 13,
+                InkWell(
+                  onTap: onDelete,
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 8,
+                      vertical: 4,
                     ),
-                  ),
-                  style: TextButton.styleFrom(
-                    padding: const EdgeInsets.symmetric(horizontal: 8),
-                    minimumSize: const Size(0, 30),
-                    tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                    child: Row(
+                      children: [
+                        const Icon(
+                          Icons.delete_outline,
+                          size: 16,
+                          color: AppColors.textSecondary,
+                        ),
+                        const SizedBox(width: 4),
+                        Text(
+                          l10n.delete,
+                          style: const TextStyle(
+                            color: AppColors.textSecondary,
+                            fontSize: 13,
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
                 ),
               ],

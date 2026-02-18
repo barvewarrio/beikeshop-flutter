@@ -131,8 +131,9 @@ class _HomeScreenState extends State<HomeScreen> {
         .where((p) => p.isFlashSale)
         .take(5)
         .toList();
-    if (flashSaleProducts.isEmpty)
+    if (flashSaleProducts.isEmpty) {
       return const SliverToBoxAdapter(child: SizedBox.shrink());
+    }
 
     String twoDigits(int n) => n.toString().padLeft(2, '0');
     final hours = twoDigits(_timeLeft.inHours);
@@ -146,7 +147,7 @@ class _HomeScreenState extends State<HomeScreen> {
         child: Column(
           children: [
             Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
               child: Row(
                 children: [
                   const Icon(Icons.bolt, color: AppColors.primary, size: 24),
@@ -157,55 +158,111 @@ class _HomeScreenState extends State<HomeScreen> {
                       fontWeight: FontWeight.bold,
                       fontSize: 18,
                       fontStyle: FontStyle.italic,
+                      color: Colors.black87,
                     ),
                   ),
-                  const Spacer(),
+                  const SizedBox(width: 12),
                   Container(
                     padding: const EdgeInsets.symmetric(
-                      horizontal: 8,
+                      horizontal: 6,
                       vertical: 4,
                     ),
                     decoration: BoxDecoration(
                       color: Colors.black,
                       borderRadius: BorderRadius.circular(4),
                     ),
-                    child: Row(
-                      children: [
-                        _buildTimeBox(hours),
-                        const Text(
-                          ':',
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                        _buildTimeBox(minutes),
-                        const Text(
-                          ':',
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                        _buildTimeBox(seconds),
-                      ],
+                    child: Text(
+                      hours,
+                      style: const TextStyle(
+                        color: Colors.white,
+                        fontWeight: FontWeight.bold,
+                        fontSize: 12,
+                      ),
                     ),
                   ),
-                  const SizedBox(width: 8),
-                  Text(
-                    '${l10n.viewAll} >',
-                    style: const TextStyle(color: Colors.grey, fontSize: 12),
+                  const Padding(
+                    padding: EdgeInsets.symmetric(horizontal: 4),
+                    child: Text(
+                      ':',
+                      style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        color: Colors.black,
+                      ),
+                    ),
+                  ),
+                  Container(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 6,
+                      vertical: 4,
+                    ),
+                    decoration: BoxDecoration(
+                      color: Colors.black,
+                      borderRadius: BorderRadius.circular(4),
+                    ),
+                    child: Text(
+                      minutes,
+                      style: const TextStyle(
+                        color: Colors.white,
+                        fontWeight: FontWeight.bold,
+                        fontSize: 12,
+                      ),
+                    ),
+                  ),
+                  const Padding(
+                    padding: EdgeInsets.symmetric(horizontal: 4),
+                    child: Text(
+                      ':',
+                      style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        color: Colors.black,
+                      ),
+                    ),
+                  ),
+                  Container(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 6,
+                      vertical: 4,
+                    ),
+                    decoration: BoxDecoration(
+                      color: Colors.black,
+                      borderRadius: BorderRadius.circular(4),
+                    ),
+                    child: Text(
+                      seconds,
+                      style: const TextStyle(
+                        color: Colors.white,
+                        fontWeight: FontWeight.bold,
+                        fontSize: 12,
+                      ),
+                    ),
+                  ),
+                  const Spacer(),
+                  GestureDetector(
+                    onTap: () {},
+                    child: Row(
+                      children: [
+                        Text(
+                          l10n.viewAll,
+                          style: const TextStyle(
+                            color: Colors.grey,
+                            fontSize: 12,
+                          ),
+                        ),
+                        const Icon(
+                          Icons.keyboard_arrow_right,
+                          size: 16,
+                          color: Colors.grey,
+                        ),
+                      ],
+                    ),
                   ),
                 ],
               ),
             ),
             SizedBox(
-              height: 160,
+              height: 190,
               child: ListView.separated(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 12,
-                  vertical: 8,
-                ),
+                padding: const EdgeInsets.symmetric(horizontal: 12),
                 scrollDirection: Axis.horizontal,
                 itemCount: flashSaleProducts.length,
                 separatorBuilder: (_, __) => const SizedBox(width: 12),
@@ -223,88 +280,95 @@ class _HomeScreenState extends State<HomeScreen> {
                             ),
                           );
                         },
-                        child: Container(
-                          width: 100,
-                          decoration: BoxDecoration(
-                            border: Border.all(color: Colors.grey[200]!),
-                            borderRadius: BorderRadius.circular(8),
-                          ),
+                        child: SizedBox(
+                          width: 110,
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              Expanded(
-                                child: Stack(
-                                  children: [
-                                    ClipRRect(
-                                      borderRadius: const BorderRadius.vertical(
-                                        top: Radius.circular(8),
-                                      ),
-                                      child: CachedNetworkImage(
-                                        imageUrl: product.imageUrl,
-                                        fit: BoxFit.cover,
-                                        width: 100,
-                                        height: 100,
-                                        placeholder: (context, url) =>
-                                            Container(color: Colors.grey[200]),
-                                        errorWidget: (context, url, error) =>
-                                            const Icon(Icons.error),
-                                      ),
+                              Stack(
+                                children: [
+                                  ClipRRect(
+                                    borderRadius: BorderRadius.circular(8),
+                                    child: CachedNetworkImage(
+                                      imageUrl: product.imageUrl,
+                                      fit: BoxFit.cover,
+                                      width: 110,
+                                      height: 110,
+                                      placeholder: (context, url) =>
+                                          Container(color: Colors.grey[200]),
+                                      errorWidget: (context, url, error) =>
+                                          const Icon(Icons.error),
                                     ),
-                                    Positioned(
-                                      bottom: 0,
-                                      left: 0,
-                                      child: Container(
-                                        color: const Color(0xFFFF5000),
-                                        padding: const EdgeInsets.symmetric(
-                                          horizontal: 4,
-                                          vertical: 2,
-                                        ),
-                                        child: Text(
-                                          '-${product.discountPercentage.toStringAsFixed(0)}%',
-                                          style: const TextStyle(
-                                            color: Colors.white,
-                                            fontSize: 10,
-                                            fontWeight: FontWeight.bold,
-                                          ),
+                                  ),
+                                  Positioned(
+                                    bottom: 0,
+                                    left: 0,
+                                    child: Container(
+                                      decoration: const BoxDecoration(
+                                        color: Color(0xFFFF5000),
+                                        borderRadius: BorderRadius.only(
+                                          topRight: Radius.circular(8),
+                                          bottomLeft: Radius.circular(8),
                                         ),
                                       ),
+                                      padding: const EdgeInsets.symmetric(
+                                        horizontal: 6,
+                                        vertical: 2,
+                                      ),
+                                      child: Text(
+                                        '-${product.discountPercentage.toStringAsFixed(0)}%',
+                                        style: const TextStyle(
+                                          color: Colors.white,
+                                          fontSize: 11,
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                      ),
                                     ),
-                                  ],
+                                  ),
+                                ],
+                              ),
+                              const SizedBox(height: 8),
+                              Text(
+                                settings.formatPrice(product.price),
+                                style: const TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                  color: AppColors.primary,
+                                  fontSize: 15,
                                 ),
                               ),
-                              Padding(
-                                padding: const EdgeInsets.all(4.0),
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Text(
-                                      settings.formatPrice(product.price),
-                                      style: const TextStyle(
-                                        fontWeight: FontWeight.bold,
-                                        color: AppColors.primary,
-                                        fontSize: 14,
+                              const SizedBox(height: 4),
+                              Stack(
+                                children: [
+                                  Container(
+                                    height: 14,
+                                    decoration: BoxDecoration(
+                                      color: Colors.grey[200],
+                                      borderRadius: BorderRadius.circular(7),
+                                    ),
+                                  ),
+                                  FractionallySizedBox(
+                                    widthFactor: 0.7, // Mock progress
+                                    child: Container(
+                                      height: 14,
+                                      decoration: BoxDecoration(
+                                        color: const Color(
+                                          0xFFFF5000,
+                                        ).withValues(alpha: 0.6),
+                                        borderRadius: BorderRadius.circular(7),
                                       ),
                                     ),
-                                    Text(
-                                      settings.formatPrice(
-                                        product.originalPrice ?? 0,
-                                      ),
-                                      style: const TextStyle(
-                                        decoration: TextDecoration.lineThrough,
-                                        color: Colors.grey,
-                                        fontSize: 10,
+                                  ),
+                                  const Center(
+                                    child: Text(
+                                      '12 sold', // Mock sold count
+                                      style: TextStyle(
+                                        fontSize: 9,
+                                        color: Colors.black54,
+                                        fontWeight: FontWeight.w500,
                                       ),
                                     ),
-                                    const SizedBox(height: 2),
-                                    LinearProgressIndicator(
-                                      value: 0.8,
-                                      backgroundColor: Colors.grey[200],
-                                      color: const Color(0xFFFF5000),
-                                      minHeight: 3,
-                                      borderRadius: BorderRadius.circular(2),
-                                    ),
-                                  ],
-                                ),
+                                  ),
+                                ],
                               ),
                             ],
                           ),
@@ -317,20 +381,6 @@ class _HomeScreenState extends State<HomeScreen> {
             ),
             const SizedBox(height: 12),
           ],
-        ),
-      ),
-    );
-  }
-
-  Widget _buildTimeBox(String time) {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 2),
-      child: Text(
-        time,
-        style: const TextStyle(
-          color: Colors.white,
-          fontWeight: FontWeight.bold,
-          fontSize: 12,
         ),
       ),
     );
@@ -436,11 +486,11 @@ class _HomeScreenState extends State<HomeScreen> {
 
           // Waterfall Product Grid
           SliverPadding(
-            padding: const EdgeInsets.symmetric(horizontal: 8),
+            padding: const EdgeInsets.symmetric(horizontal: 6),
             sliver: SliverMasonryGrid.count(
               crossAxisCount: 2,
-              mainAxisSpacing: 8,
-              crossAxisSpacing: 8,
+              mainAxisSpacing: 6,
+              crossAxisSpacing: 6,
               childCount: _products.length,
               itemBuilder: (context, index) {
                 final product = _products[index];

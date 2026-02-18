@@ -560,6 +560,30 @@ abstract class AppLocalizations {
   /// **'Buyer Protection'**
   String get buyerProtection;
 
+  /// No description provided for @freeShipping.
+  ///
+  /// In en, this message translates to:
+  /// **'Free Shipping'**
+  String get freeShipping;
+
+  /// No description provided for @enterCouponCode.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter coupon code'**
+  String get enterCouponCode;
+
+  /// No description provided for @viewAvailable.
+  ///
+  /// In en, this message translates to:
+  /// **'View Available'**
+  String get viewAvailable;
+
+  /// No description provided for @almostSoldOut.
+  ///
+  /// In en, this message translates to:
+  /// **'Almost Sold Out'**
+  String get almostSoldOut;
+
   /// No description provided for @priceDrop.
   ///
   /// In en, this message translates to:
@@ -595,12 +619,6 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Shipping Fee'**
   String get shippingFee;
-
-  /// No description provided for @freeShipping.
-  ///
-  /// In en, this message translates to:
-  /// **'Free Shipping'**
-  String get freeShipping;
 
   /// No description provided for @setAsDefault.
   ///
@@ -662,12 +680,6 @@ abstract class AppLocalizations {
   /// **'Place Order'**
   String get placeOrder;
 
-  /// No description provided for @almostSoldOut.
-  ///
-  /// In en, this message translates to:
-  /// **'Almost Sold Out'**
-  String get almostSoldOut;
-
   /// No description provided for @apply.
   ///
   /// In en, this message translates to:
@@ -697,18 +709,6 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Chat'**
   String get chat;
-
-  /// No description provided for @viewAvailable.
-  ///
-  /// In en, this message translates to:
-  /// **'View Available'**
-  String get viewAvailable;
-
-  /// No description provided for @enterCouponCode.
-  ///
-  /// In en, this message translates to:
-  /// **'Enter coupon code'**
-  String get enterCouponCode;
 
   /// No description provided for @orderPlaced.
   ///
@@ -1105,6 +1105,18 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'You saved {amount}'**
   String youSaved(String amount);
+
+  /// No description provided for @requiredField.
+  ///
+  /// In en, this message translates to:
+  /// **'Required'**
+  String get requiredField;
+
+  /// No description provided for @errorAddingToCart.
+  ///
+  /// In en, this message translates to:
+  /// **'Error adding to cart: {error}'**
+  String errorAddingToCart(String error);
 }
 
 class _AppLocalizationsDelegate

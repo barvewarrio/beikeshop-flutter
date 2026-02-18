@@ -217,10 +217,14 @@ class ProfileScreen extends StatelessWidget {
                             children: [
                               Text(
                                 l10n.myOrders,
-                                style: AppTextStyles.subheading,
+                                style: const TextStyle(
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.bold,
+                                  color: AppColors.textPrimary,
+                                ),
                               ),
-                              TextButton(
-                                onPressed: () {
+                              GestureDetector(
+                                onTap: () {
                                   Navigator.push(
                                     context,
                                     MaterialPageRoute(
@@ -231,49 +235,68 @@ class ProfileScreen extends StatelessWidget {
                                     ),
                                   );
                                 },
-                                child: Text(
-                                  '${l10n.viewAll} >',
-                                  style: const TextStyle(
-                                    color: AppColors.textSecondary,
-                                    fontSize: 12,
-                                  ),
+                                child: Row(
+                                  children: [
+                                    Text(
+                                      l10n.viewAll,
+                                      style: const TextStyle(
+                                        color: AppColors.textSecondary,
+                                        fontSize: 13,
+                                      ),
+                                    ),
+                                    const Icon(
+                                      Icons.keyboard_arrow_right,
+                                      size: 16,
+                                      color: AppColors.textSecondary,
+                                    ),
+                                  ],
                                 ),
                               ),
                             ],
                           ),
-                          const SizedBox(height: 16),
+                          const SizedBox(height: 20),
                           Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceAround,
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
-                              _OrderStatusItem(
-                                icon: FontAwesomeIcons.creditCard,
-                                label: l10n.unpaid,
-                                badgeCount: unpaidCount,
-                                onTap: () => _navigateToOrderList(context, 1),
+                              Expanded(
+                                child: _OrderStatusItem(
+                                  icon: FontAwesomeIcons.wallet,
+                                  label: l10n.unpaid,
+                                  badgeCount: unpaidCount,
+                                  onTap: () => _navigateToOrderList(context, 1),
+                                ),
                               ),
-                              _OrderStatusItem(
-                                icon: FontAwesomeIcons.boxOpen,
-                                label: l10n.processing,
-                                badgeCount: processingCount,
-                                onTap: () => _navigateToOrderList(context, 2),
+                              Expanded(
+                                child: _OrderStatusItem(
+                                  icon: FontAwesomeIcons.box,
+                                  label: l10n.processing,
+                                  badgeCount: processingCount,
+                                  onTap: () => _navigateToOrderList(context, 2),
+                                ),
                               ),
-                              _OrderStatusItem(
-                                icon: FontAwesomeIcons.truck,
-                                label: l10n.shipped,
-                                badgeCount: shippedCount,
-                                onTap: () => _navigateToOrderList(context, 3),
+                              Expanded(
+                                child: _OrderStatusItem(
+                                  icon: FontAwesomeIcons.truckFast,
+                                  label: l10n.shipped,
+                                  badgeCount: shippedCount,
+                                  onTap: () => _navigateToOrderList(context, 3),
+                                ),
                               ),
-                              _OrderStatusItem(
-                                icon: FontAwesomeIcons.star,
-                                label: l10n.review,
-                                badgeCount: reviewCount,
-                                onTap: () => _navigateToOrderList(context, 4),
+                              Expanded(
+                                child: _OrderStatusItem(
+                                  icon: FontAwesomeIcons.penToSquare,
+                                  label: l10n.review,
+                                  badgeCount: reviewCount,
+                                  onTap: () => _navigateToOrderList(context, 4),
+                                ),
                               ),
-                              _OrderStatusItem(
-                                icon: FontAwesomeIcons.rotateLeft,
-                                label: l10n.returns,
-                                badgeCount: returnsCount,
-                                onTap: () => _navigateToOrderList(context, 5),
+                              Expanded(
+                                child: _OrderStatusItem(
+                                  icon: FontAwesomeIcons.rotateLeft,
+                                  label: l10n.returns,
+                                  badgeCount: returnsCount,
+                                  onTap: () => _navigateToOrderList(context, 5),
+                                ),
                               ),
                             ],
                           ),
@@ -303,30 +326,37 @@ class ProfileScreen extends StatelessWidget {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text(l10n.myServices, style: AppTextStyles.subheading),
-                      const SizedBox(height: 16),
+                      Text(
+                        l10n.myServices,
+                        style: const TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold,
+                          color: AppColors.textPrimary,
+                        ),
+                      ),
+                      const SizedBox(height: 20),
                       GridView.count(
                         shrinkWrap: true,
                         physics: const NeverScrollableScrollPhysics(),
                         crossAxisCount: 4,
-                        mainAxisSpacing: 16,
-                        crossAxisSpacing: 16,
-                        childAspectRatio: 1.0,
+                        mainAxisSpacing: 24,
+                        crossAxisSpacing: 8,
+                        childAspectRatio: 0.9,
                         children: [
                           _ServiceItem(
-                            icon: Icons.message_outlined,
+                            icon: FontAwesomeIcons.envelope,
                             label: l10n.messages,
                             color: Colors.blue,
                             onTap: () {},
                           ),
                           _ServiceItem(
-                            icon: Icons.confirmation_number_outlined,
+                            icon: FontAwesomeIcons.ticket,
                             label: l10n.coupons,
                             color: Colors.orange,
                             onTap: () {},
                           ),
                           _ServiceItem(
-                            icon: Icons.favorite_border,
+                            icon: FontAwesomeIcons.heart,
                             label: l10n.wishlist,
                             color: Colors.pink,
                             onTap: () {
@@ -339,13 +369,13 @@ class ProfileScreen extends StatelessWidget {
                             },
                           ),
                           _ServiceItem(
-                            icon: Icons.account_balance_wallet_outlined,
+                            icon: FontAwesomeIcons.wallet,
                             label: l10n.credit,
                             color: Colors.green,
                             onTap: () {},
                           ),
                           _ServiceItem(
-                            icon: Icons.location_on_outlined,
+                            icon: FontAwesomeIcons.locationDot,
                             label: l10n.address,
                             color: Colors.red,
                             onTap: () {
@@ -359,19 +389,19 @@ class ProfileScreen extends StatelessWidget {
                             },
                           ),
                           _ServiceItem(
-                            icon: Icons.history,
+                            icon: FontAwesomeIcons.clockRotateLeft,
                             label: l10n.history,
                             color: Colors.purple,
                             onTap: () {},
                           ),
                           _ServiceItem(
-                            icon: Icons.help_outline,
+                            icon: FontAwesomeIcons.headset,
                             label: l10n.support,
                             color: Colors.teal,
                             onTap: () {},
                           ),
                           _ServiceItem(
-                            icon: Icons.settings_outlined,
+                            icon: FontAwesomeIcons.gear,
                             label: l10n.settings,
                             color: Colors.grey,
                             onTap: () {
@@ -425,47 +455,64 @@ class _OrderStatusItem extends StatelessWidget {
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: onTap,
+      behavior: HitTestBehavior.opaque,
       child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Stack(
-            clipBehavior: Clip.none,
-            children: [
-              Icon(icon, size: 24, color: AppColors.textPrimary),
-              if (badgeCount > 0)
-                Positioned(
-                  top: -6,
-                  right: -6,
-                  child: Container(
-                    padding: const EdgeInsets.all(4),
-                    decoration: const BoxDecoration(
-                      color: AppColors.primary,
-                      shape: BoxShape.circle,
-                    ),
-                    constraints: const BoxConstraints(
-                      minWidth: 16,
-                      minHeight: 16,
-                    ),
-                    child: Center(
-                      child: Text(
-                        badgeCount > 99 ? '99+' : badgeCount.toString(),
-                        style: const TextStyle(
-                          color: Colors.white,
-                          fontSize: 10,
-                          fontWeight: FontWeight.bold,
+          SizedBox(
+            height: 32,
+            width: 32,
+            child: Stack(
+              clipBehavior: Clip.none,
+              alignment: Alignment.center,
+              children: [
+                Icon(icon, size: 24, color: AppColors.textPrimary),
+                if (badgeCount > 0)
+                  Positioned(
+                    top: -6,
+                    right: -6,
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 4,
+                        vertical: 2,
+                      ),
+                      decoration: BoxDecoration(
+                        color: AppColors.primary,
+                        borderRadius: BorderRadius.circular(10),
+                        border: Border.all(color: Colors.white, width: 1.5),
+                      ),
+                      constraints: const BoxConstraints(
+                        minWidth: 18,
+                        minHeight: 18,
+                      ),
+                      child: Center(
+                        child: Text(
+                          badgeCount > 99 ? '99+' : badgeCount.toString(),
+                          style: const TextStyle(
+                            color: Colors.white,
+                            fontSize: 10,
+                            fontWeight: FontWeight.bold,
+                            height: 1,
+                          ),
+                          textAlign: TextAlign.center,
                         ),
                       ),
                     ),
                   ),
-                ),
-            ],
+              ],
+            ),
           ),
           const SizedBox(height: 8),
           Text(
             label,
             style: const TextStyle(
-              fontSize: 11,
+              fontSize: 12,
               color: AppColors.textSecondary,
+              height: 1.2,
             ),
+            textAlign: TextAlign.center,
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
           ),
         ],
       ),
@@ -490,21 +537,21 @@ class _ServiceItem extends StatelessWidget {
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: onTap,
+      behavior: HitTestBehavior.opaque,
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Container(
-            padding: const EdgeInsets.all(12),
-            decoration: BoxDecoration(
-              color: color.withValues(alpha: 0.1),
-              shape: BoxShape.circle,
-            ),
-            child: Icon(icon, size: 24, color: color),
-          ),
+          // Temu style often uses simple icons without heavy background
+          // or icons with very subtle background
+          Icon(icon, size: 28, color: color),
           const SizedBox(height: 8),
           Text(
             label,
-            style: const TextStyle(fontSize: 12, color: AppColors.textPrimary),
+            style: const TextStyle(
+              fontSize: 12,
+              color: AppColors.textPrimary,
+              height: 1.2,
+            ),
             textAlign: TextAlign.center,
             maxLines: 1,
             overflow: TextOverflow.ellipsis,

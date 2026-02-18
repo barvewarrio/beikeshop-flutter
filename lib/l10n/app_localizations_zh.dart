@@ -246,6 +246,18 @@ class AppLocalizationsZh extends AppLocalizations {
   String get buyerProtection => '买家保护';
 
   @override
+  String get freeShipping => '免运费';
+
+  @override
+  String get enterCouponCode => '请输入优惠券码';
+
+  @override
+  String get viewAvailable => '查看可用优惠券';
+
+  @override
+  String get almostSoldOut => '库存紧张';
+
+  @override
   String get priceDrop => '降价提醒';
 
   @override
@@ -262,9 +274,6 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get shippingFee => '运费';
-
-  @override
-  String get freeShipping => '免运费';
 
   @override
   String get setAsDefault => '设为默认地址';
@@ -297,9 +306,6 @@ class AppLocalizationsZh extends AppLocalizations {
   String get placeOrder => '提交订单';
 
   @override
-  String get almostSoldOut => '库存紧张';
-
-  @override
   String get apply => '使用';
 
   @override
@@ -313,12 +319,6 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get chat => '客服';
-
-  @override
-  String get viewAvailable => '查看可用优惠券';
-
-  @override
-  String get enterCouponCode => '请输入优惠券码';
 
   @override
   String get orderPlaced => '订单已提交';
@@ -347,10 +347,10 @@ class AppLocalizationsZh extends AppLocalizations {
   String get cancelOrder => '取消订单';
 
   @override
-  String get discretePackaging => '保密发货';
+  String get discretePackaging => '私密发货';
 
   @override
-  String get discretePackagingNote => '所有订单均使用无品牌标识的包装箱发货，保护您的隐私。';
+  String get discretePackagingNote => '所有包裹均采用私密包装，不包含任何敏感信息。';
 
   @override
   String get paypal => 'PayPal';
@@ -540,5 +540,13 @@ class AppLocalizationsZh extends AppLocalizations {
   @override
   String youSaved(String amount) {
     return '已省 $amount';
+  }
+
+  @override
+  String get requiredField => '必填';
+
+  @override
+  String errorAddingToCart(String error) {
+    return '加入购物车失败: $error';
   }
 }

@@ -142,16 +142,17 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
   }
 
   Widget _buildTrustBadge(IconData icon, String text) {
-    return Column(
+    return Row(
+      mainAxisSize: MainAxisSize.min,
       children: [
-        Icon(icon, color: const Color(0xFF1B8D1F), size: 24),
-        const SizedBox(height: 4),
+        Icon(icon, color: const Color(0xFF999999), size: 16),
+        const SizedBox(width: 4),
         Text(
           text,
           style: const TextStyle(
-            fontSize: 10,
-            color: Color(0xFF1B8D1F),
-            fontWeight: FontWeight.w500,
+            fontSize: 12,
+            color: Color(0xFF666666),
+            fontWeight: FontWeight.normal,
           ),
           textAlign: TextAlign.center,
         ),
@@ -304,9 +305,26 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                         textBaseline: TextBaseline.alphabetic,
                         children: [
                           Text(
-                            settings.formatPrice(_product!.price),
+                            settings.currencyCode,
                             style: const TextStyle(
-                              fontSize: 24,
+                              fontSize: 16,
+                              fontWeight: FontWeight.bold,
+                              color: AppColors.primary,
+                            ),
+                          ),
+                          const SizedBox(width: 2),
+                          Text(
+                            _product!.price.toStringAsFixed(2).split('.')[0],
+                            style: const TextStyle(
+                              fontSize: 28,
+                              fontWeight: FontWeight.bold,
+                              color: AppColors.primary,
+                            ),
+                          ),
+                          Text(
+                            '.${_product!.price.toStringAsFixed(2).split('.')[1]}',
+                            style: const TextStyle(
+                              fontSize: 16,
                               fontWeight: FontWeight.bold,
                               color: AppColors.primary,
                             ),
@@ -329,7 +347,7 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                                 vertical: 2,
                               ),
                               decoration: BoxDecoration(
-                                color: AppColors.primary.withValues(alpha: 0.1),
+                                color: const Color(0xFFFFF0E0),
                                 borderRadius: BorderRadius.circular(4),
                               ),
                               child: Text(
@@ -402,28 +420,38 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                               vertical: 4,
                             ),
                             decoration: BoxDecoration(
-                              color: Colors.grey[100],
+                              color: const Color(0xFFF5F5F5),
                               borderRadius: BorderRadius.circular(4),
                             ),
                             child: Text(
                               l10n.soldCount(_product!.sales.toString()),
                               style: const TextStyle(
                                 fontSize: 12,
-                                color: AppColors.textSecondary,
+                                color: Color(0xFF666666),
                               ),
                             ),
                           ),
-                          const SizedBox(width: 12),
-                          const Icon(Icons.star, size: 16, color: Colors.amber),
-                          const SizedBox(width: 4),
-                          Text(
-                            _product!.rating.toString(),
-                            style: const TextStyle(
-                              fontSize: 12,
-                              color: AppColors.textPrimary,
-                            ),
+                          const SizedBox(width: 8),
+                          Row(
+                            children: [
+                              const Icon(
+                                Icons.star,
+                                size: 14,
+                                color: Colors.black,
+                              ),
+                              const SizedBox(width: 2),
+                              Text(
+                                _product!.rating.toString(),
+                                style: const TextStyle(
+                                  fontSize: 12,
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.black,
+                                ),
+                              ),
+                            ],
                           ),
-                          // Low Stock Warning (Mock logic: ID ends with odd number)
+                          const SizedBox(width: 8),
+                          // Low Stock Warning
                           if (int.tryParse(
                                     _product!.id.substring(
                                       _product!.id.length - 1,
@@ -438,20 +466,19 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                                       2 !=
                                   0)
                             Container(
-                              margin: const EdgeInsets.only(left: 12),
                               padding: const EdgeInsets.symmetric(
-                                horizontal: 8,
+                                horizontal: 6,
                                 vertical: 2,
                               ),
                               decoration: BoxDecoration(
-                                color: AppColors.primary.withValues(alpha: 0.1),
+                                color: const Color(0xFFFFF0E0),
                                 border: Border.all(color: AppColors.primary),
                                 borderRadius: BorderRadius.circular(4),
                               ),
                               child: Text(
                                 l10n.lowStock(5), // Mock low stock count
                                 style: const TextStyle(
-                                  fontSize: 12,
+                                  fontSize: 10,
                                   color: AppColors.primary,
                                   fontWeight: FontWeight.bold,
                                 ),
@@ -466,73 +493,96 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                       Container(
                         padding: const EdgeInsets.all(12),
                         decoration: BoxDecoration(
-                          color: const Color(0xFFF9F9F9),
+                          color: const Color(0xFFFAFAFA),
                           borderRadius: BorderRadius.circular(8),
                           border: Border.all(color: const Color(0xFFEEEEEE)),
                         ),
                         child: Column(
                           children: [
                             Row(
+                              crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 const Icon(
                                   Icons.local_shipping_outlined,
                                   size: 20,
-                                  color: AppColors.textSecondary,
+                                  color: Colors.black,
                                 ),
                                 const SizedBox(width: 8),
                                 Expanded(
-                                  child: Text(
-                                    l10n.freeShipping,
-                                    style: const TextStyle(
-                                      fontSize: 14,
-                                      fontWeight: FontWeight.w500,
-                                    ),
+                                  child: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      Text(
+                                        l10n.freeShipping,
+                                        style: const TextStyle(
+                                          fontSize: 14,
+                                          fontWeight: FontWeight.bold,
+                                          color: Colors.black,
+                                        ),
+                                      ),
+                                      const SizedBox(height: 2),
+                                      Text(
+                                        l10n.deliveryBy('Oct 25 - Oct 28'),
+                                        style: const TextStyle(
+                                          fontSize: 12,
+                                          color: Color(0xFF666666),
+                                        ),
+                                      ),
+                                    ],
                                   ),
                                 ),
-                              ],
-                            ),
-                            const SizedBox(height: 8),
-                            Row(
-                              children: [
                                 const Icon(
-                                  Icons.calendar_today_outlined,
-                                  size: 20,
-                                  color: AppColors.textSecondary,
-                                ),
-                                const SizedBox(width: 8),
-                                Expanded(
-                                  child: Text(
-                                    l10n.deliveryBy(
-                                      'Oct 25 - Oct 28',
-                                    ), // Mock date
-                                    style: const TextStyle(
-                                      fontSize: 14,
-                                      color: AppColors.textSecondary,
-                                    ),
-                                  ),
+                                  Icons.chevron_right,
+                                  size: 16,
+                                  color: Color(0xFFCCCCCC),
                                 ),
                               ],
                             ),
                             const Padding(
-                              padding: EdgeInsets.symmetric(vertical: 8),
-                              child: Divider(height: 1),
+                              padding: EdgeInsets.symmetric(vertical: 10),
+                              child: Divider(
+                                height: 1,
+                                color: Color(0xFFEEEEEE),
+                              ),
                             ),
                             Row(
+                              crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 const Icon(
                                   Icons.verified_user_outlined,
                                   size: 20,
-                                  color: AppColors.textSecondary,
+                                  color: Colors.black,
                                 ),
                                 const SizedBox(width: 8),
                                 Expanded(
-                                  child: Text(
-                                    l10n.freeReturns,
-                                    style: const TextStyle(
-                                      fontSize: 14,
-                                      color: AppColors.textSecondary,
-                                    ),
+                                  child: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      Text(
+                                        l10n.freeReturns,
+                                        style: const TextStyle(
+                                          fontSize: 14,
+                                          fontWeight: FontWeight.bold,
+                                          color: Colors.black,
+                                        ),
+                                      ),
+                                      const SizedBox(height: 2),
+                                      const Text(
+                                        'Within 90 days', // Hardcoded for now, could be localized
+                                        style: TextStyle(
+                                          fontSize: 12,
+                                          color: Color(0xFF666666),
+                                        ),
+                                      ),
+                                    ],
                                   ),
+                                ),
+                                const Icon(
+                                  Icons.chevron_right,
+                                  size: 16,
+                                  color: Color(0xFFCCCCCC),
                                 ),
                               ],
                             ),
@@ -542,25 +592,33 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
 
                       const SizedBox(height: 16),
                       // Trust Badges
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceAround,
-                        children: [
-                          _buildTrustBadge(
-                            Icons.lock_outline,
-                            l10n.securePayment,
+                      Container(
+                        padding: const EdgeInsets.symmetric(vertical: 12),
+                        decoration: const BoxDecoration(
+                          border: Border(
+                            bottom: BorderSide(color: Color(0xFFEEEEEE)),
                           ),
-                          _buildTrustBadge(
-                            Icons.verified_user_outlined,
-                            l10n.buyerProtection,
-                          ),
-                          _buildTrustBadge(
-                            Icons.local_shipping_outlined,
-                            l10n.deliveryGuarantee,
-                          ),
-                        ],
+                        ),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceAround,
+                          children: [
+                            _buildTrustBadge(
+                              Icons.check_circle_outline,
+                              l10n.securePayment,
+                            ),
+                            _buildTrustBadge(
+                              Icons.check_circle_outline,
+                              l10n.buyerProtection,
+                            ),
+                            _buildTrustBadge(
+                              Icons.check_circle_outline,
+                              l10n.deliveryGuarantee,
+                            ),
+                          ],
+                        ),
                       ),
 
-                      const Divider(height: 32),
+                      const SizedBox(height: 16),
 
                       // Description Title
                       Text(
@@ -568,6 +626,7 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                         style: const TextStyle(
                           fontSize: 16,
                           fontWeight: FontWeight.bold,
+                          color: Colors.black,
                         ),
                       ),
                       const SizedBox(height: 8),
@@ -576,38 +635,54 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                         _product!.description ?? l10n.noResults, // Fallback
                         style: const TextStyle(
                           fontSize: 14,
-                          color: AppColors.textSecondary,
+                          color: Color(0xFF444444),
                           height: 1.5,
                         ),
                       ),
 
-                      const Divider(height: 32),
+                      const Divider(height: 32, color: Color(0xFFEEEEEE)),
 
                       // Reviews Section
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Text(
-                            l10n.reviewsTitle(_reviews.length),
-                            style: const TextStyle(
-                              fontSize: 16,
-                              fontWeight: FontWeight.bold,
+                      InkWell(
+                        onTap: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => ProductReviewsScreen(
+                                productId: widget.productId,
+                              ),
                             ),
-                          ),
-                          TextButton(
-                            onPressed: () {
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (context) => ProductReviewsScreen(
-                                    productId: widget.productId,
+                          );
+                        },
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Text(
+                              l10n.reviewsTitle(_reviews.length),
+                              style: const TextStyle(
+                                fontSize: 16,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.black,
+                              ),
+                            ),
+                            Row(
+                              children: [
+                                Text(
+                                  l10n.seeAll,
+                                  style: const TextStyle(
+                                    fontSize: 13,
+                                    color: Color(0xFF666666),
                                   ),
                                 ),
-                              );
-                            },
-                            child: Text(l10n.seeAll),
-                          ),
-                        ],
+                                const Icon(
+                                  Icons.chevron_right,
+                                  size: 16,
+                                  color: Color(0xFFCCCCCC),
+                                ),
+                              ],
+                            ),
+                          ],
+                        ),
                       ),
                       if (_reviews.isEmpty)
                         Padding(
@@ -618,6 +693,7 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                         ListView.separated(
                           shrinkWrap: true,
                           physics: const NeverScrollableScrollPhysics(),
+                          padding: const EdgeInsets.only(top: 12),
                           itemCount: _reviews.take(3).length,
                           separatorBuilder: (_, __) =>
                               const SizedBox(height: 16),
@@ -629,11 +705,11 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                                 Row(
                                   children: [
                                     CircleAvatar(
-                                      radius: 16,
+                                      radius: 12,
                                       backgroundColor: Colors.grey[200],
                                       child: const Icon(
                                         Icons.person,
-                                        size: 20,
+                                        size: 16,
                                         color: Colors.grey,
                                       ),
                                     ),
@@ -641,7 +717,8 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                                     Text(
                                       review.customerName,
                                       style: const TextStyle(
-                                        fontWeight: FontWeight.bold,
+                                        fontSize: 13,
+                                        color: Color(0xFF666666),
                                       ),
                                     ),
                                     const Spacer(),
@@ -651,15 +728,23 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                                           i < review.rating
                                               ? Icons.star
                                               : Icons.star_border,
-                                          size: 14,
-                                          color: Colors.amber,
+                                          size: 12,
+                                          color: Colors.black,
                                         );
                                       }),
                                     ),
                                   ],
                                 ),
-                                const SizedBox(height: 8),
-                                Text(review.comment ?? ''),
+                                const SizedBox(height: 6),
+                                Text(
+                                  review.comment ?? '',
+                                  style: const TextStyle(
+                                    fontSize: 13,
+                                    color: Colors.black,
+                                  ),
+                                  maxLines: 2,
+                                  overflow: TextOverflow.ellipsis,
+                                ),
                                 if (review.images.isNotEmpty)
                                   Padding(
                                     padding: const EdgeInsets.only(top: 8),

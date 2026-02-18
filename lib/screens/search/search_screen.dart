@@ -185,56 +185,124 @@ class _SearchScreenState extends State<SearchScreen> {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Text(l10n.recentSearches, style: AppTextStyles.subheading),
-              IconButton(
-                icon: const Icon(
+              Text(
+                l10n.recentSearches,
+                style: const TextStyle(
+                  fontWeight: FontWeight.bold,
+                  fontSize: 14,
+                ),
+              ),
+              GestureDetector(
+                onTap: _clearHistory,
+                child: const Icon(
                   Icons.delete_outline,
                   size: 18,
                   color: AppColors.textHint,
                 ),
-                onPressed: _clearHistory,
-                tooltip: l10n.clearHistory,
               ),
             ],
           ),
-          const SizedBox(height: 8),
+          const SizedBox(height: 12),
           Wrap(
             spacing: 8,
             runSpacing: 8,
             children: _recentSearches.map((query) {
-              return ActionChip(
-                label: Text(query),
-                backgroundColor: Colors.white,
-                elevation: 1,
-                onPressed: () {
+              return GestureDetector(
+                onTap: () {
                   _searchController.text = query;
                   _performSearch(query);
                 },
+                child: Container(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 12,
+                    vertical: 6,
+                  ),
+                  decoration: BoxDecoration(
+                    color: Colors.grey[100],
+                    borderRadius: BorderRadius.circular(16),
+                  ),
+                  child: Text(
+                    query,
+                    style: const TextStyle(
+                      color: AppColors.textPrimary,
+                      fontSize: 12,
+                    ),
+                  ),
+                ),
               );
             }).toList(),
           ),
           const SizedBox(height: 24),
         ],
-        Text(l10n.trending, style: AppTextStyles.subheading),
-        const SizedBox(height: 8),
-        Wrap(
-          spacing: 8,
-          runSpacing: 8,
-          children: _trending.map((query) {
-            return ActionChip(
-              label: Text(
-                query,
-                style: const TextStyle(color: AppColors.primary),
-              ),
-              backgroundColor: AppColors.primary.withValues(alpha: 0.1),
-              elevation: 0,
-              side: BorderSide.none,
-              onPressed: () {
+        Text(
+          l10n.trending,
+          style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 14),
+        ),
+        const SizedBox(height: 12),
+        // Trending List with Rankings
+        ListView.builder(
+          shrinkWrap: true,
+          physics: const NeverScrollableScrollPhysics(),
+          itemCount: _trending.length,
+          itemBuilder: (context, index) {
+            final query = _trending[index];
+            final rank = index + 1;
+            Color rankColor;
+            if (rank == 1) {
+              rankColor = const Color(0xFFFF0000); // Red
+            } else if (rank == 2) {
+              rankColor = const Color(0xFFFF5000); // Orange
+            } else if (rank == 3) {
+              rankColor = const Color(0xFFFFA500); // Yellow/Orange
+            } else {
+              rankColor = Colors.grey;
+            }
+
+            return InkWell(
+              onTap: () {
                 _searchController.text = query;
                 _performSearch(query);
               },
+              child: Padding(
+                padding: const EdgeInsets.symmetric(vertical: 12),
+                child: Row(
+                  children: [
+                    Container(
+                      width: 20,
+                      alignment: Alignment.center,
+                      child: Text(
+                        '$rank',
+                        style: TextStyle(
+                          color: rankColor,
+                          fontWeight: FontWeight.bold,
+                          fontSize: 14,
+                          fontStyle: rank <= 3
+                              ? FontStyle.italic
+                              : FontStyle.normal,
+                        ),
+                      ),
+                    ),
+                    const SizedBox(width: 12),
+                    Expanded(
+                      child: Text(
+                        query,
+                        style: const TextStyle(
+                          color: AppColors.textPrimary,
+                          fontSize: 14,
+                        ),
+                      ),
+                    ),
+                    if (rank <= 3)
+                      const Icon(
+                        Icons.local_fire_department,
+                        color: Colors.red,
+                        size: 16,
+                      ),
+                  ],
+                ),
+              ),
             );
-          }).toList(),
+          },
         ),
       ],
     );

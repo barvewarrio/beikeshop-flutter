@@ -246,8 +246,12 @@ class ProductCard extends StatelessWidget {
                           if (context.mounted) {
                             ScaffoldMessenger.of(context).showSnackBar(
                               SnackBar(
-                                content: Text('${product.title} added to cart'),
+                                content: Text(
+                                  l10n?.addedToCart ?? 'Added to Cart',
+                                ),
                                 duration: const Duration(seconds: 2),
+                                behavior: SnackBarBehavior.floating,
+                                backgroundColor: Colors.green,
                               ),
                             );
                           }
@@ -255,8 +259,12 @@ class ProductCard extends StatelessWidget {
                           if (context.mounted) {
                             ScaffoldMessenger.of(context).showSnackBar(
                               SnackBar(
-                                content: Text('Error adding to cart: $e'),
+                                content: Text(
+                                  l10n?.errorAddingToCart(e.toString()) ??
+                                      'Error: $e',
+                                ),
                                 backgroundColor: Colors.red,
+                                behavior: SnackBarBehavior.floating,
                               ),
                             );
                           }
@@ -268,13 +276,23 @@ class ProductCard extends StatelessWidget {
                         side: const BorderSide(color: AppColors.primary),
                         padding: EdgeInsets.zero,
                         elevation: 0,
-                      ),
-                      child: Text(
-                        l10n?.cart ?? 'Add to Cart',
-                        style: const TextStyle(
-                          fontSize: 12,
-                          fontWeight: FontWeight.bold,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(16),
                         ),
+                      ),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          const Icon(Icons.add_shopping_cart, size: 16),
+                          const SizedBox(width: 4),
+                          Text(
+                            l10n?.addToCart ?? 'Add',
+                            style: const TextStyle(
+                              fontSize: 12,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ],
                       ),
                     ),
                   ),

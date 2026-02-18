@@ -98,7 +98,6 @@
   "defaultTag": "默认",
   "change": "修改",
   "placeOrder": "提交订单",
-  "priceDrop": "降价提醒",
   "almostSoldOut": "库存紧张",
   "apply": "使用",
   "remove": "移除",
@@ -115,7 +114,6 @@
   "shipping": "运费",
   "creditCard": "信用卡",
   "cancelOrder": "取消订单",
-  "freeShipping": "免运费",
   "discretePackaging": "私密发货",
   "discretePackagingNote": "所有包裹均采用私密包装，不包含任何敏感信息。",
   "paypal": "PayPal",
@@ -138,8 +136,6 @@
   "ageVerificationContent": "本应用包含成人内容。您必须年满18岁才能访问。",
   "iAmOver18": "我已满18岁",
   "exitApp": "离开",
-  "discretePackaging": "保密发货",
-  "discretePackagingNote": "所有订单均使用无品牌标识的包装箱发货，保护您的隐私。",
   "copy": "复制",
   "requestRefund": "申请退款",
   "rmaReason": "退款原因",
@@ -184,7 +180,9 @@
   "freeReturns": "90天无理由退货",
   "lowStock": "仅剩 {count} 件库存！",
   "soldCount": "已售 {count}",
-  "youSaved": "已省 {amount}"
+  "youSaved": "已省 {amount}",
+  "requiredField": "必填",
+  "errorAddingToCart": "加入购物车失败: {error}"
 }
 
 

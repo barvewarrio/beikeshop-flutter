@@ -98,6 +98,10 @@
   "city": "City",
   "zipCode": "Zip Code",
   "buyerProtection": "Buyer Protection",
+  "freeShipping": "Free Shipping",
+  "enterCouponCode": "Enter coupon code",
+  "viewAvailable": "View available",
+  "almostSoldOut": "Almost Sold Out",
   "priceDrop": "Price Drop",
   "deliveryGuarantee": "Delivery Guarantee",
   "securePayment": "Secure Payment",
@@ -254,6 +258,13 @@
   "@youSaved": {
     "placeholders": {
       "amount": { "type": "String" }
+    }
+  },
+  "requiredField": "Required",
+  "errorAddingToCart": "Error adding to cart: {error}",
+  "@errorAddingToCart": {
+    "placeholders": {
+      "error": { "type": "String" }
     }
   }
 }

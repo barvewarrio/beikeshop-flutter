@@ -247,6 +247,18 @@ class AppLocalizationsEn extends AppLocalizations {
   String get buyerProtection => 'Buyer Protection';
 
   @override
+  String get freeShipping => 'Free Shipping';
+
+  @override
+  String get enterCouponCode => 'Enter coupon code';
+
+  @override
+  String get viewAvailable => 'View Available';
+
+  @override
+  String get almostSoldOut => 'Almost Sold Out';
+
+  @override
   String get priceDrop => 'Price Drop';
 
   @override
@@ -263,9 +275,6 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get shippingFee => 'Shipping Fee';
-
-  @override
-  String get freeShipping => 'Free Shipping';
 
   @override
   String get setAsDefault => 'Set as Default Address';
@@ -298,9 +307,6 @@ class AppLocalizationsEn extends AppLocalizations {
   String get placeOrder => 'Place Order';
 
   @override
-  String get almostSoldOut => 'Almost Sold Out';
-
-  @override
   String get apply => 'Apply';
 
   @override
@@ -314,12 +320,6 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get chat => 'Chat';
-
-  @override
-  String get viewAvailable => 'View Available';
-
-  @override
-  String get enterCouponCode => 'Enter coupon code';
 
   @override
   String get orderPlaced => 'Order Placed!';
@@ -544,5 +544,13 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String youSaved(String amount) {
     return 'You saved $amount';
+  }
+
+  @override
+  String get requiredField => 'Required';
+
+  @override
+  String errorAddingToCart(String error) {
+    return 'Error adding to cart: $error';
   }
 }

@@ -144,7 +144,7 @@ class _CategoryScreenState extends State<CategoryScreen> {
                   },
                   child: Container(
                     height: 50,
-                    color: isSelected ? Colors.white : Colors.grey[100],
+                    color: isSelected ? Colors.white : const Color(0xFFF5F5F5),
                     child: Stack(
                       children: [
                         if (isSelected)
@@ -154,13 +154,7 @@ class _CategoryScreenState extends State<CategoryScreen> {
                             bottom: 0,
                             child: Container(
                               width: 4,
-                              decoration: const BoxDecoration(
-                                color: AppColors.primary,
-                                borderRadius: BorderRadius.only(
-                                  topRight: Radius.circular(4),
-                                  bottomRight: Radius.circular(4),
-                                ),
-                              ),
+                              color: AppColors.primary,
                             ),
                           ),
                         Center(
@@ -171,7 +165,7 @@ class _CategoryScreenState extends State<CategoryScreen> {
                               style: TextStyle(
                                 color: isSelected
                                     ? AppColors.primary
-                                    : AppColors.textPrimary,
+                                    : const Color(0xFF555555),
                                 fontWeight: isSelected
                                     ? FontWeight.bold
                                     : FontWeight.normal,
@@ -248,8 +242,8 @@ class _CategoryScreenState extends State<CategoryScreen> {
                       gridDelegate:
                           const SliverGridDelegateWithFixedCrossAxisCount(
                             crossAxisCount: 3,
-                            mainAxisSpacing: 12,
-                            crossAxisSpacing: 12,
+                            mainAxisSpacing: 8,
+                            crossAxisSpacing: 8,
                             childAspectRatio: 0.8,
                           ),
                       delegate: SliverChildBuilderDelegate((context, index) {
@@ -263,7 +257,7 @@ class _CategoryScreenState extends State<CategoryScreen> {
                                 child: Container(
                                   decoration: BoxDecoration(
                                     borderRadius: BorderRadius.circular(8),
-                                    color: Colors.grey[100],
+                                    color: const Color(0xFFF5F5F5),
                                   ),
                                   child: ClipRRect(
                                     borderRadius: BorderRadius.circular(8),
@@ -315,8 +309,8 @@ class _CategoryScreenState extends State<CategoryScreen> {
                     // Product Grid (Waterfall)
                     SliverMasonryGrid.count(
                       crossAxisCount: 2,
-                      mainAxisSpacing: 8,
-                      crossAxisSpacing: 8,
+                      mainAxisSpacing: 6,
+                      crossAxisSpacing: 6,
                       childCount: _products.length,
                       itemBuilder: (context, index) {
                         return ProductCard(
