@@ -662,6 +662,30 @@ abstract class AppLocalizations {
   /// **'Place Order'**
   String get placeOrder;
 
+  /// No description provided for @almostSoldOut.
+  ///
+  /// In en, this message translates to:
+  /// **'Almost Sold Out'**
+  String get almostSoldOut;
+
+  /// No description provided for @apply.
+  ///
+  /// In en, this message translates to:
+  /// **'Apply'**
+  String get apply;
+
+  /// No description provided for @remove.
+  ///
+  /// In en, this message translates to:
+  /// **'Remove'**
+  String get remove;
+
+  /// No description provided for @discount.
+  ///
+  /// In en, this message translates to:
+  /// **'Discount'**
+  String get discount;
+
   /// No description provided for @store.
   ///
   /// In en, this message translates to:

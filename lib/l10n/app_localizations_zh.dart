@@ -297,6 +297,18 @@ class AppLocalizationsZh extends AppLocalizations {
   String get placeOrder => '提交订单';
 
   @override
+  String get almostSoldOut => '库存紧张';
+
+  @override
+  String get apply => '使用';
+
+  @override
+  String get remove => '移除';
+
+  @override
+  String get discount => '折扣';
+
+  @override
   String get store => '店铺';
 
   @override

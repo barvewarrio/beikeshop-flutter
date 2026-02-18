@@ -298,6 +298,18 @@ class AppLocalizationsEn extends AppLocalizations {
   String get placeOrder => 'Place Order';
 
   @override
+  String get almostSoldOut => 'Almost Sold Out';
+
+  @override
+  String get apply => 'Apply';
+
+  @override
+  String get remove => 'Remove';
+
+  @override
+  String get discount => 'Discount';
+
+  @override
   String get store => 'Store';
 
   @override

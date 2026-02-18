@@ -254,14 +254,55 @@ class _CartScreenState extends State<CartScreen> {
                                   ),
                                 ),
                                 const SizedBox(height: 8),
-                                Text(
-                                  settings.formatPrice(item.product.price),
-                                  style: const TextStyle(
-                                    fontSize: 16,
-                                    fontWeight: FontWeight.bold,
-                                    color: AppColors.textPrimary,
-                                  ),
+                                Row(
+                                  children: [
+                                    Text(
+                                      settings.formatPrice(item.product.price),
+                                      style: const TextStyle(
+                                        fontSize: 16,
+                                        fontWeight: FontWeight.bold,
+                                        color: AppColors.textPrimary,
+                                      ),
+                                    ),
+                                    const Spacer(),
+                                    if (int.tryParse(item.product.id) != null &&
+                                        int.parse(item.product.id) % 2 == 0)
+                                      Container(
+                                        padding: const EdgeInsets.symmetric(
+                                          horizontal: 6,
+                                          vertical: 2,
+                                        ),
+                                        decoration: BoxDecoration(
+                                          color: Colors.red.withValues(
+                                            alpha: 0.1,
+                                          ),
+                                          borderRadius: BorderRadius.circular(
+                                            4,
+                                          ),
+                                        ),
+                                        child: Text(
+                                          l10n.priceDrop,
+                                          style: const TextStyle(
+                                            fontSize: 10,
+                                            color: Colors.red,
+                                            fontWeight: FontWeight.bold,
+                                          ),
+                                        ),
+                                      ),
+                                  ],
                                 ),
+                                if (int.tryParse(item.product.id) != null &&
+                                    int.parse(item.product.id) % 3 == 0) ...[
+                                  const SizedBox(height: 4),
+                                   Text(
+                                     l10n.almostSoldOut,
+                                     style: const TextStyle(
+                                       fontSize: 12,
+                                       color: Color(0xFFFF5000),
+                                      fontWeight: FontWeight.w500,
+                                    ),
+                                  ),
+                                ],
                               ],
                             ),
                           ),
@@ -402,7 +443,6 @@ class _CartScreenState extends State<CartScreen> {
 
               // Bottom Bar
               Container(
-                padding: const EdgeInsets.all(16),
                 decoration: BoxDecoration(
                   color: Colors.white,
                   boxShadow: [
@@ -415,72 +455,156 @@ class _CartScreenState extends State<CartScreen> {
                 ),
                 child: SafeArea(
                   top: false,
-                  child: Row(
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
                     children: [
-                      Checkbox(
-                        value:
-                            cart.items.isNotEmpty &&
-                            cart.items.every((item) => item.isSelected),
-                        onChanged: (v) {
-                          cart.toggleAll(v ?? false);
-                        },
-                        activeColor: AppColors.primary,
-                        shape: const CircleBorder(),
-                      ),
-                      Text(l10n.all),
-                      const Spacer(),
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.end,
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          Row(
+                      // Free Shipping Progress
+                      if (!isFreeShipping)
+                        Container(
+                          width: double.infinity,
+                          padding: const EdgeInsets.symmetric(
+                            vertical: 8,
+                            horizontal: 16,
+                          ),
+                          color: const Color(0xFFFFF0E0),
+                          child: Row(
                             children: [
-                              Text(l10n.total),
-                              const SizedBox(width: 4),
-                              Text(
-                                settings.formatPrice(cart.totalAmount),
-                                style: const TextStyle(
-                                  fontSize: 18,
-                                  fontWeight: FontWeight.bold,
-                                  color: AppColors.primary,
+                              const Icon(
+                                Icons.local_shipping_outlined,
+                                size: 16,
+                                color: Color(0xFFFF5000),
+                              ),
+                              const SizedBox(width: 8),
+                              Expanded(
+                                child: Text(
+                                  l10n.addMoreForFreeShipping(
+                                    settings.formatPrice(remaining),
+                                  ),
+                                  style: const TextStyle(
+                                    fontSize: 12,
+                                    color: Color(0xFFFF5000),
+                                    fontWeight: FontWeight.w500,
+                                  ),
                                 ),
                               ),
                             ],
                           ),
-                          if (isFreeShipping)
-                            const Text(
-                              'Free Shipping Applied',
-                              style: TextStyle(
-                                fontSize: 10,
-                                color: AppColors.primary,
+                        ),
+
+                      Padding(
+                        padding: const EdgeInsets.all(16),
+                        child: Row(
+                          children: [
+                            Row(
+                              children: [
+                                Checkbox(
+                                  value:
+                                      cart.items.isNotEmpty &&
+                                      cart.items.every(
+                                        (item) => item.isSelected,
+                                      ),
+                                  onChanged: (v) {
+                                    cart.toggleAll(v ?? false);
+                                  },
+                                  activeColor: AppColors.primary,
+                                  shape: const CircleBorder(),
+                                ),
+                                Text(
+                                  l10n.all,
+                                  style: const TextStyle(fontSize: 14),
+                                ),
+                              ],
+                            ),
+                            const Spacer(),
+                            Column(
+                              crossAxisAlignment: CrossAxisAlignment.end,
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                Row(
+                                  children: [
+                                    Text(
+                                      l10n.total,
+                                      style: const TextStyle(
+                                        fontSize: 14,
+                                        color: AppColors.textSecondary,
+                                      ),
+                                    ),
+                                    const SizedBox(width: 4),
+                                    Text(
+                                      settings.formatPrice(cart.totalAmount),
+                                      style: const TextStyle(
+                                        fontSize: 18,
+                                        fontWeight: FontWeight.bold,
+                                        color: AppColors.primary,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                                if (cart.discount > 0)
+                                  Text(
+                                    '-${settings.formatPrice(cart.discount)}',
+                                    style: const TextStyle(
+                                      fontSize: 12,
+                                      color: Colors.green,
+                                      fontWeight: FontWeight.w500,
+                                    ),
+                                  ),
+                              ],
+                            ),
+                            const SizedBox(width: 16),
+                            Container(
+                              height: 44,
+                              decoration: BoxDecoration(
+                                gradient: const LinearGradient(
+                                  colors: [
+                                    Color(0xFFFF5000),
+                                    Color(0xFFE02020),
+                                  ],
+                                ),
+                                borderRadius: BorderRadius.circular(22),
+                                boxShadow: [
+                                  BoxShadow(
+                                    color: AppColors.primary.withValues(
+                                      alpha: 0.3,
+                                    ),
+                                    blurRadius: 8,
+                                    offset: const Offset(0, 4),
+                                  ),
+                                ],
+                              ),
+                              child: ElevatedButton(
+                                onPressed: cart.selectedCount > 0
+                                    ? () {
+                                        Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                            builder: (context) =>
+                                                const CheckoutScreen(),
+                                          ),
+                                        );
+                                      }
+                                    : null,
+                                style: ElevatedButton.styleFrom(
+                                  backgroundColor: Colors.transparent,
+                                  shadowColor: Colors.transparent,
+                                  padding: const EdgeInsets.symmetric(
+                                    horizontal: 24,
+                                  ),
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(22),
+                                  ),
+                                ),
+                                child: Text(
+                                  '${l10n.checkout} (${cart.selectedCount})',
+                                  style: const TextStyle(
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.bold,
+                                    color: Colors.white,
+                                  ),
+                                ),
                               ),
                             ),
-                        ],
-                      ),
-                      const SizedBox(width: 16),
-                      ElevatedButton(
-                        onPressed: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => const CheckoutScreen(),
-                            ),
-                          );
-                        },
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: AppColors.primary,
-                          foregroundColor: Colors.white,
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 24,
-                            vertical: 12,
-                          ),
-                        ),
-                        child: Text(
-                          '${l10n.checkout} (${cart.selectedCount})',
-                          style: const TextStyle(
-                            fontSize: 16,
-                            fontWeight: FontWeight.bold,
-                          ),
+                          ],
                         ),
                       ),
                     ],
