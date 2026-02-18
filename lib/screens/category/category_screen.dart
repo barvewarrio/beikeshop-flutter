@@ -4,6 +4,9 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:beikeshop_flutter/l10n/app_localizations.dart';
 import '../../api/api_service.dart';
 import '../../models/models.dart';
+import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
+import '../../widgets/product_card.dart';
+
 import '../product/product_detail_screen.dart';
 
 class CategoryScreen extends StatefulWidget {
@@ -17,11 +20,27 @@ class _CategoryScreenState extends State<CategoryScreen> {
   int _selectedIndex = 0;
   bool _isLoading = true;
   List<Category> _categories = [];
+  List<Product> _products = [];
 
   @override
   void initState() {
     super.initState();
     _fetchCategories();
+    _generateMockProducts();
+  }
+
+  void _generateMockProducts() {
+    _products = List.generate(10, (index) {
+      final original = 20 + index * 3.0;
+      return Product(
+        id: 'cat_prod_$index',
+        title: 'Category Item $index',
+        imageUrl: 'https://picsum.photos/300/300?random=${index + 100}',
+        price: original * 0.8,
+        originalPrice: original,
+        sales: 50 + index * 5,
+      );
+    });
   }
 
   Future<void> _fetchCategories() async {
@@ -162,113 +181,150 @@ class _CategoryScreenState extends State<CategoryScreen> {
           Expanded(
             child: Container(
               color: Colors.white,
-              child: ListView(
-                padding: const EdgeInsets.all(16),
-                children: [
-                  // Banner for Category
-                  Container(
-                    height: 80,
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(8),
-                      image: DecorationImage(
-                        image: NetworkImage(
-                          'https://picsum.photos/400/150?random=$_selectedIndex',
-                        ),
-                        fit: BoxFit.cover,
-                      ),
-                    ),
-                    child: Container(
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(8),
-                        gradient: LinearGradient(
-                          begin: Alignment.topCenter,
-                          end: Alignment.bottomCenter,
-                          colors: [
-                            Colors.transparent,
-                            Colors.black.withValues(alpha: 0.5),
-                          ],
-                        ),
-                      ),
-                      alignment: Alignment.bottomLeft,
-                      padding: const EdgeInsets.all(8),
-                      child: Text(
-                        l10n.topPicksIn(
-                          _categories.isNotEmpty
-                              ? _categories[_selectedIndex].name
-                              : "",
-                        ),
-                        style: const TextStyle(
-                          color: Colors.white,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                    ),
-                  ),
-                  const SizedBox(height: 20),
-                  // Subcategories Grid
-                  GridView.builder(
-                    shrinkWrap: true,
-                    physics: const NeverScrollableScrollPhysics(),
-                    gridDelegate:
-                        const SliverGridDelegateWithFixedCrossAxisCount(
-                          crossAxisCount: 3,
-                          mainAxisSpacing: 16,
-                          crossAxisSpacing: 16,
-                          childAspectRatio: 0.75,
-                        ),
-                    itemCount: 12, // TODO: Replace with actual subcategories
-                    itemBuilder: (context, index) {
-                      return GestureDetector(
-                        onTap: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => ProductDetailScreen(
-                                productId: 'cat_item_$index',
-                              ),
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 12),
+                child: CustomScrollView(
+                  slivers: [
+                    const SliverToBoxAdapter(child: SizedBox(height: 12)),
+                    // Banner for Category
+                    SliverToBoxAdapter(
+                      child: Container(
+                        height: 100,
+                        margin: const EdgeInsets.only(bottom: 16),
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(8),
+                          image: DecorationImage(
+                            image: NetworkImage(
+                              'https://picsum.photos/400/150?random=$_selectedIndex',
                             ),
-                          );
-                        },
-                        child: Column(
-                          children: [
-                            Expanded(
-                              child: Container(
-                                decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(
-                                    50,
-                                  ), // Circle if square
-                                  color: Colors.grey[100],
-                                ),
-                                child: ClipOval(
-                                  child: CachedNetworkImage(
-                                    imageUrl:
-                                        'https://picsum.photos/100/100?random=${_selectedIndex * 100 + index}',
-                                    fit: BoxFit.cover,
-                                    placeholder: (context, url) =>
-                                        Container(color: Colors.grey[200]),
-                                    errorWidget: (context, url, error) =>
-                                        const Icon(Icons.error),
+                            fit: BoxFit.cover,
+                          ),
+                        ),
+                        child: Container(
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(8),
+                            gradient: LinearGradient(
+                              begin: Alignment.topCenter,
+                              end: Alignment.bottomCenter,
+                              colors: [
+                                Colors.transparent,
+                                Colors.black.withValues(alpha: 0.5),
+                              ],
+                            ),
+                          ),
+                          alignment: Alignment.bottomLeft,
+                          padding: const EdgeInsets.all(12),
+                          child: Text(
+                            l10n.topPicksIn(
+                              _categories.isNotEmpty
+                                  ? _categories[_selectedIndex].name
+                                  : "",
+                            ),
+                            style: const TextStyle(
+                              color: Colors.white,
+                              fontWeight: FontWeight.bold,
+                              fontSize: 16,
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+
+                    // Subcategories Grid
+                    SliverGrid(
+                      gridDelegate:
+                          const SliverGridDelegateWithFixedCrossAxisCount(
+                            crossAxisCount: 3,
+                            mainAxisSpacing: 12,
+                            crossAxisSpacing: 12,
+                            childAspectRatio: 0.8,
+                          ),
+                      delegate: SliverChildBuilderDelegate((context, index) {
+                        return GestureDetector(
+                          onTap: () {
+                            // Navigate to subcategory
+                          },
+                          child: Column(
+                            children: [
+                              Expanded(
+                                child: Container(
+                                  decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(8),
+                                    color: Colors.grey[100],
+                                  ),
+                                  child: ClipRRect(
+                                    borderRadius: BorderRadius.circular(8),
+                                    child: CachedNetworkImage(
+                                      imageUrl:
+                                          'https://picsum.photos/100/100?random=${_selectedIndex * 100 + index}',
+                                      fit: BoxFit.cover,
+                                      placeholder: (context, url) =>
+                                          Container(color: Colors.grey[200]),
+                                      errorWidget: (context, url, error) =>
+                                          const Icon(Icons.error),
+                                    ),
                                   ),
                                 ),
                               ),
-                            ),
-                            const SizedBox(height: 4),
-                            Text(
-                              'Item $index',
-                              style: const TextStyle(
-                                fontSize: 11,
-                                color: AppColors.textSecondary,
+                              const SizedBox(height: 4),
+                              Text(
+                                'Subcat $index',
+                                style: const TextStyle(
+                                  fontSize: 11,
+                                  color: AppColors.textSecondary,
+                                ),
+                                textAlign: TextAlign.center,
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
                               ),
-                              textAlign: TextAlign.center,
-                              maxLines: 1,
-                              overflow: TextOverflow.ellipsis,
-                            ),
-                          ],
+                            ],
+                          ),
+                        );
+                      }, childCount: 9),
+                    ),
+
+                    const SliverToBoxAdapter(child: SizedBox(height: 24)),
+
+                    // Recommended Title
+                    SliverToBoxAdapter(
+                      child: Padding(
+                        padding: const EdgeInsets.only(bottom: 12),
+                        child: Text(
+                          l10n.recommendedForYou,
+                          style: const TextStyle(
+                            fontWeight: FontWeight.bold,
+                            fontSize: 16,
+                          ),
                         ),
-                      );
-                    },
-                  ),
-                ],
+                      ),
+                    ),
+
+                    // Product Grid (Waterfall)
+                    SliverMasonryGrid.count(
+                      crossAxisCount: 2,
+                      mainAxisSpacing: 8,
+                      crossAxisSpacing: 8,
+                      childCount: _products.length,
+                      itemBuilder: (context, index) {
+                        return ProductCard(
+                          product: _products[index],
+                          onTap: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => ProductDetailScreen(
+                                  productId: _products[index].id,
+                                ),
+                              ),
+                            );
+                          },
+                        );
+                      },
+                    ),
+
+                    const SliverToBoxAdapter(child: SizedBox(height: 20)),
+                  ],
+                ),
               ),
             ),
           ),

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'dart:async';
 import '../../theme/app_theme.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:cached_network_image/cached_network_image.dart';
@@ -29,6 +30,8 @@ class _HomeScreenState extends State<HomeScreen> {
   bool _isLoading = true;
   List<Product> _products = [];
   List<Category> _categories = [];
+  Timer? _timer;
+  Duration _timeLeft = const Duration(hours: 2, minutes: 15, seconds: 30);
 
   // Mock Data for now until API is fully ready
   final List<String> _bannerImages = [
@@ -40,10 +43,32 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   void initState() {
     super.initState();
+    _startTimer();
     _fetchData();
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (mounted) {
         AgeVerificationModal.checkAndShow(context);
+      }
+    });
+  }
+
+  @override
+  void dispose() {
+    _timer?.cancel();
+    super.dispose();
+  }
+
+  void _startTimer() {
+    _timer = Timer.periodic(const Duration(seconds: 1), (timer) {
+      if (mounted) {
+        setState(() {
+          if (_timeLeft.inSeconds > 0) {
+            _timeLeft -= const Duration(seconds: 1);
+          } else {
+            // Reset for demo
+            _timeLeft = const Duration(hours: 4);
+          }
+        });
       }
     });
   }
@@ -109,6 +134,11 @@ class _HomeScreenState extends State<HomeScreen> {
     if (flashSaleProducts.isEmpty)
       return const SliverToBoxAdapter(child: SizedBox.shrink());
 
+    String twoDigits(int n) => n.toString().padLeft(2, '0');
+    final hours = twoDigits(_timeLeft.inHours);
+    final minutes = twoDigits(_timeLeft.inMinutes.remainder(60));
+    final seconds = twoDigits(_timeLeft.inSeconds.remainder(60));
+
     return SliverToBoxAdapter(
       child: Container(
         margin: const EdgeInsets.symmetric(vertical: 8),
@@ -119,17 +149,14 @@ class _HomeScreenState extends State<HomeScreen> {
               padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
               child: Row(
                 children: [
-                  const Icon(
-                    Icons.flash_on,
-                    color: AppColors.primary,
-                    size: 20,
-                  ),
-                  const SizedBox(width: 8),
+                  const Icon(Icons.bolt, color: AppColors.primary, size: 24),
+                  const SizedBox(width: 4),
                   Text(
                     l10n.flashSale,
                     style: const TextStyle(
                       fontWeight: FontWeight.bold,
-                      fontSize: 16,
+                      fontSize: 18,
+                      fontStyle: FontStyle.italic,
                     ),
                   ),
                   const Spacer(),
@@ -142,9 +169,26 @@ class _HomeScreenState extends State<HomeScreen> {
                       color: Colors.black,
                       borderRadius: BorderRadius.circular(4),
                     ),
-                    child: const Text(
-                      '02:15:30',
-                      style: TextStyle(color: Colors.white, fontSize: 12),
+                    child: Row(
+                      children: [
+                        _buildTimeBox(hours),
+                        const Text(
+                          ':',
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        _buildTimeBox(minutes),
+                        const Text(
+                          ':',
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        _buildTimeBox(seconds),
+                      ],
                     ),
                   ),
                   const SizedBox(width: 8),
@@ -156,9 +200,12 @@ class _HomeScreenState extends State<HomeScreen> {
               ),
             ),
             SizedBox(
-              height: 140,
+              height: 160,
               child: ListView.separated(
-                padding: const EdgeInsets.symmetric(horizontal: 12),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 12,
+                  vertical: 8,
+                ),
                 scrollDirection: Axis.horizontal,
                 itemCount: flashSaleProducts.length,
                 separatorBuilder: (_, __) => const SizedBox(width: 12),
@@ -176,8 +223,12 @@ class _HomeScreenState extends State<HomeScreen> {
                             ),
                           );
                         },
-                        child: SizedBox(
+                        child: Container(
                           width: 100,
+                          decoration: BoxDecoration(
+                            border: Border.all(color: Colors.grey[200]!),
+                            borderRadius: BorderRadius.circular(8),
+                          ),
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
@@ -185,7 +236,9 @@ class _HomeScreenState extends State<HomeScreen> {
                                 child: Stack(
                                   children: [
                                     ClipRRect(
-                                      borderRadius: BorderRadius.circular(8),
+                                      borderRadius: const BorderRadius.vertical(
+                                        top: Radius.circular(8),
+                                      ),
                                       child: CachedNetworkImage(
                                         imageUrl: product.imageUrl,
                                         fit: BoxFit.cover,
@@ -200,17 +253,14 @@ class _HomeScreenState extends State<HomeScreen> {
                                     Positioned(
                                       bottom: 0,
                                       left: 0,
-                                      right: 0,
                                       child: Container(
-                                        color: AppColors.primary.withValues(
-                                          alpha: 0.8,
-                                        ),
+                                        color: const Color(0xFFFF5000),
                                         padding: const EdgeInsets.symmetric(
+                                          horizontal: 4,
                                           vertical: 2,
                                         ),
                                         child: Text(
                                           '-${product.discountPercentage.toStringAsFixed(0)}%',
-                                          textAlign: TextAlign.center,
                                           style: const TextStyle(
                                             color: Colors.white,
                                             fontSize: 10,
@@ -222,23 +272,38 @@ class _HomeScreenState extends State<HomeScreen> {
                                   ],
                                 ),
                               ),
-                              const SizedBox(height: 4),
-                              Text(
-                                settings.formatPrice(product.price),
-                                style: const TextStyle(
-                                  fontWeight: FontWeight.bold,
-                                  color: AppColors.primary,
-                                  fontSize: 12,
-                                ),
-                              ),
-                              Text(
-                                settings.formatPrice(
-                                  product.originalPrice ?? 0,
-                                ),
-                                style: const TextStyle(
-                                  decoration: TextDecoration.lineThrough,
-                                  color: Colors.grey,
-                                  fontSize: 10,
+                              Padding(
+                                padding: const EdgeInsets.all(4.0),
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(
+                                      settings.formatPrice(product.price),
+                                      style: const TextStyle(
+                                        fontWeight: FontWeight.bold,
+                                        color: AppColors.primary,
+                                        fontSize: 14,
+                                      ),
+                                    ),
+                                    Text(
+                                      settings.formatPrice(
+                                        product.originalPrice ?? 0,
+                                      ),
+                                      style: const TextStyle(
+                                        decoration: TextDecoration.lineThrough,
+                                        color: Colors.grey,
+                                        fontSize: 10,
+                                      ),
+                                    ),
+                                    const SizedBox(height: 2),
+                                    LinearProgressIndicator(
+                                      value: 0.8,
+                                      backgroundColor: Colors.grey[200],
+                                      color: const Color(0xFFFF5000),
+                                      minHeight: 3,
+                                      borderRadius: BorderRadius.circular(2),
+                                    ),
+                                  ],
                                 ),
                               ),
                             ],
@@ -252,6 +317,20 @@ class _HomeScreenState extends State<HomeScreen> {
             ),
             const SizedBox(height: 12),
           ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildTimeBox(String time) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 2),
+      child: Text(
+        time,
+        style: const TextStyle(
+          color: Colors.white,
+          fontWeight: FontWeight.bold,
+          fontSize: 12,
         ),
       ),
     );
