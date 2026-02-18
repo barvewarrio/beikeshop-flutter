@@ -33,9 +33,10 @@ class _CategoryScreenState extends State<CategoryScreen> {
     _products = List.generate(10, (index) {
       final original = 20 + index * 3.0;
       return Product(
-        id: 'cat_prod_$index',
-        title: 'Category Item $index',
-        imageUrl: 'https://picsum.photos/300/300?random=${index + 100}',
+        id: 'cat_prod_${_selectedIndex}_$index',
+        title: 'Category ${_selectedIndex + 1} Item $index',
+        imageUrl:
+            'https://picsum.photos/300/300?random=${_selectedIndex * 100 + index}',
         price: original * 0.8,
         originalPrice: original,
         sales: 50 + index * 5,
@@ -138,6 +139,7 @@ class _CategoryScreenState extends State<CategoryScreen> {
                   onTap: () {
                     setState(() {
                       _selectedIndex = index;
+                      _generateMockProducts();
                     });
                   },
                   child: Container(
@@ -145,21 +147,6 @@ class _CategoryScreenState extends State<CategoryScreen> {
                     color: isSelected ? Colors.white : Colors.grey[100],
                     child: Stack(
                       children: [
-                        Center(
-                          child: Text(
-                            category.name,
-                            style: TextStyle(
-                              color: isSelected
-                                  ? AppColors.primary
-                                  : AppColors.textPrimary,
-                              fontWeight: isSelected
-                                  ? FontWeight.bold
-                                  : FontWeight.normal,
-                              fontSize: 12,
-                            ),
-                            textAlign: TextAlign.center,
-                          ),
-                        ),
                         if (isSelected)
                           Positioned(
                             left: 0,
@@ -167,9 +154,35 @@ class _CategoryScreenState extends State<CategoryScreen> {
                             bottom: 0,
                             child: Container(
                               width: 4,
-                              color: AppColors.primary,
+                              decoration: const BoxDecoration(
+                                color: AppColors.primary,
+                                borderRadius: BorderRadius.only(
+                                  topRight: Radius.circular(4),
+                                  bottomRight: Radius.circular(4),
+                                ),
+                              ),
                             ),
                           ),
+                        Center(
+                          child: Padding(
+                            padding: const EdgeInsets.symmetric(horizontal: 8),
+                            child: Text(
+                              category.name,
+                              style: TextStyle(
+                                color: isSelected
+                                    ? AppColors.primary
+                                    : AppColors.textPrimary,
+                                fontWeight: isSelected
+                                    ? FontWeight.bold
+                                    : FontWeight.normal,
+                                fontSize: 13,
+                              ),
+                              textAlign: TextAlign.center,
+                              maxLines: 2,
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                          ),
+                        ),
                       ],
                     ),
                   ),

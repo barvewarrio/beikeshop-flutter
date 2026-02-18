@@ -13,7 +13,9 @@ import '../checkout/payment_screen.dart';
 import '../cart/cart_screen.dart';
 
 class OrderListScreen extends StatelessWidget {
-  const OrderListScreen({super.key});
+  final int initialIndex;
+
+  const OrderListScreen({super.key, this.initialIndex = 0});
 
   @override
   Widget build(BuildContext context) {
@@ -34,6 +36,7 @@ class OrderListScreen extends StatelessWidget {
 
     return DefaultTabController(
       length: tabs.length,
+      initialIndex: initialIndex,
       child: Scaffold(
         appBar: AppBar(
           title: Text(l10n.myOrders),
