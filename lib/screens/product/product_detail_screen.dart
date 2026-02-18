@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:beikeshop_flutter/screens/product/product_reviews_screen.dart';
 import '../../theme/app_theme.dart';
 import '../../api/api_service.dart';
 import '../../models/models.dart';
@@ -8,6 +9,7 @@ import 'package:provider/provider.dart';
 import 'package:beikeshop_flutter/l10n/app_localizations.dart';
 import '../../providers/cart_provider.dart';
 import '../../providers/settings_provider.dart';
+import '../../providers/wishlist_provider.dart';
 
 class ProductDetailScreen extends StatefulWidget {
   final String productId;
@@ -21,7 +23,7 @@ class ProductDetailScreen extends StatefulWidget {
 class _ProductDetailScreenState extends State<ProductDetailScreen> {
   bool _isLoading = true;
   Product? _product;
-
+  List<Review> _reviews = [];
   @override
   void initState() {
     super.initState();
@@ -35,14 +37,20 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
 
     try {
       final product = await ApiService().getProductDetail(widget.productId);
+      // Fetch reviews in parallel
+      final reviewsResponse = await ApiService().getReviews(widget.productId);
+      final List<dynamic> reviewsData = reviewsResponse['data'] ?? [];
+      final reviews = reviewsData.map((json) => Review.fromJson(json)).toList();
+
       if (mounted) {
         setState(() {
           _product = product;
+          _reviews = reviews;
           _isLoading = false;
         });
       }
     } catch (e) {
-      print('Error fetching product details: $e');
+      debugPrint('Error fetching product details: $e');
       if (mounted) {
         // Fallback to mock data if API fails
         setState(() {
@@ -66,9 +74,43 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
     }
   }
 
+  Future<void> _toggleWishlist() async {
+    final wishlistProvider = context.read<WishlistProvider>();
+    final isWishlisted = wishlistProvider.isInWishlist(widget.productId);
+
+    try {
+      if (isWishlisted) {
+        await wishlistProvider.removeFromWishlist(widget.productId);
+      } else {
+        if (_product != null) {
+          await wishlistProvider.addToWishlist(_product!);
+        }
+      }
+
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(
+              !isWishlisted ? 'Added to wishlist' : 'Removed from wishlist',
+            ),
+            duration: const Duration(seconds: 1),
+          ),
+        );
+      }
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Failed to update wishlist: $e')),
+        );
+      }
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final settings = context.watch<SettingsProvider>();
+    final wishlistProvider = context.watch<WishlistProvider>();
+    final isWishlisted = wishlistProvider.isInWishlist(widget.productId);
     final l10n = AppLocalizations.of(context)!;
 
     if (_isLoading) {
@@ -117,8 +159,11 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                       shape: BoxShape.circle,
                     ),
                     child: IconButton(
-                      icon: const Icon(Icons.share, color: Colors.black),
-                      onPressed: () {},
+                      icon: Icon(
+                        isWishlisted ? Icons.favorite : Icons.favorite_border,
+                        color: isWishlisted ? Colors.red : Colors.black,
+                      ),
+                      onPressed: _toggleWishlist,
                     ),
                   ),
                   Container(
@@ -345,6 +390,123 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                           height: 1.5,
                         ),
                       ),
+
+                      const Divider(height: 32),
+
+                      // Reviews Section
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Text(
+                            'Reviews (${_reviews.length})',
+                            style: const TextStyle(
+                              fontSize: 16,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                          TextButton(
+                            onPressed: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => ProductReviewsScreen(
+                                    productId: widget.productId,
+                                  ),
+                                ),
+                              );
+                            },
+                            child: const Text('See All'),
+                          ),
+                        ],
+                      ),
+                      if (_reviews.isEmpty)
+                        const Padding(
+                          padding: EdgeInsets.symmetric(vertical: 16),
+                          child: Text(
+                            'No reviews yet. Be the first to review!',
+                          ),
+                        )
+                      else
+                        ListView.separated(
+                          shrinkWrap: true,
+                          physics: const NeverScrollableScrollPhysics(),
+                          itemCount: _reviews.take(3).length,
+                          separatorBuilder: (_, __) =>
+                              const SizedBox(height: 16),
+                          itemBuilder: (context, index) {
+                            final review = _reviews[index];
+                            return Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Row(
+                                  children: [
+                                    CircleAvatar(
+                                      radius: 16,
+                                      backgroundColor: Colors.grey[200],
+                                      child: const Icon(
+                                        Icons.person,
+                                        size: 20,
+                                        color: Colors.grey,
+                                      ),
+                                    ),
+                                    const SizedBox(width: 8),
+                                    Text(
+                                      review.customerName ?? 'Anonymous',
+                                      style: const TextStyle(
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    ),
+                                    const Spacer(),
+                                    Row(
+                                      children: List.generate(5, (i) {
+                                        return Icon(
+                                          i < review.rating
+                                              ? Icons.star
+                                              : Icons.star_border,
+                                          size: 14,
+                                          color: Colors.amber,
+                                        );
+                                      }),
+                                    ),
+                                  ],
+                                ),
+                                const SizedBox(height: 8),
+                                Text(review.comment ?? ''),
+                                if (review.images != null &&
+                                    review.images!.isNotEmpty)
+                                  Padding(
+                                    padding: const EdgeInsets.only(top: 8),
+                                    child: SizedBox(
+                                      height: 60,
+                                      child: ListView.separated(
+                                        scrollDirection: Axis.horizontal,
+                                        itemCount: review.images!.length,
+                                        separatorBuilder: (_, __) =>
+                                            const SizedBox(width: 8),
+                                        itemBuilder: (context, imgIndex) {
+                                          return ClipRRect(
+                                            borderRadius: BorderRadius.circular(
+                                              4,
+                                            ),
+                                            child: CachedNetworkImage(
+                                              imageUrl:
+                                                  review.images![imgIndex],
+                                              width: 60,
+                                              height: 60,
+                                              fit: BoxFit.cover,
+                                              placeholder: (_, __) => Container(
+                                                color: Colors.grey[200],
+                                              ),
+                                            ),
+                                          );
+                                        },
+                                      ),
+                                    ),
+                                  ),
+                              ],
+                            );
+                          },
+                        ),
 
                       // Space for bottom bar
                       const SizedBox(height: 100),

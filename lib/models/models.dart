@@ -1,3 +1,11 @@
+export 'payment_method_model.dart';
+export 'cart_item_model.dart';
+export 'user_model.dart';
+export 'review_model.dart';
+export 'rma_model.dart';
+export 'region_models.dart';
+export 'coupon_model.dart';
+
 class Product {
   final String id;
   final String title;
@@ -9,6 +17,8 @@ class Product {
   final double rating;
   final bool isFlashSale;
   final List<String> tags;
+  final String? defaultSkuId;
+  final bool isWishlisted;
 
   Product({
     required this.id,
@@ -21,6 +31,8 @@ class Product {
     this.rating = 0.0,
     this.isFlashSale = false,
     this.tags = const [],
+    this.defaultSkuId,
+    this.isWishlisted = false,
   });
 
   double get discountPercentage {
@@ -29,6 +41,13 @@ class Product {
   }
 
   factory Product.fromJson(Map<String, dynamic> json) {
+    String? skuId;
+    if (json['master_sku'] != null && json['master_sku']['id'] != null) {
+      skuId = json['master_sku']['id'].toString();
+    } else if (json['skus'] != null && (json['skus'] as List).isNotEmpty) {
+      skuId = json['skus'][0]['id'].toString();
+    }
+
     return Product(
       id: json['id'].toString(),
       title: json['name'] ?? '',
@@ -42,6 +61,8 @@ class Product {
       rating: double.tryParse(json['rating']?.toString() ?? '0') ?? 0.0,
       isFlashSale: json['is_flash_sale'] ?? false,
       tags: (json['tags'] as List?)?.map((e) => e.toString()).toList() ?? [],
+      defaultSkuId: skuId,
+      isWishlisted: json['in_current_wishlist'] != null,
     );
   }
 
@@ -57,6 +78,7 @@ class Product {
       'rating': rating,
       'is_flash_sale': isFlashSale,
       'tags': tags,
+      'default_sku_id': defaultSkuId,
     };
   }
 }
@@ -77,7 +99,7 @@ class Category {
   factory Category.fromJson(Map<String, dynamic> json) {
     var childrenJson = json['children'] as List?;
     List<Category> childrenList = childrenJson != null
-        ? childrenJson.map((i) => Category.fromJson(i)).toList()
+        ? childrenJson.map((child) => Category.fromJson(child)).toList()
         : [];
 
     return Category(

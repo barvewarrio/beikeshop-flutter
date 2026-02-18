@@ -35,7 +35,7 @@ class _CategoryScreenState extends State<CategoryScreen> {
         });
       }
     } catch (e) {
-      print('Error fetching categories: $e');
+      debugPrint('Error fetching categories: $e');
       if (mounted) {
         setState(() {
           _isLoading = false;

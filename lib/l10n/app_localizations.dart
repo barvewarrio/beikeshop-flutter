@@ -650,6 +650,30 @@ abstract class AppLocalizations {
   /// **'Credit Card'**
   String get creditCard;
 
+  /// No description provided for @cancelOrder.
+  ///
+  /// In en, this message translates to:
+  /// **'Cancel Order'**
+  String get cancelOrder;
+
+  /// No description provided for @freeShipping.
+  ///
+  /// In en, this message translates to:
+  /// **'Free'**
+  String get freeShipping;
+
+  /// No description provided for @discretePackaging.
+  ///
+  /// In en, this message translates to:
+  /// **'Discrete Packaging'**
+  String get discretePackaging;
+
+  /// No description provided for @discretePackagingNote.
+  ///
+  /// In en, this message translates to:
+  /// **'All orders are shipped in plain boxes with no branding.'**
+  String get discretePackagingNote;
+
   /// No description provided for @paypal.
   ///
   /// In en, this message translates to:
@@ -704,12 +728,6 @@ abstract class AppLocalizations {
   /// **'Product not found'**
   String get productNotFound;
 
-  /// No description provided for @freeShipping.
-  ///
-  /// In en, this message translates to:
-  /// **'Free'**
-  String get freeShipping;
-
   /// No description provided for @ageVerificationTitle.
   ///
   /// In en, this message translates to:
@@ -734,17 +752,83 @@ abstract class AppLocalizations {
   /// **'Exit'**
   String get exitApp;
 
-  /// No description provided for @discretePackaging.
+  /// No description provided for @copy.
   ///
   /// In en, this message translates to:
-  /// **'Discrete Packaging'**
-  String get discretePackaging;
+  /// **'Copy'**
+  String get copy;
 
-  /// No description provided for @discretePackagingNote.
+  /// No description provided for @requestRefund.
   ///
   /// In en, this message translates to:
-  /// **'All orders are shipped in plain boxes with no branding.'**
-  String get discretePackagingNote;
+  /// **'Request Refund'**
+  String get requestRefund;
+
+  /// No description provided for @rmaReason.
+  ///
+  /// In en, this message translates to:
+  /// **'Reason for Refund'**
+  String get rmaReason;
+
+  /// No description provided for @rmaStatus.
+  ///
+  /// In en, this message translates to:
+  /// **'Refund Status'**
+  String get rmaStatus;
+
+  /// No description provided for @rmaDetails.
+  ///
+  /// In en, this message translates to:
+  /// **'Refund Details'**
+  String get rmaDetails;
+
+  /// No description provided for @rmaPending.
+  ///
+  /// In en, this message translates to:
+  /// **'Pending Review'**
+  String get rmaPending;
+
+  /// No description provided for @rmaApproved.
+  ///
+  /// In en, this message translates to:
+  /// **'Approved'**
+  String get rmaApproved;
+
+  /// No description provided for @rmaRejected.
+  ///
+  /// In en, this message translates to:
+  /// **'Rejected'**
+  String get rmaRejected;
+
+  /// No description provided for @submit.
+  ///
+  /// In en, this message translates to:
+  /// **'Submit'**
+  String get submit;
+
+  /// No description provided for @pleaseSelectReason.
+  ///
+  /// In en, this message translates to:
+  /// **'Please select a reason'**
+  String get pleaseSelectReason;
+
+  /// No description provided for @description.
+  ///
+  /// In en, this message translates to:
+  /// **'Description'**
+  String get description;
+
+  /// No description provided for @optional.
+  ///
+  /// In en, this message translates to:
+  /// **'Optional'**
+  String get optional;
+
+  /// No description provided for @submitSuccess.
+  ///
+  /// In en, this message translates to:
+  /// **'Submitted successfully'**
+  String get submitSuccess;
 }
 
 class _AppLocalizationsDelegate

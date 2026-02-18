@@ -6,9 +6,68 @@ import '../../theme/app_theme.dart';
 import '../../providers/cart_provider.dart';
 import '../../providers/settings_provider.dart';
 import '../checkout/checkout_screen.dart';
+import '../coupon/coupon_list_screen.dart';
 
-class CartScreen extends StatelessWidget {
+class CartScreen extends StatefulWidget {
   const CartScreen({super.key});
+
+  @override
+  State<CartScreen> createState() => _CartScreenState();
+}
+
+class _CartScreenState extends State<CartScreen> {
+  final TextEditingController _couponController = TextEditingController();
+  bool _isApplying = false;
+
+  @override
+  void dispose() {
+    _couponController.dispose();
+    super.dispose();
+  }
+
+  Future<void> _applyCoupon() async {
+    final code = _couponController.text.trim();
+    if (code.isEmpty) return;
+
+    setState(() => _isApplying = true);
+    try {
+      await context.read<CartProvider>().applyCoupon(code);
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Coupon applied successfully')),
+        );
+      }
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text('Failed to apply coupon: $e')));
+      }
+    } finally {
+      if (mounted) setState(() => _isApplying = false);
+    }
+  }
+
+  Future<void> _removeCoupon() async {
+    setState(() => _isApplying = true);
+    try {
+      await context.read<CartProvider>().removeCoupon();
+      _couponController.clear();
+      if (mounted) {
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(const SnackBar(content: Text('Coupon removed')));
+      }
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text('Failed to remove coupon: $e')));
+      }
+    } finally {
+      if (mounted) setState(() => _isApplying = false);
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -85,6 +144,12 @@ class CartScreen extends StatelessWidget {
           final double remaining = freeShippingThreshold - currentTotal;
           final bool isFreeShipping = remaining <= 0;
 
+          // Sync controller with cart state
+          if (cart.couponCode != null &&
+              _couponController.text != cart.couponCode) {
+            _couponController.text = cart.couponCode!;
+          }
+
           return Column(
             children: [
               // Free Shipping Progress
@@ -106,7 +171,8 @@ class CartScreen extends StatelessWidget {
                       Expanded(
                         child: Text(
                           l10n.addMoreForFreeShipping(
-                              settings.formatPrice(remaining)),
+                            settings.formatPrice(remaining),
+                          ),
                           style: const TextStyle(
                             color: AppColors.textPrimary,
                             fontSize: 12,
@@ -205,7 +271,135 @@ class CartScreen extends StatelessWidget {
                   },
                 ),
               ),
-              
+
+              // Coupon Section
+              Container(
+                padding: const EdgeInsets.all(16),
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  border: Border(top: BorderSide(color: AppColors.border)),
+                ),
+                child: Column(
+                  children: [
+                    InkWell(
+                      onTap: () async {
+                        final result = await Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) =>
+                                const CouponListScreen(selectMode: true),
+                          ),
+                        );
+                        if (result != null && result is String) {
+                          _couponController.text = result;
+                          _applyCoupon();
+                        }
+                      },
+                      child: Padding(
+                        padding: const EdgeInsets.only(bottom: 12),
+                        child: Row(
+                          children: [
+                            const Icon(
+                              Icons.local_offer_outlined,
+                              color: AppColors.primary,
+                              size: 20,
+                            ),
+                            const SizedBox(width: 8),
+                            Text(
+                              l10n.coupons,
+                              style: const TextStyle(
+                                fontWeight: FontWeight.bold,
+                                fontSize: 16,
+                              ),
+                            ),
+                            const Spacer(),
+                            const Text(
+                              'View Available',
+                              style: TextStyle(
+                                color: AppColors.textSecondary,
+                                fontSize: 14,
+                              ),
+                            ),
+                            const Icon(
+                              Icons.chevron_right,
+                              color: AppColors.textHint,
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                    Row(
+                      children: [
+                        Expanded(
+                          child: TextField(
+                            controller: _couponController,
+                            decoration: InputDecoration(
+                              hintText: 'Enter coupon code',
+                              border: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(8),
+                              ),
+                              contentPadding: const EdgeInsets.symmetric(
+                                horizontal: 12,
+                                vertical: 8,
+                              ),
+                              isDense: true,
+                            ),
+                            enabled: cart.couponCode == null,
+                          ),
+                        ),
+                        const SizedBox(width: 8),
+                        if (cart.couponCode == null)
+                          ElevatedButton(
+                            onPressed: _isApplying ? null : _applyCoupon,
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: AppColors.primary,
+                              foregroundColor: Colors.white,
+                            ),
+                            child: _isApplying
+                                ? const SizedBox(
+                                    width: 16,
+                                    height: 16,
+                                    child: CircularProgressIndicator(
+                                      strokeWidth: 2,
+                                      color: Colors.white,
+                                    ),
+                                  )
+                                : const Text('Apply'),
+                          )
+                        else
+                          OutlinedButton.icon(
+                            onPressed: _isApplying ? null : _removeCoupon,
+                            icon: const Icon(Icons.close, size: 16),
+                            label: const Text('Remove'),
+                            style: OutlinedButton.styleFrom(
+                              foregroundColor: Colors.red,
+                            ),
+                          ),
+                      ],
+                    ),
+                    if (cart.discount > 0) ...[
+                      const SizedBox(height: 8),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          const Text(
+                            'Discount:',
+                            style: TextStyle(color: Colors.green),
+                          ),
+                          Text(
+                            '-${settings.formatPrice(cart.discount)}',
+                            style: const TextStyle(
+                              color: Colors.green,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ],
+                ),
+              ),
+
               // Bottom Bar
               Container(
                 padding: const EdgeInsets.all(16),
@@ -224,9 +418,11 @@ class CartScreen extends StatelessWidget {
                   child: Row(
                     children: [
                       Checkbox(
-                        value: cart.items.every((item) => item.isSelected),
+                        value:
+                            cart.items.isNotEmpty &&
+                            cart.items.every((item) => item.isSelected),
                         onChanged: (v) {
-                          // Toggle all
+                          cart.toggleAll(v ?? false);
                         },
                         activeColor: AppColors.primary,
                         shape: const CircleBorder(),
@@ -264,7 +460,7 @@ class CartScreen extends StatelessWidget {
                       const SizedBox(width: 16),
                       ElevatedButton(
                         onPressed: () {
-                           Navigator.push(
+                          Navigator.push(
                             context,
                             MaterialPageRoute(
                               builder: (context) => const CheckoutScreen(),

@@ -131,7 +131,10 @@ class _OrderCard extends StatelessWidget {
     final settings = context.watch<SettingsProvider>();
     final l10n = AppLocalizations.of(context)!;
 
-    return InkWell(
+    // Calculate total items count
+    final totalItems = order.items.fold(0, (sum, item) => sum + item.quantity);
+
+    return GestureDetector(
       onTap: () {
         Navigator.push(
           context,
@@ -141,32 +144,45 @@ class _OrderCard extends StatelessWidget {
         );
       },
       child: Container(
+        margin: const EdgeInsets.only(bottom: 12),
         decoration: BoxDecoration(
           color: Colors.white,
-          borderRadius: BorderRadius.circular(8),
-          border: Border.all(color: AppColors.border),
+          borderRadius: BorderRadius.circular(12),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withValues(alpha: 0.05),
+              blurRadius: 8,
+              offset: const Offset(0, 2),
+            ),
+          ],
         ),
-        padding: const EdgeInsets.all(12),
+        padding: const EdgeInsets.all(16),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Header: Shop Name (Mock) + Status
+            // Header: Shop Name + Status
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Row(
                   children: [
-                    const Icon(
-                      Icons.store,
-                      size: 16,
-                      color: AppColors.textSecondary,
+                    Image.asset(
+                      'assets/images/logo.png', // Ensure you have a logo asset or use an icon
+                      width: 20,
+                      height: 20,
+                      errorBuilder: (_, __, ___) => const Icon(
+                        Icons.store,
+                        size: 20,
+                        color: AppColors.textPrimary,
+                      ),
                     ),
-                    const SizedBox(width: 4),
+                    const SizedBox(width: 8),
                     const Text(
                       'BeikeShop Official',
                       style: TextStyle(
                         fontWeight: FontWeight.bold,
-                        fontSize: 14,
+                        fontSize: 16,
+                        color: AppColors.textPrimary,
                       ),
                     ),
                     const SizedBox(width: 4),
@@ -181,121 +197,193 @@ class _OrderCard extends StatelessWidget {
                   _getStatusText(context, order.status),
                   style: const TextStyle(
                     color: AppColors.primary,
-                    fontWeight: FontWeight.bold,
+                    fontWeight: FontWeight.w600,
                     fontSize: 14,
                   ),
                 ),
               ],
             ),
-            const Divider(height: 24),
-
-            // Product Thumbnails (Scrollable Row)
-            SizedBox(
-              height: 80,
-              child: ListView.separated(
-                scrollDirection: Axis.horizontal,
-                itemCount: order.items.length,
-                separatorBuilder: (_, __) => const SizedBox(width: 8),
-                itemBuilder: (context, index) {
-                  final item = order.items[index];
-                  return Container(
-                    width: 80,
-                    decoration: BoxDecoration(
-                      border: Border.all(color: AppColors.border),
-                      borderRadius: BorderRadius.circular(4),
-                    ),
-                    child: ClipRRect(
-                      borderRadius: BorderRadius.circular(4),
-                      child: CachedNetworkImage(
-                        imageUrl: item.product.imageUrl,
-                        fit: BoxFit.cover,
-                        placeholder: (context, url) =>
-                            Container(color: Colors.grey[200]),
-                        errorWidget: (context, url, error) =>
-                            const Icon(Icons.error),
+            const SizedBox(height: 12),
+            
+            // Product Thumbnails or Single Item
+            if (order.items.length == 1)
+              Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  ClipRRect(
+                    borderRadius: BorderRadius.circular(8),
+                    child: CachedNetworkImage(
+                      imageUrl: order.items[0].product.imageUrl,
+                      width: 90,
+                      height: 90,
+                      fit: BoxFit.cover,
+                      placeholder: (context, url) =>
+                          Container(color: Colors.grey[100]),
+                      errorWidget: (context, url, error) => Container(
+                        color: Colors.grey[100],
+                        child: const Icon(
+                          Icons.broken_image,
+                          color: Colors.grey,
+                        ),
                       ),
                     ),
-                  );
-                },
+                  ),
+                  const SizedBox(width: 12),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          order.items[0].product.title,
+                          maxLines: 2,
+                          overflow: TextOverflow.ellipsis,
+                          style: const TextStyle(
+                            fontSize: 15,
+                            color: AppColors.textPrimary,
+                            height: 1.3,
+                          ),
+                        ),
+                        const SizedBox(height: 8),
+                        Text(
+                          '${settings.formatPrice(order.items[0].product.price)} x${order.items[0].quantity}',
+                          style: const TextStyle(
+                            fontSize: 14,
+                            color: AppColors.textSecondary,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              )
+            else
+              SizedBox(
+                height: 90,
+                child: ListView.separated(
+                  scrollDirection: Axis.horizontal,
+                  itemCount: order.items.length,
+                  separatorBuilder: (_, __) => const SizedBox(width: 12),
+                  itemBuilder: (context, index) {
+                    final item = order.items[index];
+                    return ClipRRect(
+                      borderRadius: BorderRadius.circular(8),
+                      child: CachedNetworkImage(
+                        imageUrl: item.product.imageUrl,
+                        width: 90,
+                        height: 90,
+                        fit: BoxFit.cover,
+                        placeholder: (context, url) =>
+                            Container(color: Colors.grey[100]),
+                        errorWidget: (context, url, error) => Container(
+                          color: Colors.grey[100],
+                          child: const Icon(
+                            Icons.broken_image,
+                            color: Colors.grey,
+                          ),
+                        ),
+                      ),
+                    );
+                  },
+                ),
               ),
-            ),
-            const SizedBox(height: 12),
 
-            // Summary
+            const SizedBox(height: 16),
+
+            // Total & Buttons
             Row(
-              mainAxisAlignment: MainAxisAlignment.end,
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Text(
-                  l10n.itemCount(order.items.length),
+                 Text(
+                  '${l10n.itemCount(totalItems)} ${l10n.total}: ',
                   style: const TextStyle(
-                    color: AppColors.textSecondary,
-                    fontSize: 12,
-                  ),
-                ),
-                const SizedBox(width: 8),
-                Text(
-                  l10n.total,
-                  style: const TextStyle(
-                    color: AppColors.textPrimary,
                     fontSize: 14,
+                    color: AppColors.textSecondary,
                   ),
                 ),
-                const SizedBox(width: 4),
-                Text(
-                  settings.formatPrice(order.totalAmount),
-                  style: const TextStyle(
-                    fontWeight: FontWeight.bold,
-                    fontSize: 16,
-                    color: AppColors.textPrimary,
+                Expanded(
+                  child: Text(
+                    settings.formatPrice(order.totalAmount),
+                    textAlign: TextAlign.right,
+                    style: const TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                      color: AppColors.textPrimary,
+                    ),
                   ),
                 ),
               ],
             ),
+            
+            const SizedBox(height: 16),
+            const Divider(height: 1, color: AppColors.border),
             const SizedBox(height: 12),
-
-            // Action Buttons
+            
             Row(
               mainAxisAlignment: MainAxisAlignment.end,
               children: [
-                if (order.status == 'Pending') ...[
-                  OutlinedButton(
-                    onPressed: () {},
-                    style: OutlinedButton.styleFrom(
-                      foregroundColor: AppColors.textSecondary,
-                      side: const BorderSide(color: AppColors.border),
-                    ),
-                    child: Text(l10n.cancel),
-                  ),
-                  const SizedBox(width: 8),
-                  ElevatedButton(
-                    onPressed: () {},
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: AppColors.primary,
-                      foregroundColor: Colors.white,
-                    ),
-                    child: Text(l10n.payNow),
-                  ),
-                ] else if (order.status == 'Shipped' ||
-                    order.status == 'Delivered') ...[
+                if (order.status == 'Delivered') ...[
                   OutlinedButton(
                     onPressed: () {},
                     style: OutlinedButton.styleFrom(
                       foregroundColor: AppColors.textPrimary,
                       side: const BorderSide(color: AppColors.border),
+                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+                      padding: const EdgeInsets.symmetric(horizontal: 16),
+                      minimumSize: const Size(0, 36),
                     ),
-                    child: Text(l10n.trackOrder),
+                    child: Text(
+                      l10n.review,
+                      style: const TextStyle(fontSize: 14),
+                    ),
                   ),
-                  const SizedBox(width: 8),
-                  if (order.status == 'Delivered')
-                    OutlinedButton(
-                      onPressed: () {},
-                      style: OutlinedButton.styleFrom(
-                        foregroundColor: AppColors.primary,
-                        side: const BorderSide(color: AppColors.primary),
-                      ),
-                      child: Text(l10n.buyAgain),
-                    ),
+                  const SizedBox(width: 12),
                 ],
+                if (order.status == 'Pending') ...[
+                  OutlinedButton(
+                     onPressed: () {},
+                     style: OutlinedButton.styleFrom(
+                       foregroundColor: AppColors.textPrimary,
+                       side: const BorderSide(color: AppColors.border),
+                       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+                       padding: const EdgeInsets.symmetric(horizontal: 16),
+                       minimumSize: const Size(0, 36),
+                     ),
+                     child: Text(
+                       l10n.cancelOrder,
+                       style: const TextStyle(fontSize: 14),
+                     ),
+                   ),
+                   const SizedBox(width: 12),
+                  ElevatedButton(
+                    onPressed: () {},
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: AppColors.primary,
+                      foregroundColor: Colors.white,
+                      elevation: 0,
+                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+                      padding: const EdgeInsets.symmetric(horizontal: 20),
+                      minimumSize: const Size(0, 36),
+                    ),
+                    child: Text(
+                      l10n.payNow,
+                      style: const TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
+                    ),
+                  )
+                ] else
+                  OutlinedButton(
+                    onPressed: () {},
+                    style: OutlinedButton.styleFrom(
+                      foregroundColor: AppColors.primary,
+                      side: const BorderSide(color: AppColors.primary),
+                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+                      padding: const EdgeInsets.symmetric(horizontal: 16),
+                      minimumSize: const Size(0, 36),
+                    ),
+                    child: Text(
+                      l10n.buyAgain,
+                      style: const TextStyle(fontSize: 14),
+                    ),
+                  ),
               ],
             ),
           ],

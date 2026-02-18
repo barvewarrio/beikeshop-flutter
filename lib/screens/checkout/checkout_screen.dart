@@ -9,6 +9,8 @@ import '../../models/address_model.dart';
 import '../../theme/app_theme.dart';
 import '../address/address_list_screen.dart';
 
+import 'payment_screen.dart';
+
 class CheckoutScreen extends StatefulWidget {
   const CheckoutScreen({Key? key}) : super(key: key);
 
@@ -19,7 +21,7 @@ class CheckoutScreen extends StatefulWidget {
 class _CheckoutScreenState extends State<CheckoutScreen> {
   Address? _selectedAddress;
   bool _isLoading = false;
-  String _paymentMethod = 'Credit Card';
+  String _paymentMethod = '';
 
   @override
   void initState() {
@@ -35,16 +37,21 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
 
   void _selectAddress() async {
     // Navigate to address list and wait for selection
-    await Navigator.push(
+    final selectedAddress = await Navigator.push<Address>(
       context,
-      MaterialPageRoute(builder: (context) => const AddressListScreen()),
+      MaterialPageRoute(
+        builder: (context) => const AddressListScreen(selectMode: true),
+      ),
     );
 
-    // If user returns, we should refresh the selected address
-    if (mounted) {
+    if (selectedAddress != null && mounted) {
+      setState(() {
+        _selectedAddress = selectedAddress;
+      });
+    } else if (mounted) {
+      // If no address selected (back button), refresh current selection in case it was edited
       final addressProvider = context.read<AddressProvider>();
       setState(() {
-        // If we had an address, try to keep it (if it still exists), otherwise use default
         if (_selectedAddress != null) {
           try {
             _selectedAddress = addressProvider.addresses.firstWhere(
@@ -83,7 +90,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
       }
 
       // Create Order
-      await context.read<OrderProvider>().placeOrder(
+      final newOrder = await context.read<OrderProvider>().placeOrder(
         selectedItems,
         total,
         _selectedAddress!,
@@ -96,27 +103,36 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
       }
 
       if (mounted) {
-        showDialog(
-          context: context,
-          barrierDismissible: false,
-          builder: (ctx) => AlertDialog(
-            title: Text(l10n.orderPlaced),
-            content: Text(l10n.orderPlacedMessage),
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(12),
-            ),
-            actions: [
-              TextButton(
-                onPressed: () {
-                  Navigator.pop(ctx); // Close dialog
-                  Navigator.pop(context); // Close checkout
-                  // Ideally navigate to Order List or Home
-                },
-                child: const Text('OK'),
+        if (_paymentMethod == 'cod') {
+          showDialog(
+            context: context,
+            barrierDismissible: false,
+            builder: (ctx) => AlertDialog(
+              title: Text(l10n.orderPlaced),
+              content: Text(l10n.orderPlacedMessage),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(12),
               ),
-            ],
-          ),
-        );
+              actions: [
+                TextButton(
+                  onPressed: () {
+                    Navigator.pop(ctx); // Close dialog
+                    Navigator.pop(context); // Close checkout
+                    // Ideally navigate to Order List or Home
+                  },
+                  child: const Text('OK'),
+                ),
+              ],
+            ),
+          );
+        } else {
+          Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(
+              builder: (context) => PaymentScreen(order: newOrder),
+            ),
+          );
+        }
       }
     } catch (e) {
       if (mounted) {
@@ -375,6 +391,72 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
   }
 
   Widget _buildPaymentSection(AppLocalizations l10n) {
+    final orderProvider = context.watch<OrderProvider>();
+    final paymentMethods = orderProvider.paymentMethods;
+    final isPaymentLoading = orderProvider.isPaymentLoading;
+
+    if (isPaymentLoading) {
+      return const Center(child: CircularProgressIndicator());
+    }
+
+    // Fallback for dev/test when no payment methods are configured
+    if (paymentMethods.isEmpty) {
+      if (_paymentMethod.isEmpty) {
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          if (mounted) {
+            setState(() {
+              _paymentMethod = 'stripe';
+            });
+          }
+        });
+      }
+
+      return Container(
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(12),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withValues(alpha: 0.05),
+              blurRadius: 10,
+              offset: const Offset(0, 2),
+            ),
+          ],
+        ),
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              l10n.paymentMethod,
+              style: const TextStyle(
+                fontSize: 16,
+                fontWeight: FontWeight.bold,
+                color: AppColors.textPrimary,
+              ),
+            ),
+            const SizedBox(height: 8),
+            _buildPaymentOption(
+              'Test Payment (Stripe)',
+              'stripe',
+              '', // No icon
+            ),
+          ],
+        ),
+      );
+    }
+
+    if (_paymentMethod.isEmpty && paymentMethods.isNotEmpty) {
+      // Defer state update to next frame to avoid build error
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (mounted) {
+          setState(() {
+            _paymentMethod = paymentMethods.first.code;
+          });
+        }
+      });
+    }
+
     return Container(
       decoration: BoxDecoration(
         color: Colors.white,
@@ -400,19 +482,19 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
             ),
           ),
           const SizedBox(height: 8),
-          _buildPaymentOption(
-            l10n.creditCard,
-            'Credit Card',
-            Icons.credit_card,
+          ...paymentMethods.map(
+            (method) => _buildPaymentOption(
+              method.name,
+              method.code,
+              method.icon, // Passing icon URL/path
+            ),
           ),
-          _buildPaymentOption(l10n.paypal, 'PayPal', Icons.payment),
-          _buildPaymentOption(l10n.cod, 'COD', Icons.money),
         ],
       ),
     );
   }
 
-  Widget _buildPaymentOption(String label, String value, IconData icon) {
+  Widget _buildPaymentOption(String label, String value, String iconPath) {
     final isSelected = _paymentMethod == value;
     return InkWell(
       onTap: () => setState(() => _paymentMethod = value),
@@ -428,7 +510,22 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
               size: 20,
             ),
             const SizedBox(width: 12),
-            Icon(icon, size: 20, color: AppColors.textSecondary),
+            // Display icon from network or fallback
+            SizedBox(
+              width: 24,
+              height: 24,
+              child: iconPath.startsWith('http')
+                  ? Image.network(
+                      iconPath,
+                      errorBuilder: (_, __, ___) =>
+                          const Icon(Icons.payment, size: 24),
+                    )
+                  : const Icon(
+                      Icons.payment,
+                      size: 24,
+                      color: AppColors.textSecondary,
+                    ),
+            ),
             const SizedBox(width: 12),
             Text(
               label,

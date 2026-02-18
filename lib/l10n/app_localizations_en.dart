@@ -294,6 +294,19 @@ class AppLocalizationsEn extends AppLocalizations {
   String get creditCard => 'Credit Card';
 
   @override
+  String get cancelOrder => 'Cancel Order';
+
+  @override
+  String get freeShipping => 'Free';
+
+  @override
+  String get discretePackaging => 'Discrete Packaging';
+
+  @override
+  String get discretePackagingNote =>
+      'All orders are shipped in plain boxes with no branding.';
+
+  @override
   String get paypal => 'PayPal';
 
   @override
@@ -323,9 +336,6 @@ class AppLocalizationsEn extends AppLocalizations {
   String get productNotFound => 'Product not found';
 
   @override
-  String get freeShipping => 'Free';
-
-  @override
   String get ageVerificationTitle => 'Age Verification';
 
   @override
@@ -339,9 +349,41 @@ class AppLocalizationsEn extends AppLocalizations {
   String get exitApp => 'Exit';
 
   @override
-  String get discretePackaging => 'Discrete Packaging';
+  String get copy => 'Copy';
 
   @override
-  String get discretePackagingNote =>
-      'All orders are shipped in plain boxes with no branding.';
+  String get requestRefund => 'Request Refund';
+
+  @override
+  String get rmaReason => 'Reason for Refund';
+
+  @override
+  String get rmaStatus => 'Refund Status';
+
+  @override
+  String get rmaDetails => 'Refund Details';
+
+  @override
+  String get rmaPending => 'Pending Review';
+
+  @override
+  String get rmaApproved => 'Approved';
+
+  @override
+  String get rmaRejected => 'Rejected';
+
+  @override
+  String get submit => 'Submit';
+
+  @override
+  String get pleaseSelectReason => 'Please select a reason';
+
+  @override
+  String get description => 'Description';
+
+  @override
+  String get optional => 'Optional';
+
+  @override
+  String get submitSuccess => 'Submitted successfully';
 }

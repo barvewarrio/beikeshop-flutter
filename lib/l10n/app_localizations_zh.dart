@@ -293,6 +293,18 @@ class AppLocalizationsZh extends AppLocalizations {
   String get creditCard => '信用卡';
 
   @override
+  String get cancelOrder => '取消订单';
+
+  @override
+  String get freeShipping => '免运费';
+
+  @override
+  String get discretePackaging => '保密发货';
+
+  @override
+  String get discretePackagingNote => '所有订单均使用无品牌标识的包装箱发货，保护您的隐私。';
+
+  @override
   String get paypal => 'PayPal';
 
   @override
@@ -322,9 +334,6 @@ class AppLocalizationsZh extends AppLocalizations {
   String get productNotFound => '未找到相关商品';
 
   @override
-  String get freeShipping => '免运费';
-
-  @override
   String get ageVerificationTitle => '年龄确认';
 
   @override
@@ -337,8 +346,41 @@ class AppLocalizationsZh extends AppLocalizations {
   String get exitApp => '离开';
 
   @override
-  String get discretePackaging => '保密发货';
+  String get copy => '复制';
 
   @override
-  String get discretePackagingNote => '所有订单均使用无品牌标识的包装箱发货，保护您的隐私。';
+  String get requestRefund => '申请退款';
+
+  @override
+  String get rmaReason => '退款原因';
+
+  @override
+  String get rmaStatus => '退款状态';
+
+  @override
+  String get rmaDetails => '退款详情';
+
+  @override
+  String get rmaPending => '审核中';
+
+  @override
+  String get rmaApproved => '已批准';
+
+  @override
+  String get rmaRejected => '已拒绝';
+
+  @override
+  String get submit => '提交';
+
+  @override
+  String get pleaseSelectReason => '请选择原因';
+
+  @override
+  String get description => '描述';
+
+  @override
+  String get optional => '可选';
+
+  @override
+  String get submitSuccess => '提交成功';
 }

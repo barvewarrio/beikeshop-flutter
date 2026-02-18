@@ -1,117 +1,143 @@
-import 'dart:convert';
 import 'package:flutter/foundation.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import '../models/address_model.dart';
+import '../api/api_service.dart';
 
 class AddressProvider extends ChangeNotifier {
   List<Address> _addresses = [];
-  bool _isLoading = true;
+  bool _isLoading = false;
+  String? _error;
 
   AddressProvider() {
-    _loadAddresses();
+    loadAddresses();
   }
 
   List<Address> get addresses => _addresses;
   bool get isLoading => _isLoading;
-  Address? get defaultAddress => _addresses.isEmpty 
-      ? null 
-      : _addresses.firstWhere((a) => a.isDefault, orElse: () => _addresses.first);
+  String? get error => _error;
 
-  Future<void> _loadAddresses() async {
+  Address? get defaultAddress {
+    if (_addresses.isEmpty) return null;
     try {
-      final prefs = await SharedPreferences.getInstance();
-      final String? addressesJson = prefs.getString('user_addresses');
-      
-      if (addressesJson != null) {
-        final List<dynamic> decodedList = jsonDecode(addressesJson);
-        _addresses = decodedList.map((item) => Address.fromJson(item)).toList();
-      }
+      return _addresses.firstWhere((a) => a.isDefault);
+    } catch (_) {
+      return _addresses.first;
+    }
+  }
+
+  Future<void> loadAddresses() async {
+    _isLoading = true;
+    _error = null;
+    notifyListeners();
+
+    try {
+      _addresses = await ApiService().getAddresses();
     } catch (e) {
-      print('Error loading addresses: $e');
+      debugPrint('Error loading addresses: $e');
+      _error = e.toString();
     } finally {
       _isLoading = false;
       notifyListeners();
     }
   }
 
-  Future<void> _saveAddresses() async {
+  Future<void> addAddress(Address address) async {
+    _isLoading = true;
+    _error = null;
+    notifyListeners();
+
     try {
-      final prefs = await SharedPreferences.getInstance();
-      final String addressesJson = jsonEncode(_addresses.map((item) => item.toJson()).toList());
-      await prefs.setString('user_addresses', addressesJson);
+      final newAddress = await ApiService().addAddress(address);
+      _addresses.add(newAddress);
+
+      // If the new address is default, refresh list or update local state
+      if (newAddress.isDefault) {
+        _updateLocalDefault(newAddress.id);
+      }
     } catch (e) {
-      print('Error saving addresses: $e');
-    }
-  }
-
-  void addAddress(Address address) {
-    if (address.isDefault) {
-      // If new address is default, unset previous default
-      for (var i = 0; i < _addresses.length; i++) {
-        if (_addresses[i].isDefault) {
-          _addresses[i] = _addresses[i].copyWith(isDefault: false);
-        }
-      }
-    } else if (_addresses.isEmpty) {
-      // If it's the first address, make it default automatically
-      address = address.copyWith(isDefault: true);
-    }
-    
-    _addresses.add(address);
-    _saveAddresses();
-    notifyListeners();
-  }
-
-  void updateAddress(Address updatedAddress) {
-    final index = _addresses.indexWhere((a) => a.id == updatedAddress.id);
-    if (index >= 0) {
-      if (updatedAddress.isDefault) {
-        // Unset other defaults
-        for (var i = 0; i < _addresses.length; i++) {
-          if (_addresses[i].id != updatedAddress.id && _addresses[i].isDefault) {
-            _addresses[i] = _addresses[i].copyWith(isDefault: false);
-          }
-        }
-      }
-      
-      _addresses[index] = updatedAddress;
-      _saveAddresses();
+      debugPrint('Error adding address: $e');
+      _error = e.toString();
+    } finally {
+      _isLoading = false;
       notifyListeners();
     }
   }
 
-  void removeAddress(String id) {
-    final removedAddress = _addresses.firstWhere((a) => a.id == id);
-    _addresses.removeWhere((a) => a.id == id);
-    
-    // If we removed the default address and there are others left, make the first one default
-    if (removedAddress.isDefault && _addresses.isNotEmpty) {
-      _addresses[0] = _addresses[0].copyWith(isDefault: true);
-    }
-    
-    _saveAddresses();
+  Future<void> updateAddress(Address address) async {
+    _isLoading = true;
+    _error = null;
     notifyListeners();
+
+    try {
+      final updatedAddress = await ApiService().updateAddress(address);
+      final index = _addresses.indexWhere((a) => a.id == updatedAddress.id);
+      if (index != -1) {
+        _addresses[index] = updatedAddress;
+        if (updatedAddress.isDefault) {
+          _updateLocalDefault(updatedAddress.id);
+        }
+      }
+    } catch (e) {
+      debugPrint('Error updating address: $e');
+      _error = e.toString();
+    } finally {
+      _isLoading = false;
+      notifyListeners();
+    }
   }
 
-  void setDefaultAddress(String id) {
-    bool changed = false;
-    for (var i = 0; i < _addresses.length; i++) {
-      if (_addresses[i].id == id) {
-        if (!_addresses[i].isDefault) {
-          _addresses[i] = _addresses[i].copyWith(isDefault: true);
-          changed = true;
-        }
+  Future<void> removeAddress(String id) async {
+    _isLoading = true;
+    _error = null;
+    notifyListeners();
+
+    try {
+      final addressToDelete = _addresses.firstWhere(
+        (a) => a.id == id,
+        orElse: () => Address(
+          id: '',
+          name: '',
+          phone: '',
+          country: '',
+          province: '',
+          city: '',
+          addressLine: '',
+          zipCode: '',
+        ),
+      );
+      await ApiService().deleteAddress(id);
+
+      if (addressToDelete.isDefault) {
+        // Reload to get new default assigned by backend
+        // We set _isLoading false here because loadAddresses will handle its own loading state
+        // and we want to avoid double finally execution issues if we just called it
+        await loadAddresses();
       } else {
-        if (_addresses[i].isDefault) {
-          _addresses[i] = _addresses[i].copyWith(isDefault: false);
-          changed = true;
-        }
+        _addresses.removeWhere((a) => a.id == id);
+      }
+    } catch (e) {
+      debugPrint('Error deleting address: $e');
+      _error = e.toString();
+    } finally {
+      _isLoading = false;
+      notifyListeners();
+    }
+  }
+
+  void _updateLocalDefault(String defaultId) {
+    for (var i = 0; i < _addresses.length; i++) {
+      if (_addresses[i].id != defaultId && _addresses[i].isDefault) {
+        _addresses[i] = _addresses[i].copyWith(isDefault: false);
       }
     }
-    
-    if (changed) {
-      _saveAddresses();
-      notifyListeners();
+  }
+
+  // Helper to ensure single default locally
+  void setDefaultAddress(String id) {
+    try {
+      final address = _addresses.firstWhere((a) => a.id == id);
+      updateAddress(address.copyWith(isDefault: true));
+    } catch (e) {
+      debugPrint('Address not found: $id');
     }
   }
 }

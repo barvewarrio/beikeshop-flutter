@@ -31,9 +31,39 @@
 **隐私政策 (Privacy Policy)**: http://mvpagent.cn/PureDesire
 
 ### 已完成 (Completed)
-- [x] **年龄验证 (Age Verification)**: 已实现 APP 启动时的年龄确认弹窗 (Home Screen Modal)。
-- [x] **隐私政策 (Privacy Policy)**: 已更新 URL。
+- [x] **年龄验证 (Age Verification)**: 已实现 APP 启动时的年龄确认弹窗 (Home Screen Modal)，使用 SharedPreferences 持久化状态。
+- [x] **隐私政策 (Privacy Policy)**: 已更新 URL，并在设置页添加链接。
 - [x] **保密发货 (Discrete Packaging)**: 已在结算页增加保密发货说明。
+- [x] **界面优化 (UI Refinement)**:
+  - 地址管理页 (Address Management): Temu 风格卡片 (圆角 8px, 阴影 blur 4, 默认标签位置优化)。
+  - 订单列表页 (Order List): 修复 Product 模型属性引用错误 (name -> title)，修复本地化 item count 错误，统一 Temu 风格 UI。
+- [x] **API 服务优化 (API Service)**:
+  - 修复 `getOrders` 分页数据解析错误。
+  - 完善 `Product` 和 `Order` 数据模型映射。
+  - 验证订单商品总数计算逻辑 (Flutter端累加 items.quantity，后端 OrderRepo 预加载 orderProducts)。
+- [x] **多货币支持 (Multi-currency)**: SettingsProvider 支持 12 种货币及汇率换算。
+- [x] **支付接口 (Payment API)**:
+  - 后端: `Api/PaymentController` 已完善，支持 COD (货到付款) 和 Stripe (作为默认回退选项) 的处理逻辑。
+  - 前端: `ApiService` 集成支付接口，`CheckoutScreen` 动态加载支付方式。
+- [x] **代码质量 (Code Quality)**:
+  - Flutter 端全面修复 `avoid_print` linter 错误，统一使用 `debugPrint` 进行日志输出，提升生产环境性能。
+  - 修复 `ApiService` 中 User 模型导入问题。
+- [x] **评价系统 (Review System)**:
+  - 后端: `ReviewController` (List, Create) 已实现并注册路由，`Review` 模型与迁移验证通过。
+  - 前端: 实现 `ProductReviewsScreen` (查看全部评价) 和 `WriteReviewScreen` (提交评价)，商品详情页展示 Top 3 评价。
+- [x] **心愿单 (Wishlist)**:
+  - 后端: `WishlistController` (List, Add, Remove) 已实现并注册路由，`CustomerWishlist` 模型关联验证通过。
+  - 前端: 商品详情页集成心愿单切换功能。
+- [x] **搜索功能 (Search)**:
+  - 前端: `SearchScreen` 集成后端关键词过滤接口 (`getProducts(keyword: ...)`)。
+- [x] **优惠券 (Coupons)**:
+  - 后端: `CouponController` (List, Apply, Remove) 已实现并注册路由。
+  - 前端: `ApiService` 已集成优惠券接口。
+- [x] **退款/售后 (RMA)**:
+  - 后端: `RmaController` (List, Show, Create, Reasons) 已实现并注册路由。
+  - 前端: `ApiService` 集成 RMA 接口，订单详情页增加 "Request Refund" 按钮。
+- [x] **下载页 (Download Page)**:
+  - 前端: `beikeshop-down` 项目实现 Temu 风格下载页，增加 "Spin to Win" 互动弹窗及移动端吸底引导 (Sticky Footer)。
 
 ### 补充建议 (Strategic Suggestions)
 1. **合规性 (Compliance)**
@@ -63,38 +93,31 @@
 - **PayPal**: (推测存在于 Composer 依赖 `srmklive/paypal`)
 - **COD (货到付款)**: 基础插件功能
 
-#### 2. 缺失接口列表 (Missing API Endpoints)
-前端 `ApiService.dart` 目前仅实现了极少部分接口。以下为完整电商流程所需的缺失接口：
+**重要提示 (Critical Note)**:
+所有支付插件若要在移动端使用，**必须**实现 `service.payment.mobile_pay.data` 钩子 (Hook)，并填充 `params` 数据。否则 `PaymentService::mobilePay()` 将抛出异常。
 
-**用户认证 (Authentication)**
-- [ ] `POST /login` (登录)
-- [ ] `POST /register` (注册)
-- [ ] `GET /logout` (登出)
-- [ ] `POST /forgotten/send_code` & `password` (找回密码)
-- [ ] `GET /auth/user` (获取用户信息)
+#### 2. 接口开发状态 (API Development Status)
 
-**购物车 (Cart)**
-- [ ] `GET /carts` (获取购物车列表)
-- [ ] `POST /carts` (添加商品)
-- [ ] `PUT /carts/{cart_id}` (更新数量)
-- [ ] `DELETE /carts/{cart_id}` (删除商品)
-- [ ] `POST /carts/select` & `unselect` (选中/取消选中)
+**已完成 (Completed)**
+- [x] **用户认证 (Authentication)**: `AuthController` (Login, Register, Logout, Me, Refresh) - 已验证并集成真实 API (JWT Auth)。
+- [x] **支付 (Payment)**: `PaymentController` (Methods, Pay) - 已实现 COD 和 Stripe 处理逻辑。
+- [x] **路由 (Routes)**: `api.php` 已注册并验证 Auth, Payment, Cart, Order, Review, Wishlist, RMA, Coupon 所有核心路由。
+- [x] **购物车 (Cart)**: `CartController` (List, Add, Update, Delete) - 已验证。
+- [x] **地址管理 (Address)**: `AddressController` (List, Add, Update, Delete) - 已验证。
+- [x] **订单管理 (Order)**: `OrderController` (List, Detail, Create, Cancel) - 已验证。
+- [x] **基础数据**: `CategoryController`, `ProductController`, `CountryController`, `ZoneController` - 已验证。
+- [x] **评价系统**: `ReviewController` (List, Create) - 已验证。
+- [x] **心愿单**: `WishlistController` (List, Add, Remove) - 已验证。
+- [x] **优惠券**: `CouponController` (List, Apply, Remove) - 已验证。
+- [x] **退款/售后**: `RmaController` (List, Show, Create, Reasons) - 已验证。
 
-**结算与订单 (Checkout & Order)**
-- [ ] `GET /checkout` (获取结算页信息：地址、支付方式、配送方式)
-- [ ] `PUT /checkout` (更新结算信息)
-- [ ] `POST /checkout/confirm` (提交订单)
-- [ ] `GET /account/orders` (订单列表)
-- [ ] `GET /account/orders/{order_number}` (订单详情)
-- [ ] `GET /orders/{order_number}/pay` (支付页面/参数)
-
-**地址管理 (Address)**
-- [ ] `GET /account/addresses` (地址列表)
-- [ ] `POST /account/addresses` (新增地址)
-- [ ] `PUT /account/addresses/{id}` (编辑地址)
-- [ ] `DELETE /account/addresses/{id}` (删除地址)
+### 待开发接口 (Missing Interfaces / To-Do)
+- [ ] **物流追踪 (Order Tracking)**:
+  - 前端: 订单详情页需展示物流信息。
+  - 后端: 需实现 `GET /api/orders/{id}/tracking` 接口，对接物流商API。
+- [ ] **支付回调**: Webhook/Callback for Stripe/Alipay/WeChat
+- [ ] **物流追踪**: `ShippingController` (Track)
 
 #### 3. 后端适配建议 (Backend Adaptation)
-- **API 模式改造**: BeikeShop 后端主要设计为返回 HTML 视图 (MVC)。
-  - 需确认后端控制器是否支持 `Accept: application/json` 请求头自动返回 JSON。
-  - 若不支持，需修改 `Shop/Http/Controllers` 下的控制器（如 `CheckoutController`），在检测到 API 请求时返回 `json_success($data)` 而非 `view(...)`。
+- **API 模式改造**: 已在 `Shop/Http/Controllers/Api` 命名空间下创建独立控制器，并配置 `api_customer` guard (JWT Auth)。
+- **支付适配**: 需检查现有支付插件是否实现 mobile hook。

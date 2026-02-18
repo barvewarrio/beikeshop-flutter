@@ -56,25 +56,11 @@ class _SearchScreenState extends State<SearchScreen> {
     });
 
     try {
-      // In a real app, call API. Here we filter mock products.
-      final allProducts = await ApiService()
-          .getProducts(); // Or use a search API endpoint
+      // Call API with keyword
+      final results = await ApiService().getProducts(keyword: query);
 
-      // Simulate network delay
-      await Future.delayed(const Duration(milliseconds: 500));
-
-      final results = allProducts.where((p) {
-        final title = p.title.toLowerCase();
-        final q = query.toLowerCase();
-        return title.contains(q);
-      }).toList();
-
-      // If no results from API (or mock data is limited), generate some mock results for demo
-      if (results.isEmpty) {
-        // Fallback to generate some random products just to show UI if query matches nothing
-        // But better to show "No results" if logic is strict.
-        // Let's keep it strict for now.
-      }
+      // Simulate network delay if needed (optional)
+      // await Future.delayed(const Duration(milliseconds: 500));
 
       if (mounted) {
         setState(() {
@@ -94,6 +80,9 @@ class _SearchScreenState extends State<SearchScreen> {
           _isLoading = false;
           _searchResults = [];
         });
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text('Search failed: $e')));
       }
     }
   }

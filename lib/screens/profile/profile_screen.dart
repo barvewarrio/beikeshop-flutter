@@ -8,6 +8,7 @@ import '../auth/login_screen.dart';
 import '../address/address_list_screen.dart';
 import '../order/order_list_screen.dart';
 import '../settings/settings_screen.dart';
+import '../wishlist/wishlist_screen.dart';
 
 class ProfileScreen extends StatelessWidget {
   const ProfileScreen({super.key});
@@ -284,6 +285,19 @@ class ProfileScreen extends StatelessWidget {
                             onTap: () {},
                           ),
                           _ServiceItem(
+                            icon: Icons.favorite_border,
+                            label: l10n.wishlist,
+                            color: Colors.pink,
+                            onTap: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => const WishlistScreen(),
+                                ),
+                              );
+                            },
+                          ),
+                          _ServiceItem(
                             icon: Icons.account_balance_wallet_outlined,
                             label: l10n.credit,
                             color: Colors.green,
@@ -307,12 +321,6 @@ class ProfileScreen extends StatelessWidget {
                             icon: Icons.history,
                             label: l10n.history,
                             color: Colors.purple,
-                            onTap: () {},
-                          ),
-                          _ServiceItem(
-                            icon: Icons.favorite_border,
-                            label: l10n.wishlist,
-                            color: Colors.pink,
                             onTap: () {},
                           ),
                           _ServiceItem(

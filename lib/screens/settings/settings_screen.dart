@@ -87,34 +87,55 @@ class SettingsScreen extends StatelessWidget {
 
   void _showCurrencyDialog(BuildContext context, SettingsProvider settings) {
     final l10n = AppLocalizations.of(context)!;
-    // 货币选择弹窗
+    
+    final currencies = [
+      {'code': 'USD', 'name': 'USD (\$)'},
+      {'code': 'CNY', 'name': 'CNY (¥)'},
+      {'code': 'EUR', 'name': 'EUR (€)'},
+      {'code': 'VND', 'name': 'VND (₫)'},
+      {'code': 'CAD', 'name': 'CAD (CA\$)'},
+      {'code': 'NGN', 'name': 'NGN (₦)'},
+      {'code': 'KES', 'name': 'KES (KSh)'},
+      {'code': 'THB', 'name': 'THB (฿)'},
+      {'code': 'MYR', 'name': 'MYR (RM)'},
+      {'code': 'PHP', 'name': 'PHP (₱)'},
+      {'code': 'IDR', 'name': 'IDR (Rp)'},
+      {'code': 'SGD', 'name': 'SGD (S\$)'},
+    ];
+
     showDialog(
       context: context,
-      builder: (context) => SimpleDialog(
+      builder: (context) => AlertDialog(
         title: Text(l10n.selectCurrency),
-        children: [
-          SimpleDialogOption(
-            onPressed: () {
-              settings.setCurrency('USD');
-              Navigator.pop(context);
+        content: SizedBox(
+          width: double.maxFinite,
+          child: ListView.separated(
+            shrinkWrap: true,
+            itemCount: currencies.length,
+            separatorBuilder: (context, index) => const Divider(height: 1),
+            itemBuilder: (context, index) {
+              final currency = currencies[index];
+              final isSelected = settings.currencyCode == currency['code'];
+              
+              return ListTile(
+                title: Text(
+                  currency['name']!,
+                  style: TextStyle(
+                    fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
+                    color: isSelected ? AppColors.primary : AppColors.textPrimary,
+                  ),
+                ),
+                trailing: isSelected 
+                    ? const Icon(Icons.check, color: AppColors.primary)
+                    : null,
+                onTap: () {
+                  settings.setCurrency(currency['code']!);
+                  Navigator.pop(context);
+                },
+              );
             },
-            child: const Text('USD (\$)'),
           ),
-          SimpleDialogOption(
-            onPressed: () {
-              settings.setCurrency('CNY');
-              Navigator.pop(context);
-            },
-            child: const Text('CNY (¥)'),
-          ),
-          SimpleDialogOption(
-            onPressed: () {
-              settings.setCurrency('EUR');
-              Navigator.pop(context);
-            },
-            child: const Text('EUR (€)'),
-          ),
-        ],
+        ),
       ),
     );
   }

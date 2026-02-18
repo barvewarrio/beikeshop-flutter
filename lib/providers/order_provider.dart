@@ -5,44 +5,64 @@ import '../models/order_model.dart';
 import '../models/models.dart';
 import '../providers/cart_provider.dart';
 import '../models/address_model.dart';
+import '../models/cart_item_model.dart';
+import '../api/api_service.dart';
+import '../models/payment_method_model.dart';
 
 class OrderProvider extends ChangeNotifier {
   List<Order> _orders = [];
+  List<PaymentMethod> _paymentMethods = [];
   bool _isLoading = true;
+  bool _isPaymentLoading = false;
+  final ApiService _apiService = ApiService();
 
   OrderProvider() {
-    _loadOrders();
+    loadOrders();
+    fetchPaymentMethods();
   }
 
   List<Order> get orders => _orders;
+  List<PaymentMethod> get paymentMethods => _paymentMethods;
   bool get isLoading => _isLoading;
+  bool get isPaymentLoading => _isPaymentLoading;
 
-  Future<void> _loadOrders() async {
+  Future<void> fetchPaymentMethods() async {
+    _isPaymentLoading = true;
+    // notifyListeners(); // Avoid rebuilds during build phase if called from constructor
     try {
-      final prefs = await SharedPreferences.getInstance();
-      final String? ordersJson = prefs.getString('user_orders');
-
-      if (ordersJson != null) {
-        final List<dynamic> decodedList = jsonDecode(ordersJson);
-        _orders = decodedList.map((item) => Order.fromJson(item)).toList();
-      }
+      final methods = await _apiService.getPaymentMethods();
+      _paymentMethods = methods.map((m) => PaymentMethod.fromJson(m)).toList();
     } catch (e) {
-      print('Error loading orders: $e');
+      debugPrint('Error fetching payment methods: $e');
     } finally {
-      _isLoading = false;
+      _isPaymentLoading = false;
       notifyListeners();
     }
   }
 
-  Future<void> _saveOrders() async {
+  Future<Map<String, dynamic>> payOrder(
+    String orderId,
+    String paymentMethod,
+  ) async {
     try {
-      final prefs = await SharedPreferences.getInstance();
-      final String ordersJson = jsonEncode(
-        _orders.map((item) => item.toJson()).toList(),
-      );
-      await prefs.setString('user_orders', ordersJson);
+      return await _apiService.payOrder(orderId, paymentMethod);
     } catch (e) {
-      print('Error saving orders: $e');
+      debugPrint('Error paying order: $e');
+      rethrow;
+    }
+  }
+
+  Future<void> loadOrders() async {
+    _isLoading = true;
+    // notifyListeners(); // Avoid rebuilds during build phase
+    try {
+      _orders = await _apiService.getOrders();
+    } catch (e) {
+      debugPrint('Error loading orders: $e');
+      // Fallback to local storage if API fails? Or just empty.
+    } finally {
+      _isLoading = false;
+      notifyListeners();
     }
   }
 
@@ -50,22 +70,22 @@ class OrderProvider extends ChangeNotifier {
     List<CartItem> items,
     double totalAmount,
     Address shippingAddress,
-    String paymentMethod,
-  ) async {
-    final newOrder = Order(
-      id: DateTime.now().millisecondsSinceEpoch.toString(),
-      items: items,
-      totalAmount: totalAmount,
-      shippingAddress: shippingAddress,
-      date: DateTime.now(),
-      status: 'Pending',
-      paymentMethod: paymentMethod,
-    );
+    String paymentMethod, {
+    String? comment,
+  }) async {
+    try {
+      final newOrder = await _apiService.createOrder(
+        addressId: shippingAddress.id!,
+        paymentMethod: paymentMethod,
+        comment: comment,
+      );
 
-    _orders.insert(0, newOrder);
-    await _saveOrders();
-    notifyListeners();
-
-    return newOrder;
+      _orders.insert(0, newOrder);
+      notifyListeners();
+      return newOrder;
+    } catch (e) {
+      debugPrint('Error placing order: $e');
+      rethrow;
+    }
   }
 }

@@ -9,6 +9,8 @@ import 'providers/auth_provider.dart';
 import 'providers/address_provider.dart';
 import 'providers/order_provider.dart';
 import 'providers/settings_provider.dart';
+import 'providers/wishlist_provider.dart';
+import 'providers/rma_provider.dart';
 
 void main() {
   runApp(
@@ -19,6 +21,8 @@ void main() {
         ChangeNotifierProvider(create: (_) => AddressProvider()),
         ChangeNotifierProvider(create: (_) => OrderProvider()),
         ChangeNotifierProvider(create: (_) => SettingsProvider()),
+        ChangeNotifierProvider(create: (_) => WishlistProvider()),
+        ChangeNotifierProvider(create: (_) => RmaProvider()),
       ],
       child: const MyApp(),
     ),

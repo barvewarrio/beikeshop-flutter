@@ -98,6 +98,10 @@
   "subtotal": "商品小计",
   "shipping": "运费",
   "creditCard": "信用卡",
+  "cancelOrder": "取消订单",
+  "freeShipping": "免运费",
+  "discretePackaging": "私密发货",
+  "discretePackagingNote": "所有包裹均采用私密包装，不包含任何敏感信息。",
   "paypal": "PayPal",
   "cod": "货到付款",
   "searchHint": "搜索商品",
@@ -120,7 +124,20 @@
   "iAmOver18": "我已满18岁",
   "exitApp": "离开",
   "discretePackaging": "保密发货",
-  "discretePackagingNote": "所有订单均使用无品牌标识的包装箱发货，保护您的隐私。"
+  "discretePackagingNote": "所有订单均使用无品牌标识的包装箱发货，保护您的隐私。",
+  "copy": "复制",
+  "requestRefund": "申请退款",
+  "rmaReason": "退款原因",
+  "rmaStatus": "退款状态",
+  "rmaDetails": "退款详情",
+  "rmaPending": "审核中",
+  "rmaApproved": "已批准",
+  "rmaRejected": "已拒绝",
+  "submit": "提交",
+  "pleaseSelectReason": "请选择原因",
+  "description": "描述",
+  "optional": "可选",
+  "submitSuccess": "提交成功"
 }
 
 

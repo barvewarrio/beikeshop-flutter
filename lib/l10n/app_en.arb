@@ -116,9 +116,13 @@
       }
     }
   },
-  "subtotal": "Subtotal",
+ "subtotal": "Subtotal",
   "shipping": "Shipping",
   "creditCard": "Credit Card",
+  "cancelOrder": "Cancel Order",
+  "freeShipping": "Free Shipping",
+  "discretePackaging": "Discrete Packaging",
+  "discretePackagingNote": "All packages are discreetly packaged without any sensitive information.",
   "paypal": "PayPal",
   "cod": "Cash on Delivery",
   "searchHint": "Search products",
@@ -141,7 +145,20 @@
   "iAmOver18": "I am over 18",
   "exitApp": "Exit",
   "discretePackaging": "Discrete Packaging",
-  "discretePackagingNote": "All orders are shipped in plain boxes with no branding."
+  "discretePackagingNote": "All orders are shipped in plain boxes with no branding.",
+  "copy": "Copy",
+  "requestRefund": "Request Refund",
+  "rmaReason": "Reason for Refund",
+  "rmaStatus": "Refund Status",
+  "rmaDetails": "Refund Details",
+  "rmaPending": "Pending Review",
+  "rmaApproved": "Approved",
+  "rmaRejected": "Rejected",
+  "submit": "Submit",
+  "pleaseSelectReason": "Please select a reason",
+  "description": "Description",
+  "optional": "Optional",
+  "submitSuccess": "Submitted successfully"
 }
 
 

@@ -6,17 +6,35 @@ class SettingsProvider extends ChangeNotifier {
   String _languageCode = 'zh'; // Default to Chinese
   String _currencyCode = 'CNY'; // Default to CNY
 
-  // Exchange rates (Mock)
+  // Exchange rates (Mock - Base USD)
   final Map<String, double> _exchangeRates = {
     'USD': 1.0,
-    'CNY': 7.2,
-    'EUR': 0.92,
+    'CNY': 7.20, // China
+    'EUR': 0.92, // Europe
+    'VND': 24500.0, // Vietnam
+    'CAD': 1.35, // Canada
+    'NGN': 1500.0, // Nigeria
+    'KES': 145.0, // Kenya
+    'THB': 36.0, // Thailand
+    'MYR': 4.75, // Malaysia
+    'PHP': 56.0, // Philippines
+    'IDR': 15700.0, // Indonesia
+    'SGD': 1.34, // Singapore
   };
 
   final Map<String, String> _currencySymbols = {
     'USD': '\$',
     'CNY': '¥',
     'EUR': '€',
+    'VND': '₫',
+    'CAD': 'CA\$',
+    'NGN': '₦',
+    'KES': 'KSh',
+    'THB': '฿',
+    'MYR': 'RM',
+    'PHP': '₱',
+    'IDR': 'Rp',
+    'SGD': 'S\$',
   };
 
   SettingsProvider() {
@@ -54,9 +72,15 @@ class SettingsProvider extends ChangeNotifier {
     double rate = _exchangeRates[_currencyCode] ?? 1.0;
     double convertedAmount = amountInUSD * rate;
 
+    // Different formatting for currencies with large numbers (VND, IDR)
+    int decimalDigits = 2;
+    if (['VND', 'IDR', 'KRW', 'JPY'].contains(_currencyCode)) {
+      decimalDigits = 0;
+    }
+
     final format = NumberFormat.currency(
       symbol: currencySymbol,
-      decimalDigits: 2,
+      decimalDigits: decimalDigits,
     );
     return format.format(convertedAmount);
   }
