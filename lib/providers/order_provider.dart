@@ -70,7 +70,7 @@ class OrderProvider extends ChangeNotifier {
   }) async {
     try {
       final newOrder = await _apiService.createOrder(
-        addressId: shippingAddress.id!,
+        addressId: shippingAddress.id,
         paymentMethod: paymentMethod,
         comment: comment,
       );

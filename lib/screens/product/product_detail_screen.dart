@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:beikeshop_flutter/screens/product/product_reviews_screen.dart';
@@ -24,10 +25,43 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
   bool _isLoading = true;
   Product? _product;
   List<Review> _reviews = [];
+  late Timer _timer;
+  int _timeLeft = 8130; // 02:15:30 in seconds
+
   @override
   void initState() {
     super.initState();
+    _startTimer();
     _fetchProductDetails();
+  }
+
+  @override
+  void dispose() {
+    if (_timer.isActive) {
+      _timer.cancel();
+    }
+    super.dispose();
+  }
+
+  void _startTimer() {
+    _timer = Timer.periodic(const Duration(seconds: 1), (timer) {
+      if (_timeLeft == 0) {
+        timer.cancel();
+      } else {
+        if (mounted) {
+          setState(() {
+            _timeLeft--;
+          });
+        }
+      }
+    });
+  }
+
+  String get _timerString {
+    final hours = (_timeLeft / 3600).floor();
+    final minutes = ((_timeLeft % 3600) / 60).floor();
+    final seconds = _timeLeft % 60;
+    return '${hours.toString().padLeft(2, '0')}:${minutes.toString().padLeft(2, '0')}:${seconds.toString().padLeft(2, '0')}';
   }
 
   Future<void> _fetchProductDetails() async {
@@ -105,6 +139,24 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
         );
       }
     }
+  }
+
+  Widget _buildTrustBadge(IconData icon, String text) {
+    return Column(
+      children: [
+        Icon(icon, color: const Color(0xFF1B8D1F), size: 24),
+        const SizedBox(height: 4),
+        Text(
+          text,
+          style: const TextStyle(
+            fontSize: 10,
+            color: Color(0xFF1B8D1F),
+            fontWeight: FontWeight.w500,
+          ),
+          textAlign: TextAlign.center,
+        ),
+      ],
+    );
   }
 
   @override
@@ -221,10 +273,13 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                                 ),
                                 const Spacer(),
                                 Text(
-                                  l10n.endsIn('02:15:30'),
+                                  l10n.endsIn(_timerString),
                                   style: const TextStyle(
                                     color: Colors.white,
                                     fontWeight: FontWeight.w500,
+                                    fontFeatures: [
+                                      FontFeature.tabularFigures(),
+                                    ],
                                   ),
                                 ),
                               ],
@@ -483,6 +538,26 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                             ),
                           ],
                         ),
+                      ),
+
+                      const SizedBox(height: 16),
+                      // Trust Badges
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceAround,
+                        children: [
+                          _buildTrustBadge(
+                            Icons.lock_outline,
+                            l10n.securePayment,
+                          ),
+                          _buildTrustBadge(
+                            Icons.verified_user_outlined,
+                            l10n.buyerProtection,
+                          ),
+                          _buildTrustBadge(
+                            Icons.local_shipping_outlined,
+                            l10n.deliveryGuarantee,
+                          ),
+                        ],
                       ),
 
                       const Divider(height: 32),

@@ -555,40 +555,39 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
           const SizedBox(height: 16),
           // Trust Badges
           Row(
-            mainAxisAlignment: MainAxisAlignment.center,
+            mainAxisAlignment: MainAxisAlignment.spaceAround,
             children: [
-              const Icon(
-                Icons.lock_outline,
-                size: 16,
-                color: AppColors.success,
+              _buildTrustBadge(Icons.lock_outline, l10n.securePayment),
+              _buildTrustBadge(
+                Icons.verified_user_outlined,
+                l10n.buyerProtection,
               ),
-              const SizedBox(width: 4),
-              Text(
-                l10n.safePayment,
-                style: const TextStyle(
-                  fontSize: 12,
-                  color: AppColors.success,
-                  fontWeight: FontWeight.w500,
-                ),
-              ),
-              const SizedBox(width: 16),
-              const Icon(
-                Icons.security,
-                size: 16,
-                color: AppColors.textSecondary,
-              ),
-              const SizedBox(width: 4),
-              Text(
-                l10n.paymentSecurity,
-                style: const TextStyle(
-                  fontSize: 12,
-                  color: AppColors.textSecondary,
-                ),
+              _buildTrustBadge(
+                Icons.local_shipping_outlined,
+                l10n.deliveryGuarantee,
               ),
             ],
           ),
         ],
       ),
+    );
+  }
+
+  Widget _buildTrustBadge(IconData icon, String text) {
+    return Column(
+      children: [
+        Icon(icon, color: const Color(0xFF1B8D1F), size: 24),
+        const SizedBox(height: 4),
+        Text(
+          text,
+          style: const TextStyle(
+            fontSize: 10,
+            color: Color(0xFF1B8D1F),
+            fontWeight: FontWeight.w500,
+          ),
+          textAlign: TextAlign.center,
+        ),
+      ],
     );
   }
 
