@@ -662,6 +662,18 @@ abstract class AppLocalizations {
   /// **'Place Order'**
   String get placeOrder;
 
+  /// No description provided for @store.
+  ///
+  /// In en, this message translates to:
+  /// **'Store'**
+  String get store;
+
+  /// No description provided for @chat.
+  ///
+  /// In en, this message translates to:
+  /// **'Chat'**
+  String get chat;
+
   /// No description provided for @orderPlaced.
   ///
   /// In en, this message translates to:

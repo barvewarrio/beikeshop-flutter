@@ -298,6 +298,12 @@ class AppLocalizationsEn extends AppLocalizations {
   String get placeOrder => 'Place Order';
 
   @override
+  String get store => 'Store';
+
+  @override
+  String get chat => 'Chat';
+
+  @override
   String get orderPlaced => 'Order Placed!';
 
   @override

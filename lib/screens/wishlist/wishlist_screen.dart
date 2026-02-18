@@ -16,10 +16,11 @@ class _WishlistScreenState extends State<WishlistScreen> {
   @override
   void initState() {
     super.initState();
-    Future.microtask(
-      () =>
-          Provider.of<WishlistProvider>(context, listen: false).fetchWishlist(),
-    );
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (mounted) {
+        context.read<WishlistProvider>().fetchWishlist();
+      }
+    });
   }
 
   @override

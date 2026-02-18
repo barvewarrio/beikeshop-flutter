@@ -98,6 +98,8 @@
   "defaultTag": "默认",
   "change": "修改",
   "placeOrder": "提交订单",
+  "store": "店铺",
+  "chat": "客服",
   "orderPlaced": "订单已提交",
   "orderPlacedMessage": "您的订单已成功提交。",
   "selectShippingAddress": "请选择收货地址",

@@ -711,7 +711,7 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
             left: 0,
             right: 0,
             child: Container(
-              padding: const EdgeInsets.all(16),
+              padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
               decoration: BoxDecoration(
                 color: Colors.white,
                 boxShadow: [
@@ -725,88 +725,166 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
               child: SafeArea(
                 child: Row(
                   children: [
-                    Container(
-                      decoration: BoxDecoration(
-                        border: Border.all(color: Colors.grey[300]!),
-                        borderRadius: BorderRadius.circular(8),
-                      ),
-                      child: IconButton(
-                        icon: const Icon(Icons.shopping_cart_outlined),
-                        onPressed: () {
-                          // Navigate to cart
-                          // Use root navigator or just push
-                          // For now maybe just show cart or go back if coming from cart?
-                          // Let's assume standard nav to cart
-                        },
+                    // Store Icon
+                    InkWell(
+                      onTap: () {},
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          const Icon(
+                            Icons.storefront_outlined,
+                            color: Colors.black87,
+                          ),
+                          const SizedBox(height: 2),
+                          Text(
+                            l10n.store,
+                            style: const TextStyle(
+                              fontSize: 10,
+                              color: Colors.black54,
+                            ),
+                          ),
+                        ],
                       ),
                     ),
-                    const SizedBox(width: 16),
+                    const SizedBox(width: 20),
+                    // Chat Icon
+                    InkWell(
+                      onTap: () {},
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          const Icon(
+                            Icons.chat_bubble_outline,
+                            color: Colors.black87,
+                          ),
+                          const SizedBox(height: 2),
+                          Text(
+                            l10n.chat,
+                            style: const TextStyle(
+                              fontSize: 10,
+                              color: Colors.black54,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    const SizedBox(width: 20),
+                    // Action Buttons
                     Expanded(
-                      child: ElevatedButton(
-                        onPressed: () {
-                          if (_product != null) {
-                            context.read<CartProvider>().addToCart(
-                              _product!,
-                              quantity: 1,
-                            );
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              SnackBar(
-                                content: Text(l10n.addedToCart),
-                                duration: const Duration(seconds: 1),
+                      child: Container(
+                        height: 44,
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(22),
+                          boxShadow: [
+                            BoxShadow(
+                              color: AppColors.primary.withValues(alpha: 0.2),
+                              blurRadius: 8,
+                              offset: const Offset(0, 4),
+                            ),
+                          ],
+                        ),
+                        child: Row(
+                          children: [
+                            Expanded(
+                              child: Container(
+                                decoration: const BoxDecoration(
+                                  gradient: LinearGradient(
+                                    colors: [
+                                      Color(0xFFFFAD0E),
+                                      Color(0xFFFF9900),
+                                    ],
+                                  ),
+                                  borderRadius: BorderRadius.only(
+                                    topLeft: Radius.circular(22),
+                                    bottomLeft: Radius.circular(22),
+                                  ),
+                                ),
+                                child: ElevatedButton(
+                                  onPressed: () {
+                                    if (_product != null) {
+                                      context.read<CartProvider>().addToCart(
+                                        _product!,
+                                        quantity: 1,
+                                      );
+                                      ScaffoldMessenger.of(
+                                        context,
+                                      ).showSnackBar(
+                                        SnackBar(
+                                          content: Text(l10n.addedToCart),
+                                          duration: const Duration(seconds: 1),
+                                        ),
+                                      );
+                                    }
+                                  },
+                                  style: ElevatedButton.styleFrom(
+                                    backgroundColor: Colors.transparent,
+                                    shadowColor: Colors.transparent,
+                                    padding: EdgeInsets.zero,
+                                    shape: const RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.only(
+                                        topLeft: Radius.circular(22),
+                                        bottomLeft: Radius.circular(22),
+                                      ),
+                                    ),
+                                  ),
+                                  child: Text(
+                                    l10n.addToCart,
+                                    style: const TextStyle(
+                                      color: Colors.white,
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 13,
+                                    ),
+                                  ),
+                                ),
                               ),
-                            );
-                          }
-                        },
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: AppColors.primary.withValues(
-                            alpha: 0.1,
-                          ),
-                          foregroundColor: AppColors.primary,
-                          elevation: 0,
-                          padding: const EdgeInsets.symmetric(vertical: 16),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(8),
-                          ),
-                        ),
-                        child: Text(
-                          l10n.addToCart,
-                          style: const TextStyle(
-                            fontSize: 16,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                      ),
-                    ),
-                    const SizedBox(width: 16),
-                    Expanded(
-                      child: ElevatedButton(
-                        onPressed: () {
-                          if (_product != null) {
-                            // Add to cart then go to checkout
-                            context.read<CartProvider>().addToCart(
-                              _product!,
-                              quantity: 1,
-                            );
-                            // Navigate to checkout (which usually requires cart)
-                            // For now, just navigate to cart or checkout screen
-                            Navigator.pushNamed(context, '/checkout');
-                          }
-                        },
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: AppColors.primary,
-                          foregroundColor: Colors.white,
-                          elevation: 0,
-                          padding: const EdgeInsets.symmetric(vertical: 16),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(8),
-                          ),
-                        ),
-                        child: Text(
-                          l10n.buyNow,
-                          style: const TextStyle(
-                            fontSize: 16,
-                            fontWeight: FontWeight.bold,
-                          ),
+                            ),
+                            Expanded(
+                              child: Container(
+                                decoration: const BoxDecoration(
+                                  gradient: LinearGradient(
+                                    colors: [
+                                      Color(0xFFFF5000),
+                                      Color(0xFFE02020),
+                                    ],
+                                  ),
+                                  borderRadius: BorderRadius.only(
+                                    topRight: Radius.circular(22),
+                                    bottomRight: Radius.circular(22),
+                                  ),
+                                ),
+                                child: ElevatedButton(
+                                  onPressed: () {
+                                    if (_product != null) {
+                                      context.read<CartProvider>().addToCart(
+                                        _product!,
+                                        quantity: 1,
+                                      );
+                                      Navigator.pushNamed(context, '/checkout');
+                                    }
+                                  },
+                                  style: ElevatedButton.styleFrom(
+                                    backgroundColor: Colors.transparent,
+                                    shadowColor: Colors.transparent,
+                                    padding: EdgeInsets.zero,
+                                    shape: const RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.only(
+                                        topRight: Radius.circular(22),
+                                        bottomRight: Radius.circular(22),
+                                      ),
+                                    ),
+                                  ),
+                                  child: Text(
+                                    l10n.buyNow, // Using generic Buy Now text
+                                    style: const TextStyle(
+                                      color: Colors.white,
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 13,
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ],
                         ),
                       ),
                     ),

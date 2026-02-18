@@ -115,6 +115,8 @@
   "defaultTag": "Default",
   "change": "Change",
   "placeOrder": "Place Order",
+  "store": "Store",
+  "chat": "Chat",
   "orderPlaced": "Order Placed!",
   "orderPlacedMessage": "Your order has been successfully placed.",
   "selectShippingAddress": "Please select a shipping address",
