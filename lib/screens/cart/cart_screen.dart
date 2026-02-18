@@ -294,11 +294,11 @@ class _CartScreenState extends State<CartScreen> {
                                 if (int.tryParse(item.product.id) != null &&
                                     int.parse(item.product.id) % 3 == 0) ...[
                                   const SizedBox(height: 4),
-                                   Text(
-                                     l10n.almostSoldOut,
-                                     style: const TextStyle(
-                                       fontSize: 12,
-                                       color: Color(0xFFFF5000),
+                                  Text(
+                                    l10n.almostSoldOut,
+                                    style: const TextStyle(
+                                      fontSize: 12,
+                                      color: Color(0xFFFF5000),
                                       fontWeight: FontWeight.w500,
                                     ),
                                   ),
@@ -354,9 +354,9 @@ class _CartScreenState extends State<CartScreen> {
                               ),
                             ),
                             const Spacer(),
-                            const Text(
-                              'View Available',
-                              style: TextStyle(
+                            Text(
+                              l10n.viewAvailable,
+                              style: const TextStyle(
                                 color: AppColors.textSecondary,
                                 fontSize: 14,
                               ),
@@ -375,7 +375,7 @@ class _CartScreenState extends State<CartScreen> {
                           child: TextField(
                             controller: _couponController,
                             decoration: InputDecoration(
-                              hintText: 'Enter coupon code',
+                              hintText: l10n.enterCouponCode,
                               border: OutlineInputBorder(
                                 borderRadius: BorderRadius.circular(8),
                               ),

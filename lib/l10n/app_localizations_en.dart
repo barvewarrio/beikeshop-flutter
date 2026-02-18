@@ -316,6 +316,12 @@ class AppLocalizationsEn extends AppLocalizations {
   String get chat => 'Chat';
 
   @override
+  String get viewAvailable => 'View Available';
+
+  @override
+  String get enterCouponCode => 'Enter coupon code';
+
+  @override
   String get orderPlaced => 'Order Placed!';
 
   @override

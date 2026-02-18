@@ -4,6 +4,7 @@ import '../../theme/app_theme.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import '../providers/settings_provider.dart';
 import '../providers/wishlist_provider.dart';
+import '../providers/cart_provider.dart';
 import '../models/models.dart';
 import 'package:beikeshop_flutter/l10n/app_localizations.dart';
 
@@ -152,10 +153,14 @@ class ProductCard extends StatelessWidget {
                                   vertical: 2,
                                 ),
                                 decoration: BoxDecoration(
-                                  color: AppColors.primary.withValues(alpha: 0.1),
+                                  color: AppColors.primary.withValues(
+                                    alpha: 0.1,
+                                  ),
                                   borderRadius: BorderRadius.circular(2),
                                   border: Border.all(
-                                    color: AppColors.primary.withValues(alpha: 0.3),
+                                    color: AppColors.primary.withValues(
+                                      alpha: 0.3,
+                                    ),
                                   ),
                                 ),
                                 child: Text(
@@ -193,25 +198,41 @@ class ProductCard extends StatelessWidget {
 
                   if (product.discountPercentage > 0)
                     Padding(
-                      padding: const EdgeInsets.only(top: 2),
-                      child: Text(
-                        '${product.discountPercentage.toStringAsFixed(0)}% OFF',
-                        style: const TextStyle(
-                          color: AppColors.primaryDark,
-                          fontSize: 11,
-                          fontWeight: FontWeight.bold,
-                        ),
+                      padding: const EdgeInsets.only(top: 4),
+                      child: Row(
+                        children: [
+                          Container(
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 6,
+                              vertical: 2,
+                            ),
+                            decoration: BoxDecoration(
+                              color: const Color(
+                                0xFFFF5000,
+                              ).withValues(alpha: 0.1),
+                              borderRadius: BorderRadius.circular(4),
+                            ),
+                            child: Text(
+                              '-${product.discountPercentage.toStringAsFixed(0)}%',
+                              style: const TextStyle(
+                                fontSize: 10,
+                                color: Color(0xFFFF5000),
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ),
+                          const SizedBox(width: 8),
+                          if (product.sales > 0 && l10n != null)
+                            Text(
+                              l10n.soldCount(product.sales.toString()),
+                              style: TextStyle(
+                                fontSize: 10,
+                                color: Colors.grey[600],
+                              ),
+                            ),
+                        ],
                       ),
                     ),
-
-                  const SizedBox(height: 4),
-                  Text(
-                    '${product.sales} ${l10n?.sold ?? 'sold'}',
-                    style: const TextStyle(
-                      fontSize: 10,
-                      color: AppColors.textSecondary,
-                    ),
-                  ),
 
                   const SizedBox(height: 8),
                   // Add to Cart Button (Small)
@@ -219,7 +240,28 @@ class ProductCard extends StatelessWidget {
                     width: double.infinity,
                     height: 32,
                     child: ElevatedButton(
-                      onPressed: () {},
+                      onPressed: () async {
+                        try {
+                          await context.read<CartProvider>().addToCart(product);
+                          if (context.mounted) {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(
+                                content: Text('${product.title} added to cart'),
+                                duration: const Duration(seconds: 2),
+                              ),
+                            );
+                          }
+                        } catch (e) {
+                          if (context.mounted) {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(
+                                content: Text('Error adding to cart: $e'),
+                                backgroundColor: Colors.red,
+                              ),
+                            );
+                          }
+                        }
+                      },
                       style: ElevatedButton.styleFrom(
                         backgroundColor: Colors.white,
                         foregroundColor: AppColors.primary,
@@ -227,9 +269,9 @@ class ProductCard extends StatelessWidget {
                         padding: EdgeInsets.zero,
                         elevation: 0,
                       ),
-                      child: const Text(
-                        'Add to cart',
-                        style: TextStyle(
+                      child: Text(
+                        l10n?.cart ?? 'Add to Cart',
+                        style: const TextStyle(
                           fontSize: 12,
                           fontWeight: FontWeight.bold,
                         ),

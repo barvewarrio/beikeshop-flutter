@@ -698,6 +698,18 @@ abstract class AppLocalizations {
   /// **'Chat'**
   String get chat;
 
+  /// No description provided for @viewAvailable.
+  ///
+  /// In en, this message translates to:
+  /// **'View Available'**
+  String get viewAvailable;
+
+  /// No description provided for @enterCouponCode.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter coupon code'**
+  String get enterCouponCode;
+
   /// No description provided for @orderPlaced.
   ///
   /// In en, this message translates to:

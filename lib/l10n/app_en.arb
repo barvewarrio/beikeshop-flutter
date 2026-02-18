@@ -121,6 +121,8 @@
   "discount": "Discount",
   "store": "Store",
   "chat": "Chat",
+  "viewAvailable": "View Available",
+  "enterCouponCode": "Enter coupon code",
   "orderPlaced": "Order Placed!",
   "orderPlacedMessage": "Your order has been successfully placed.",
   "selectShippingAddress": "Please select a shipping address",

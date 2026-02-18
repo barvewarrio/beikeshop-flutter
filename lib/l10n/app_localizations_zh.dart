@@ -315,6 +315,12 @@ class AppLocalizationsZh extends AppLocalizations {
   String get chat => '客服';
 
   @override
+  String get viewAvailable => '查看可用优惠券';
+
+  @override
+  String get enterCouponCode => '请输入优惠券码';
+
+  @override
   String get orderPlaced => '订单已提交';
 
   @override

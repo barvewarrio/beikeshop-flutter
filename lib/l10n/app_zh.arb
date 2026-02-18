@@ -105,6 +105,8 @@
   "discount": "折扣",
   "store": "店铺",
   "chat": "客服",
+  "viewAvailable": "查看可用优惠券",
+  "enterCouponCode": "请输入优惠券码",
   "orderPlaced": "订单已提交",
   "orderPlacedMessage": "您的订单已成功提交。",
   "selectShippingAddress": "请选择收货地址",
