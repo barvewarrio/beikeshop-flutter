@@ -287,7 +287,7 @@ class _AddEditAddressScreenState extends State<AddEditAddressScreen> {
                         const Divider(height: 1),
                         _buildTextField(
                           controller: _addressLineController,
-                          label: l10n.addressLine,
+                          label: l10n.address,
                           maxLines: 2,
                         ),
                       ],
@@ -314,7 +314,7 @@ class _AddEditAddressScreenState extends State<AddEditAddressScreen> {
                           ),
                         ),
                         value: _isDefault,
-                        activeColor: AppColors.primary,
+                        activeTrackColor: AppColors.primary,
                         onChanged: (val) => setState(() => _isDefault = val),
                         contentPadding: const EdgeInsets.symmetric(
                           horizontal: 16,
@@ -423,7 +423,8 @@ class _AddEditAddressScreenState extends State<AddEditAddressScreen> {
         : value;
 
     return DropdownButtonFormField<int>(
-      value: effectiveValue,
+      key: ValueKey(effectiveValue),
+      initialValue: effectiveValue,
       decoration: InputDecoration(
         labelText: label,
         labelStyle: const TextStyle(color: AppColors.textSecondary),

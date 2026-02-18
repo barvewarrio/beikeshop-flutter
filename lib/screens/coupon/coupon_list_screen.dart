@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:beikeshop_flutter/l10n/app_localizations.dart';
 import '../../providers/cart_provider.dart';
+import '../../providers/settings_provider.dart';
 import '../../theme/app_theme.dart';
 import 'package:flutter/services.dart';
 
@@ -27,6 +28,7 @@ class _CouponListScreenState extends State<CouponListScreen> {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
+    final settings = context.watch<SettingsProvider>();
 
     return Scaffold(
       appBar: AppBar(
@@ -53,7 +55,7 @@ class _CouponListScreenState extends State<CouponListScreen> {
                   ),
                   const SizedBox(height: 16),
                   Text(
-                    'No coupons available', // Add to l10n
+                    l10n.noCouponsAvailable,
                     style: const TextStyle(
                       fontSize: 16,
                       color: AppColors.textSecondary,
@@ -98,7 +100,7 @@ class _CouponListScreenState extends State<CouponListScreen> {
                             vertical: 8,
                           ),
                           decoration: BoxDecoration(
-                            color: AppColors.primary.withOpacity(0.1),
+                            color: AppColors.primary.withValues(alpha: 0.1),
                             borderRadius: BorderRadius.circular(4),
                           ),
                           child: Column(
@@ -106,7 +108,7 @@ class _CouponListScreenState extends State<CouponListScreen> {
                               Text(
                                 coupon.type == 'P'
                                     ? '${coupon.discount}%'
-                                    : '\$${coupon.discount}',
+                                    : settings.formatPrice(coupon.discount),
                                 style: const TextStyle(
                                   color: AppColors.primary,
                                   fontWeight: FontWeight.bold,
@@ -114,9 +116,11 @@ class _CouponListScreenState extends State<CouponListScreen> {
                                 ),
                               ),
                               Text(
-                                'OFF',
+                                l10n.off,
                                 style: TextStyle(
-                                  color: AppColors.primary.withOpacity(0.8),
+                                  color: AppColors.primary.withValues(
+                                    alpha: 0.8,
+                                  ),
                                   fontSize: 12,
                                   fontWeight: FontWeight.bold,
                                 ),
@@ -139,7 +143,7 @@ class _CouponListScreenState extends State<CouponListScreen> {
                               ),
                               const SizedBox(height: 4),
                               Text(
-                                'Code: ${coupon.code}',
+                                l10n.couponCode(coupon.code),
                                 style: const TextStyle(
                                   color: AppColors.textSecondary,
                                   fontSize: 14,
@@ -150,7 +154,9 @@ class _CouponListScreenState extends State<CouponListScreen> {
                                 Padding(
                                   padding: const EdgeInsets.only(top: 4),
                                   child: Text(
-                                    'Min. Spend: \$${coupon.minTotal}',
+                                    l10n.minSpend(
+                                      settings.formatPrice(coupon.minTotal),
+                                    ),
                                     style: const TextStyle(
                                       color: AppColors.textHint,
                                       fontSize: 12,
@@ -161,7 +167,7 @@ class _CouponListScreenState extends State<CouponListScreen> {
                                 Padding(
                                   padding: const EdgeInsets.only(top: 4),
                                   child: Text(
-                                    'Expires: ${coupon.endDate}',
+                                    l10n.expires(coupon.endDate!),
                                     style: const TextStyle(
                                       color: AppColors.textHint,
                                       fontSize: 12,

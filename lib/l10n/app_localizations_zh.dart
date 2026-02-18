@@ -116,6 +116,15 @@ class AppLocalizationsZh extends AppLocalizations {
   }
 
   @override
+  String get viewCart => '查看购物车';
+
+  @override
+  String get writeReview => '写评价';
+
+  @override
+  String get requestRefund => '申请退款';
+
+  @override
   String get shoppingCart => '购物车';
 
   @override
@@ -155,9 +164,6 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get buyAgain => '再次购买';
-
-  @override
-  String get writeReview => '写评价';
 
   @override
   String get returnRefund => '申请售后';
@@ -237,7 +243,28 @@ class AppLocalizationsZh extends AppLocalizations {
   String get zipCode => '邮政编码';
 
   @override
-  String get addressLine => '详细地址';
+  String get buyerProtection => '买家保护';
+
+  @override
+  String get priceDrop => '降价提醒';
+
+  @override
+  String get deliveryGuarantee => '发货保证';
+
+  @override
+  String get securePayment => '安全支付';
+
+  @override
+  String get defaultAddress => '默认地址';
+
+  @override
+  String get setDefault => '设为默认';
+
+  @override
+  String get shippingFee => '运费';
+
+  @override
+  String get freeShipping => '免运费';
 
   @override
   String get setAsDefault => '设为默认地址';
@@ -296,9 +323,6 @@ class AppLocalizationsZh extends AppLocalizations {
   String get cancelOrder => '取消订单';
 
   @override
-  String get freeShipping => '免运费';
-
-  @override
   String get discretePackaging => '保密发货';
 
   @override
@@ -349,9 +373,6 @@ class AppLocalizationsZh extends AppLocalizations {
   String get copy => '复制';
 
   @override
-  String get requestRefund => '申请退款';
-
-  @override
   String get rmaReason => '退款原因';
 
   @override
@@ -383,4 +404,117 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get submitSuccess => '提交成功';
+
+  @override
+  String get cancelOrderConfirmation => '确定要取消此订单吗？';
+
+  @override
+  String get orderCancelled => '订单取消成功';
+
+  @override
+  String get confirm => '确认';
+
+  @override
+  String get error => '错误';
+
+  @override
+  String get addToCart => '加入购物车';
+
+  @override
+  String get addedToCart => '已加入购物车';
+
+  @override
+  String get buyNow => '立即购买';
+
+  @override
+  String get noCouponsAvailable => '暂无优惠券';
+
+  @override
+  String minSpend(String amount) {
+    return '最低消费: $amount';
+  }
+
+  @override
+  String expires(String date) {
+    return '有效期至: $date';
+  }
+
+  @override
+  String couponCode(String code) {
+    return '券码: $code';
+  }
+
+  @override
+  String get off => '优惠';
+
+  @override
+  String get addedToWishlist => '已加入心愿单';
+
+  @override
+  String get removedFromWishlist => '已从心愿单移除';
+
+  @override
+  String failedToUpdateWishlist(String error) {
+    return '更新心愿单失败: $error';
+  }
+
+  @override
+  String reviewsTitle(int count) {
+    return '用户评价 ($count)';
+  }
+
+  @override
+  String get noReviewsYet => '暂无评价，快来抢沙发吧！';
+
+  @override
+  String get anonymous => '匿名用户';
+
+  @override
+  String failedToLoadReviews(String error) {
+    return '加载评价失败: $error';
+  }
+
+  @override
+  String get loadMore => '加载更多';
+
+  @override
+  String get secureCheckout => '安全结算';
+
+  @override
+  String get orderSummary => '订单摘要';
+
+  @override
+  String get encryptedPayment => '256位 SSL 加密支付';
+
+  @override
+  String get paymentSecurity => '支付安全';
+
+  @override
+  String get moneyBackGuarantee => '退款保证';
+
+  @override
+  String get safePayment => '安全支付';
+
+  @override
+  String deliveryBy(String date) {
+    return '预计 $date 送达';
+  }
+
+  @override
+  String get freeReturns => '90天无理由退货';
+
+  @override
+  String lowStock(int count) {
+    return '仅剩 $count 件库存！';
+  }
+
+  @override
+  String soldCount(String count) {
+    return '已售 $count';
+  }
+
+  @override
+  String youSaved(String amount) {
+    return '已省 $amount';
+  }
 }

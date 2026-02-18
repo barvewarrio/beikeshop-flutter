@@ -260,6 +260,16 @@ class ApiService {
     }
   }
 
+  Future<Order> cancelOrder(String orderId) async {
+    try {
+      final response = await _dio.post(ApiEndpoints.cancelOrder(orderId));
+      return Order.fromJson(response.data);
+    } catch (e) {
+      debugPrint('Error cancelling order: $e');
+      rethrow;
+    }
+  }
+
   // --- Payment ---
   Future<List<Map<String, dynamic>>> getPaymentMethods() async {
     try {
@@ -318,7 +328,7 @@ class ApiService {
         data: {
           'product_id': productId,
           'rating': rating,
-          'review': comment,
+          'comment': comment,
           if (images != null) 'images': images,
         },
       );

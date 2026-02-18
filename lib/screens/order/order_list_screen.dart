@@ -1,13 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:intl/intl.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:beikeshop_flutter/l10n/app_localizations.dart';
 import '../../providers/order_provider.dart';
+import '../../providers/cart_provider.dart';
 import '../../providers/settings_provider.dart';
 import '../../theme/app_theme.dart';
 import '../../models/order_model.dart';
+import '../../models/cart_item_model.dart';
 import 'order_detail_screen.dart';
+import '../checkout/payment_screen.dart';
+import '../cart/cart_screen.dart';
 
 class OrderListScreen extends StatelessWidget {
   const OrderListScreen({super.key});
@@ -50,7 +53,7 @@ class OrderListScreen extends StatelessWidget {
 
             return TabBarView(
               children: tabs.map((tab) {
-                final status = tab['status'] as String?;
+                final status = tab['status'];
                 final orders = status == null
                     ? orderProvider.orders
                     : orderProvider.orders.where((o) {
@@ -104,6 +107,76 @@ class _OrderCard extends StatelessWidget {
 
   const _OrderCard({required this.order});
 
+  Future<void> _buyAgain(BuildContext context) async {
+    final l10n = AppLocalizations.of(context)!;
+    try {
+      final cart = context.read<CartProvider>();
+      for (final item in order.items) {
+        await cart.addToCart(item.product, quantity: item.quantity);
+      }
+      if (context.mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(l10n.addedToCart),
+            action: SnackBarAction(
+              label: l10n.viewCart,
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => const CartScreen()),
+                );
+              },
+            ),
+          ),
+        );
+      }
+    } catch (e) {
+      if (context.mounted) {
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text('${l10n.error}: $e')));
+      }
+    }
+  }
+
+  Future<void> _confirmCancel(BuildContext context) async {
+    final l10n = AppLocalizations.of(context)!;
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text(l10n.cancelOrder),
+        content: Text(l10n.cancelOrderConfirmation),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context, false),
+            child: Text(l10n.cancel),
+          ),
+          TextButton(
+            onPressed: () => Navigator.pop(context, true),
+            child: Text(l10n.confirm),
+          ),
+        ],
+      ),
+    );
+
+    if (confirmed == true && context.mounted) {
+      try {
+        await context.read<OrderProvider>().cancelOrder(order.id);
+        if (context.mounted) {
+          ScaffoldMessenger.of(
+            context,
+          ).showSnackBar(SnackBar(content: Text(l10n.orderCancelled)));
+        }
+      } catch (e) {
+        if (context.mounted) {
+          ScaffoldMessenger.of(
+            context,
+          ).showSnackBar(SnackBar(content: Text('${l10n.error}: $e')));
+        }
+      }
+    }
+  }
+
   String _getStatusText(BuildContext context, String status) {
     final l10n = AppLocalizations.of(context)!;
     switch (status) {
@@ -126,12 +199,27 @@ class _OrderCard extends StatelessWidget {
     }
   }
 
+  Color _getStatusColor(String status) {
+    switch (status) {
+      case 'Pending':
+        return AppColors.primary; // Orange/Red
+      case 'Processing':
+        return Colors.blue;
+      case 'Shipped':
+        return Colors.purple;
+      case 'Delivered':
+        return Colors.green;
+      case 'Cancelled':
+        return Colors.grey;
+      default:
+        return Colors.black;
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final settings = context.watch<SettingsProvider>();
     final l10n = AppLocalizations.of(context)!;
-
-    // Calculate total items count
     final totalItems = order.items.fold(0, (sum, item) => sum + item.quantity);
 
     return GestureDetector(
@@ -167,7 +255,7 @@ class _OrderCard extends StatelessWidget {
                 Row(
                   children: [
                     Image.asset(
-                      'assets/images/logo.png', // Ensure you have a logo asset or use an icon
+                      'assets/images/logo.png',
                       width: 20,
                       height: 20,
                       errorBuilder: (_, __, ___) => const Icon(
@@ -181,11 +269,10 @@ class _OrderCard extends StatelessWidget {
                       'BeikeShop Official',
                       style: TextStyle(
                         fontWeight: FontWeight.bold,
-                        fontSize: 16,
+                        fontSize: 15,
                         color: AppColors.textPrimary,
                       ),
                     ),
-                    const SizedBox(width: 4),
                     const Icon(
                       Icons.chevron_right,
                       size: 16,
@@ -195,8 +282,8 @@ class _OrderCard extends StatelessWidget {
                 ),
                 Text(
                   _getStatusText(context, order.status),
-                  style: const TextStyle(
-                    color: AppColors.primary,
+                  style: TextStyle(
+                    color: _getStatusColor(order.status),
                     fontWeight: FontWeight.w600,
                     fontSize: 14,
                   ),
@@ -204,191 +291,289 @@ class _OrderCard extends StatelessWidget {
               ],
             ),
             const SizedBox(height: 12),
-            
-            // Product Thumbnails or Single Item
+
+            // Product List
             if (order.items.length == 1)
-              Row(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  ClipRRect(
-                    borderRadius: BorderRadius.circular(8),
-                    child: CachedNetworkImage(
-                      imageUrl: order.items[0].product.imageUrl,
-                      width: 90,
-                      height: 90,
-                      fit: BoxFit.cover,
-                      placeholder: (context, url) =>
-                          Container(color: Colors.grey[100]),
-                      errorWidget: (context, url, error) => Container(
-                        color: Colors.grey[100],
-                        child: const Icon(
-                          Icons.broken_image,
-                          color: Colors.grey,
-                        ),
-                      ),
-                    ),
-                  ),
-                  const SizedBox(width: 12),
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          order.items[0].product.title,
-                          maxLines: 2,
-                          overflow: TextOverflow.ellipsis,
-                          style: const TextStyle(
-                            fontSize: 15,
-                            color: AppColors.textPrimary,
-                            height: 1.3,
-                          ),
-                        ),
-                        const SizedBox(height: 8),
-                        Text(
-                          '${settings.formatPrice(order.items[0].product.price)} x${order.items[0].quantity}',
-                          style: const TextStyle(
-                            fontSize: 14,
-                            color: AppColors.textSecondary,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ],
-              )
+              _buildSingleItem(context, order.items.first, settings)
             else
-              SizedBox(
-                height: 90,
-                child: ListView.separated(
-                  scrollDirection: Axis.horizontal,
-                  itemCount: order.items.length,
-                  separatorBuilder: (_, __) => const SizedBox(width: 12),
-                  itemBuilder: (context, index) {
-                    final item = order.items[index];
-                    return ClipRRect(
-                      borderRadius: BorderRadius.circular(8),
-                      child: CachedNetworkImage(
-                        imageUrl: item.product.imageUrl,
-                        width: 90,
-                        height: 90,
-                        fit: BoxFit.cover,
-                        placeholder: (context, url) =>
-                            Container(color: Colors.grey[100]),
-                        errorWidget: (context, url, error) => Container(
-                          color: Colors.grey[100],
-                          child: const Icon(
-                            Icons.broken_image,
-                            color: Colors.grey,
-                          ),
-                        ),
-                      ),
-                    );
-                  },
-                ),
-              ),
+              _buildMultiItem(context, order.items),
 
             const SizedBox(height: 16),
 
+            // Trust Badges (Temu Style)
+            Row(
+              children: [
+                if (order.status == 'Shipped' || order.status == 'Delivered')
+                  _buildTrustBadge(
+                    l10n.deliveryGuarantee,
+                    Icons.local_shipping_outlined,
+                  ),
+                const SizedBox(width: 12),
+                _buildTrustBadge(l10n.buyerProtection, Icons.security),
+              ],
+            ),
+            const SizedBox(height: 12),
+
             // Total & Buttons
             Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              mainAxisAlignment: MainAxisAlignment.end,
               children: [
-                 Text(
+                Text(
                   '${l10n.itemCount(totalItems)} ${l10n.total}: ',
                   style: const TextStyle(
-                    fontSize: 14,
+                    fontSize: 13,
                     color: AppColors.textSecondary,
                   ),
                 ),
-                Expanded(
-                  child: Text(
-                    settings.formatPrice(order.totalAmount),
-                    textAlign: TextAlign.right,
-                    style: const TextStyle(
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold,
-                      color: AppColors.textPrimary,
-                    ),
+                Text(
+                  settings.formatPrice(order.totalAmount),
+                  style: const TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.bold,
+                    color: AppColors.textPrimary,
                   ),
                 ),
               ],
             ),
-            
-            const SizedBox(height: 16),
+            const SizedBox(height: 12),
             const Divider(height: 1, color: AppColors.border),
             const SizedBox(height: 12),
-            
+
+            // Action Buttons
             Row(
               mainAxisAlignment: MainAxisAlignment.end,
-              children: [
-                if (order.status == 'Delivered') ...[
-                  OutlinedButton(
-                    onPressed: () {},
-                    style: OutlinedButton.styleFrom(
-                      foregroundColor: AppColors.textPrimary,
-                      side: const BorderSide(color: AppColors.border),
-                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-                      padding: const EdgeInsets.symmetric(horizontal: 16),
-                      minimumSize: const Size(0, 36),
-                    ),
-                    child: Text(
-                      l10n.review,
-                      style: const TextStyle(fontSize: 14),
-                    ),
-                  ),
-                  const SizedBox(width: 12),
-                ],
-                if (order.status == 'Pending') ...[
-                  OutlinedButton(
-                     onPressed: () {},
-                     style: OutlinedButton.styleFrom(
-                       foregroundColor: AppColors.textPrimary,
-                       side: const BorderSide(color: AppColors.border),
-                       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-                       padding: const EdgeInsets.symmetric(horizontal: 16),
-                       minimumSize: const Size(0, 36),
-                     ),
-                     child: Text(
-                       l10n.cancelOrder,
-                       style: const TextStyle(fontSize: 14),
-                     ),
-                   ),
-                   const SizedBox(width: 12),
-                  ElevatedButton(
-                    onPressed: () {},
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: AppColors.primary,
-                      foregroundColor: Colors.white,
-                      elevation: 0,
-                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-                      padding: const EdgeInsets.symmetric(horizontal: 20),
-                      minimumSize: const Size(0, 36),
-                    ),
-                    child: Text(
-                      l10n.payNow,
-                      style: const TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
-                    ),
-                  )
-                ] else
-                  OutlinedButton(
-                    onPressed: () {},
-                    style: OutlinedButton.styleFrom(
-                      foregroundColor: AppColors.primary,
-                      side: const BorderSide(color: AppColors.primary),
-                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-                      padding: const EdgeInsets.symmetric(horizontal: 16),
-                      minimumSize: const Size(0, 36),
-                    ),
-                    child: Text(
-                      l10n.buyAgain,
-                      style: const TextStyle(fontSize: 14),
-                    ),
-                  ),
-              ],
+              children: _buildActionButtons(context, l10n),
             ),
           ],
         ),
       ),
     );
+  }
+
+  Widget _buildTrustBadge(String text, IconData icon) {
+    return Row(
+      children: [
+        Icon(icon, size: 14, color: const Color(0xFF1B8D1F)), // Trust green
+        const SizedBox(width: 4),
+        Text(
+          text,
+          style: const TextStyle(
+            fontSize: 11,
+            color: Color(0xFF1B8D1F),
+            fontWeight: FontWeight.w500,
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildSingleItem(
+    BuildContext context,
+    CartItem item,
+    SettingsProvider settings,
+  ) {
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        ClipRRect(
+          borderRadius: BorderRadius.circular(6),
+          child: CachedNetworkImage(
+            imageUrl: item.product.imageUrl,
+            width: 80,
+            height: 80,
+            fit: BoxFit.cover,
+            placeholder: (context, url) => Container(color: Colors.grey[100]),
+            errorWidget: (context, url, error) => Container(
+              color: Colors.grey[100],
+              child: const Icon(Icons.broken_image, color: Colors.grey),
+            ),
+          ),
+        ),
+        const SizedBox(width: 12),
+        Expanded(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                item.product.title,
+                maxLines: 2,
+                overflow: TextOverflow.ellipsis,
+                style: const TextStyle(
+                  fontSize: 14,
+                  color: AppColors.textPrimary,
+                  height: 1.3,
+                ),
+              ),
+              const SizedBox(height: 4),
+              Text(
+                '${settings.formatPrice(item.product.price)} x${item.quantity}',
+                style: const TextStyle(
+                  fontSize: 13,
+                  color: AppColors.textSecondary,
+                ),
+              ),
+            ],
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildMultiItem(BuildContext context, List<CartItem> items) {
+    return SizedBox(
+      height: 80,
+      child: ListView.separated(
+        scrollDirection: Axis.horizontal,
+        itemCount: items.length,
+        separatorBuilder: (_, __) => const SizedBox(width: 10),
+        itemBuilder: (context, index) {
+          return ClipRRect(
+            borderRadius: BorderRadius.circular(6),
+            child: CachedNetworkImage(
+              imageUrl: items[index].product.imageUrl,
+              width: 80,
+              height: 80,
+              fit: BoxFit.cover,
+              placeholder: (context, url) => Container(color: Colors.grey[100]),
+              errorWidget: (context, url, error) => Container(
+                color: Colors.grey[100],
+                child: const Icon(Icons.broken_image, color: Colors.grey),
+              ),
+            ),
+          );
+        },
+      ),
+    );
+  }
+
+  List<Widget> _buildActionButtons(
+    BuildContext context,
+    AppLocalizations l10n,
+  ) {
+    final List<Widget> buttons = [];
+
+    if (order.status == 'Delivered') {
+      buttons.add(
+        OutlinedButton(
+          onPressed: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => OrderDetailScreen(order: order),
+              ),
+            );
+          },
+          style: OutlinedButton.styleFrom(
+            foregroundColor: AppColors.textPrimary,
+            side: const BorderSide(color: AppColors.border),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(20),
+            ),
+            padding: const EdgeInsets.symmetric(horizontal: 16),
+            minimumSize: const Size(0, 32),
+          ),
+          child: Text(l10n.review, style: const TextStyle(fontSize: 13)),
+        ),
+      );
+      buttons.add(const SizedBox(width: 8));
+      buttons.add(
+        OutlinedButton(
+          onPressed: () => _buyAgain(context),
+          style: OutlinedButton.styleFrom(
+            foregroundColor: AppColors.primary,
+            side: const BorderSide(color: AppColors.primary),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(20),
+            ),
+            padding: const EdgeInsets.symmetric(horizontal: 16),
+            minimumSize: const Size(0, 32),
+          ),
+          child: Text(l10n.buyAgain, style: const TextStyle(fontSize: 13)),
+        ),
+      );
+    } else if (order.status == 'Pending') {
+      buttons.add(
+        OutlinedButton(
+          onPressed: () => _confirmCancel(context),
+          style: OutlinedButton.styleFrom(
+            foregroundColor: AppColors.textSecondary,
+            side: const BorderSide(color: AppColors.border),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(20),
+            ),
+            padding: const EdgeInsets.symmetric(horizontal: 16),
+            minimumSize: const Size(0, 32),
+          ),
+          child: Text(l10n.cancelOrder, style: const TextStyle(fontSize: 13)),
+        ),
+      );
+      buttons.add(const SizedBox(width: 8));
+      buttons.add(
+        ElevatedButton(
+          onPressed: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => PaymentScreen(order: order),
+              ),
+            );
+          },
+          style: ElevatedButton.styleFrom(
+            backgroundColor: AppColors.primary,
+            foregroundColor: Colors.white,
+            elevation: 0,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(20),
+            ),
+            padding: const EdgeInsets.symmetric(horizontal: 20),
+            minimumSize: const Size(0, 32),
+          ),
+          child: Text(
+            l10n.payNow,
+            style: const TextStyle(fontSize: 13, fontWeight: FontWeight.bold),
+          ),
+        ),
+      );
+    } else {
+      // Shipped, Processing, etc.
+      if (order.status == 'Shipped') {
+        buttons.add(
+          OutlinedButton(
+            onPressed: () {
+              // Track order action
+            },
+            style: OutlinedButton.styleFrom(
+              foregroundColor: AppColors.textPrimary,
+              side: const BorderSide(color: AppColors.textPrimary),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(20),
+              ),
+              padding: const EdgeInsets.symmetric(horizontal: 16),
+              minimumSize: const Size(0, 32),
+            ),
+            child: Text(l10n.trackOrder, style: const TextStyle(fontSize: 13)),
+          ),
+        );
+        buttons.add(const SizedBox(width: 8));
+      }
+
+      buttons.add(
+        OutlinedButton(
+          onPressed: () => _buyAgain(context),
+          style: OutlinedButton.styleFrom(
+            foregroundColor: AppColors.primary,
+            side: const BorderSide(color: AppColors.primary),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(20),
+            ),
+            padding: const EdgeInsets.symmetric(horizontal: 16),
+            minimumSize: const Size(0, 32),
+          ),
+          child: Text(l10n.buyAgain, style: const TextStyle(fontSize: 13)),
+        ),
+      );
+    }
+
+    return buttons;
   }
 }

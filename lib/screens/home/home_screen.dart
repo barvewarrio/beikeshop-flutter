@@ -202,8 +202,8 @@ class _HomeScreenState extends State<HomeScreen> {
                                       left: 0,
                                       right: 0,
                                       child: Container(
-                                        color: AppColors.primary.withOpacity(
-                                          0.8,
+                                        color: AppColors.primary.withValues(
+                                          alpha: 0.8,
                                         ),
                                         padding: const EdgeInsets.symmetric(
                                           vertical: 2,
@@ -366,14 +366,7 @@ class _HomeScreenState extends State<HomeScreen> {
               itemBuilder: (context, index) {
                 final product = _products[index];
                 return ProductCard(
-                  title: product.title,
-                  imageUrl: product.imageUrl,
-                  price: product.price,
-                  originalPrice: product.originalPrice,
-                  sales: '${product.sales} ${l10n.sold}',
-                  isFlashSale: product.isFlashSale,
-                  discountPercentage: product.discountPercentage,
-                  tags: product.tags,
+                  product: product,
                   onTap: () {
                     Navigator.push(
                       context,

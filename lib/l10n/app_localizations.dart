@@ -308,6 +308,24 @@ abstract class AppLocalizations {
   /// **'Top Picks in {category}'**
   String topPicksIn(String category);
 
+  /// No description provided for @viewCart.
+  ///
+  /// In en, this message translates to:
+  /// **'View Cart'**
+  String get viewCart;
+
+  /// No description provided for @writeReview.
+  ///
+  /// In en, this message translates to:
+  /// **'Write Review'**
+  String get writeReview;
+
+  /// No description provided for @requestRefund.
+  ///
+  /// In en, this message translates to:
+  /// **'Request Refund'**
+  String get requestRefund;
+
   /// No description provided for @shoppingCart.
   ///
   /// In en, this message translates to:
@@ -385,12 +403,6 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Buy Again'**
   String get buyAgain;
-
-  /// No description provided for @writeReview.
-  ///
-  /// In en, this message translates to:
-  /// **'Write Review'**
-  String get writeReview;
 
   /// No description provided for @returnRefund.
   ///
@@ -542,11 +554,53 @@ abstract class AppLocalizations {
   /// **'Zip Code'**
   String get zipCode;
 
-  /// No description provided for @addressLine.
+  /// No description provided for @buyerProtection.
   ///
   /// In en, this message translates to:
-  /// **'Address Line'**
-  String get addressLine;
+  /// **'Buyer Protection'**
+  String get buyerProtection;
+
+  /// No description provided for @priceDrop.
+  ///
+  /// In en, this message translates to:
+  /// **'Price Drop'**
+  String get priceDrop;
+
+  /// No description provided for @deliveryGuarantee.
+  ///
+  /// In en, this message translates to:
+  /// **'Delivery Guarantee'**
+  String get deliveryGuarantee;
+
+  /// No description provided for @securePayment.
+  ///
+  /// In en, this message translates to:
+  /// **'Secure Payment'**
+  String get securePayment;
+
+  /// No description provided for @defaultAddress.
+  ///
+  /// In en, this message translates to:
+  /// **'Default'**
+  String get defaultAddress;
+
+  /// No description provided for @setDefault.
+  ///
+  /// In en, this message translates to:
+  /// **'Set Default'**
+  String get setDefault;
+
+  /// No description provided for @shippingFee.
+  ///
+  /// In en, this message translates to:
+  /// **'Shipping Fee'**
+  String get shippingFee;
+
+  /// No description provided for @freeShipping.
+  ///
+  /// In en, this message translates to:
+  /// **'Free Shipping'**
+  String get freeShipping;
 
   /// No description provided for @setAsDefault.
   ///
@@ -656,12 +710,6 @@ abstract class AppLocalizations {
   /// **'Cancel Order'**
   String get cancelOrder;
 
-  /// No description provided for @freeShipping.
-  ///
-  /// In en, this message translates to:
-  /// **'Free'**
-  String get freeShipping;
-
   /// No description provided for @discretePackaging.
   ///
   /// In en, this message translates to:
@@ -758,12 +806,6 @@ abstract class AppLocalizations {
   /// **'Copy'**
   String get copy;
 
-  /// No description provided for @requestRefund.
-  ///
-  /// In en, this message translates to:
-  /// **'Request Refund'**
-  String get requestRefund;
-
   /// No description provided for @rmaReason.
   ///
   /// In en, this message translates to:
@@ -829,6 +871,192 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Submitted successfully'**
   String get submitSuccess;
+
+  /// No description provided for @cancelOrderConfirmation.
+  ///
+  /// In en, this message translates to:
+  /// **'Are you sure you want to cancel this order?'**
+  String get cancelOrderConfirmation;
+
+  /// No description provided for @orderCancelled.
+  ///
+  /// In en, this message translates to:
+  /// **'Order cancelled successfully'**
+  String get orderCancelled;
+
+  /// No description provided for @confirm.
+  ///
+  /// In en, this message translates to:
+  /// **'Confirm'**
+  String get confirm;
+
+  /// No description provided for @error.
+  ///
+  /// In en, this message translates to:
+  /// **'Error'**
+  String get error;
+
+  /// No description provided for @addToCart.
+  ///
+  /// In en, this message translates to:
+  /// **'Add to Cart'**
+  String get addToCart;
+
+  /// No description provided for @addedToCart.
+  ///
+  /// In en, this message translates to:
+  /// **'Added to Cart'**
+  String get addedToCart;
+
+  /// No description provided for @buyNow.
+  ///
+  /// In en, this message translates to:
+  /// **'Buy Now'**
+  String get buyNow;
+
+  /// No description provided for @noCouponsAvailable.
+  ///
+  /// In en, this message translates to:
+  /// **'No coupons available'**
+  String get noCouponsAvailable;
+
+  /// No description provided for @minSpend.
+  ///
+  /// In en, this message translates to:
+  /// **'Min. Spend: {amount}'**
+  String minSpend(String amount);
+
+  /// No description provided for @expires.
+  ///
+  /// In en, this message translates to:
+  /// **'Expires: {date}'**
+  String expires(String date);
+
+  /// No description provided for @couponCode.
+  ///
+  /// In en, this message translates to:
+  /// **'Code: {code}'**
+  String couponCode(String code);
+
+  /// No description provided for @off.
+  ///
+  /// In en, this message translates to:
+  /// **'OFF'**
+  String get off;
+
+  /// No description provided for @addedToWishlist.
+  ///
+  /// In en, this message translates to:
+  /// **'Added to wishlist'**
+  String get addedToWishlist;
+
+  /// No description provided for @removedFromWishlist.
+  ///
+  /// In en, this message translates to:
+  /// **'Removed from wishlist'**
+  String get removedFromWishlist;
+
+  /// No description provided for @failedToUpdateWishlist.
+  ///
+  /// In en, this message translates to:
+  /// **'Failed to update wishlist: {error}'**
+  String failedToUpdateWishlist(String error);
+
+  /// No description provided for @reviewsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Reviews ({count})'**
+  String reviewsTitle(int count);
+
+  /// No description provided for @noReviewsYet.
+  ///
+  /// In en, this message translates to:
+  /// **'No reviews yet. Be the first to review!'**
+  String get noReviewsYet;
+
+  /// No description provided for @anonymous.
+  ///
+  /// In en, this message translates to:
+  /// **'Anonymous'**
+  String get anonymous;
+
+  /// No description provided for @failedToLoadReviews.
+  ///
+  /// In en, this message translates to:
+  /// **'Failed to load reviews: {error}'**
+  String failedToLoadReviews(String error);
+
+  /// No description provided for @loadMore.
+  ///
+  /// In en, this message translates to:
+  /// **'Load More'**
+  String get loadMore;
+
+  /// No description provided for @secureCheckout.
+  ///
+  /// In en, this message translates to:
+  /// **'Secure Checkout'**
+  String get secureCheckout;
+
+  /// No description provided for @orderSummary.
+  ///
+  /// In en, this message translates to:
+  /// **'Order Summary'**
+  String get orderSummary;
+
+  /// No description provided for @encryptedPayment.
+  ///
+  /// In en, this message translates to:
+  /// **'256-bit SSL Encrypted Payment'**
+  String get encryptedPayment;
+
+  /// No description provided for @paymentSecurity.
+  ///
+  /// In en, this message translates to:
+  /// **'Payment Security'**
+  String get paymentSecurity;
+
+  /// No description provided for @moneyBackGuarantee.
+  ///
+  /// In en, this message translates to:
+  /// **'Money Back Guarantee'**
+  String get moneyBackGuarantee;
+
+  /// No description provided for @safePayment.
+  ///
+  /// In en, this message translates to:
+  /// **'Safe Payment'**
+  String get safePayment;
+
+  /// No description provided for @deliveryBy.
+  ///
+  /// In en, this message translates to:
+  /// **'Delivery by {date}'**
+  String deliveryBy(String date);
+
+  /// No description provided for @freeReturns.
+  ///
+  /// In en, this message translates to:
+  /// **'Free Returns within 90 days'**
+  String get freeReturns;
+
+  /// No description provided for @lowStock.
+  ///
+  /// In en, this message translates to:
+  /// **'Only {count} left in stock!'**
+  String lowStock(int count);
+
+  /// No description provided for @soldCount.
+  ///
+  /// In en, this message translates to:
+  /// **'{count} sold'**
+  String soldCount(String count);
+
+  /// No description provided for @youSaved.
+  ///
+  /// In en, this message translates to:
+  /// **'You saved {amount}'**
+  String youSaved(String amount);
 }
 
 class _AppLocalizationsDelegate

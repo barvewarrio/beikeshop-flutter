@@ -41,6 +41,9 @@
       }
     }
   },
+  "viewCart": "View Cart",
+  "writeReview": "Write Review",
+  "requestRefund": "Request Refund",
   "shoppingCart": "Shopping Cart",
   "clear": "Clear",
   "cartEmpty": "Your cart is empty",
@@ -94,7 +97,14 @@
   "provinceState": "Province/State",
   "city": "City",
   "zipCode": "Zip Code",
-  "addressLine": "Address Line",
+  "buyerProtection": "Buyer Protection",
+  "priceDrop": "Price Drop",
+  "deliveryGuarantee": "Delivery Guarantee",
+  "securePayment": "Secure Payment",
+  "defaultAddress": "Default",
+  "setDefault": "Set Default",
+  "shippingFee": "Shipping Fee",
+  "freeShipping": "Free Shipping",
   "setAsDefault": "Set as Default Address",
   "defaultLabel": "Default",
   "save": "Save",
@@ -139,7 +149,6 @@
     }
   },
   "productNotFound": "Product not found",
-  "freeShipping": "Free",
   "ageVerificationTitle": "Age Verification",
   "ageVerificationContent": "This app contains adult-oriented content. You must be 18 years or older to enter.",
   "iAmOver18": "I am over 18",
@@ -147,7 +156,6 @@
   "discretePackaging": "Discrete Packaging",
   "discretePackagingNote": "All orders are shipped in plain boxes with no branding.",
   "copy": "Copy",
-  "requestRefund": "Request Refund",
   "rmaReason": "Reason for Refund",
   "rmaStatus": "Refund Status",
   "rmaDetails": "Refund Details",
@@ -158,7 +166,88 @@
   "pleaseSelectReason": "Please select a reason",
   "description": "Description",
   "optional": "Optional",
-  "submitSuccess": "Submitted successfully"
+  "submitSuccess": "Submitted successfully",
+  "cancelOrderConfirmation": "Are you sure you want to cancel this order?",
+  "orderCancelled": "Order cancelled successfully",
+  "confirm": "Confirm",
+  "error": "Error",
+  "addToCart": "Add to Cart",
+  "addedToCart": "Added to Cart",
+  "buyNow": "Buy Now",
+  "noCouponsAvailable": "No coupons available",
+  "minSpend": "Min. Spend: {amount}",
+  "@minSpend": {
+    "placeholders": {
+      "amount": { "type": "String" }
+    }
+  },
+  "expires": "Expires: {date}",
+  "@expires": {
+    "placeholders": {
+      "date": { "type": "String" }
+    }
+  },
+  "couponCode": "Code: {code}",
+  "@couponCode": {
+    "placeholders": {
+      "code": { "type": "String" }
+    }
+  },
+  "off": "OFF",
+  "addedToWishlist": "Added to wishlist",
+  "removedFromWishlist": "Removed from wishlist",
+  "failedToUpdateWishlist": "Failed to update wishlist: {error}",
+  "@failedToUpdateWishlist": {
+    "placeholders": {
+      "error": { "type": "String" }
+    }
+  },
+  "reviewsTitle": "Reviews ({count})",
+  "@reviewsTitle": {
+    "placeholders": {
+      "count": { "type": "int" }
+    }
+  },
+  "noReviewsYet": "No reviews yet. Be the first to review!",
+  "anonymous": "Anonymous",
+  "failedToLoadReviews": "Failed to load reviews: {error}",
+  "@failedToLoadReviews": {
+    "placeholders": {
+      "error": { "type": "String" }
+    }
+  },
+  "loadMore": "Load More",
+  "secureCheckout": "Secure Checkout",
+  "orderSummary": "Order Summary",
+  "encryptedPayment": "256-bit SSL Encrypted Payment",
+  "paymentSecurity": "Payment Security",
+  "moneyBackGuarantee": "Money Back Guarantee",
+  "safePayment": "Safe Payment",
+  "deliveryBy": "Delivery by {date}",
+  "@deliveryBy": {
+    "placeholders": {
+      "date": { "type": "String" }
+    }
+  },
+  "freeReturns": "Free Returns within 90 days",
+  "lowStock": "Only {count} left in stock!",
+  "@lowStock": {
+    "placeholders": {
+      "count": { "type": "int" }
+    }
+  },
+  "soldCount": "{count} sold",
+  "@soldCount": {
+    "placeholders": {
+      "count": { "type": "String" }
+    }
+  },
+  "youSaved": "You saved {amount}",
+  "@youSaved": {
+    "placeholders": {
+      "amount": { "type": "String" }
+    }
+  }
 }
 
 

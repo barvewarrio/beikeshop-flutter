@@ -266,13 +266,7 @@ class _SearchScreenState extends State<SearchScreen> {
       itemBuilder: (context, index) {
         final product = _searchResults[index];
         return ProductCard(
-          title: product.title,
-          imageUrl: product.imageUrl,
-          price: product.price,
-          originalPrice: product.originalPrice,
-          sales: '${product.sales} sold',
-          isFlashSale: product.isFlashSale,
-          tags: product.tags ?? [],
+          product: product,
           onTap: () {
             Navigator.push(
               context,

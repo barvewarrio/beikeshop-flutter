@@ -21,9 +21,7 @@ class AuthProvider extends ChangeNotifier {
       final prefs = await SharedPreferences.getInstance();
       final String? token = prefs.getString('auth_token');
       final String? userId = prefs.getString('user_id');
-      final String? userName = prefs.getString('user_name');
-      final String? userEmail = prefs.getString('user_email');
-      
+
       if (token != null && userId != null) {
         // Verify token with backend or just load from cache
         // ideally we should call getUser() to verify token validity
@@ -33,7 +31,7 @@ class AuthProvider extends ChangeNotifier {
         } catch (e) {
           // If token invalid, clear it
           debugPrint('Token invalid or error fetching user: $e');
-          await logout(); 
+          await logout();
           return;
         }
 
@@ -57,7 +55,7 @@ class AuthProvider extends ChangeNotifier {
     try {
       final user = await _apiService.login(email, password);
       _user = user;
-      
+
       final prefs = await SharedPreferences.getInstance();
       if (user.token != null) {
         await prefs.setString('auth_token', user.token!);
@@ -65,7 +63,7 @@ class AuthProvider extends ChangeNotifier {
       await prefs.setString('user_id', user.id);
       await prefs.setString('user_name', user.name);
       await prefs.setString('user_email', user.email);
-      
+
       notifyListeners();
       return true;
     } catch (e) {
@@ -78,7 +76,7 @@ class AuthProvider extends ChangeNotifier {
     try {
       final user = await _apiService.register(name, email, password);
       _user = user;
-      
+
       final prefs = await SharedPreferences.getInstance();
       if (user.token != null) {
         await prefs.setString('auth_token', user.token!);
@@ -86,7 +84,7 @@ class AuthProvider extends ChangeNotifier {
       await prefs.setString('user_id', user.id);
       await prefs.setString('user_name', user.name);
       await prefs.setString('user_email', user.email);
-      
+
       notifyListeners();
       return true;
     } catch (e) {

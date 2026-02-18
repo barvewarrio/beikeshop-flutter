@@ -67,57 +67,17 @@ class _WishlistScreenState extends State<WishlistScreen> {
             itemCount: wishlistProvider.wishlist.length,
             itemBuilder: (context, index) {
               final product = wishlistProvider.wishlist[index];
-              return Stack(
-                children: [
-                  ProductCard(
-                    title: product.title,
-                    imageUrl: product.imageUrl,
-                    price: product.price,
-                    originalPrice: product.originalPrice,
-                    sales: '${product.sales} sold',
-                    isFlashSale: product.isFlashSale,
-                    tags: product.tags,
-                    onTap: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) =>
-                              ProductDetailScreen(productId: product.id),
-                        ),
-                      );
-                    },
-                  ),
-                  Positioned(
-                    top: 8,
-                    right: 8,
-                    child: Container(
-                      decoration: const BoxDecoration(
-                        color: Colors.white,
-                        shape: BoxShape.circle,
-                        boxShadow: [
-                          BoxShadow(
-                            color: Colors.black12,
-                            blurRadius: 4,
-                            offset: Offset(0, 2),
-                          ),
-                        ],
-                      ),
-                      child: IconButton(
-                        icon: const Icon(
-                          Icons.delete_outline,
-                          color: Colors.red,
-                          size: 20,
-                        ),
-                        onPressed: () {
-                          // Show confirmation dialog? Or just remove.
-                          // For better UX, maybe just remove with undo snackbar.
-                          // But for now, let's just remove.
-                          wishlistProvider.removeFromWishlist(product.id);
-                        },
-                      ),
+              return ProductCard(
+                product: product,
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) =>
+                          ProductDetailScreen(productId: product.id),
                     ),
-                  ),
-                ],
+                  );
+                },
               );
             },
           );

@@ -162,7 +162,8 @@ class _RequestRefundScreenState extends State<RequestRefundScreen> {
 
                     // Reason Dropdown
                     DropdownButtonFormField<String>(
-                      value: _selectedReasonId,
+                      key: ValueKey(_selectedReasonId),
+                      initialValue: _selectedReasonId,
                       decoration: InputDecoration(
                         labelText: l10n.rmaReason,
                         border: const OutlineInputBorder(),

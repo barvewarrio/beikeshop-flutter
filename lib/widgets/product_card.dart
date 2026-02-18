@@ -3,34 +3,23 @@ import 'package:provider/provider.dart';
 import '../../theme/app_theme.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import '../providers/settings_provider.dart';
+import '../providers/wishlist_provider.dart';
+import '../models/models.dart';
+import 'package:beikeshop_flutter/l10n/app_localizations.dart';
 
 class ProductCard extends StatelessWidget {
-  final String title;
-  final String imageUrl;
-  final double price;
-  final double? originalPrice;
-  final String sales;
-  final bool isFlashSale;
-  final double discountPercentage;
-  final List<String> tags;
+  final Product product;
   final VoidCallback onTap;
 
-  const ProductCard({
-    super.key,
-    required this.title,
-    required this.imageUrl,
-    required this.price,
-    this.originalPrice,
-    required this.sales,
-    this.isFlashSale = false,
-    this.discountPercentage = 0,
-    this.tags = const [],
-    required this.onTap,
-  });
+  const ProductCard({super.key, required this.product, required this.onTap});
 
   @override
   Widget build(BuildContext context) {
     final settings = context.watch<SettingsProvider>();
+    final wishlistProvider = context.watch<WishlistProvider>();
+    final isInWishlist = wishlistProvider.isInWishlist(product.id);
+    final l10n = AppLocalizations.of(context);
+
     return GestureDetector(
       onTap: onTap,
       child: Container(
@@ -42,7 +31,7 @@ class ProductCard extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Image Section with Flash Sale Badge
+            // Image Section with Flash Sale Badge and Wishlist Button
             Stack(
               children: [
                 ClipRRect(
@@ -52,7 +41,7 @@ class ProductCard extends StatelessWidget {
                   child: AspectRatio(
                     aspectRatio: 1.0,
                     child: CachedNetworkImage(
-                      imageUrl: imageUrl,
+                      imageUrl: product.imageUrl,
                       fit: BoxFit.cover,
                       placeholder: (context, url) => Container(
                         color: Colors.grey[200],
@@ -62,20 +51,28 @@ class ProductCard extends StatelessWidget {
                       ),
                       errorWidget: (context, url, error) => Container(
                         color: Colors.grey[200],
-                        child: const Icon(Icons.broken_image, color: Colors.grey),
+                        child: const Icon(
+                          Icons.broken_image,
+                          color: Colors.grey,
+                        ),
                       ),
                     ),
                   ),
                 ),
-                if (isFlashSale)
+                if (product.isFlashSale)
                   Positioned(
                     top: 8,
                     left: 0,
                     child: Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 8,
+                        vertical: 4,
+                      ),
                       decoration: const BoxDecoration(
                         color: AppColors.primaryDark,
-                        borderRadius: BorderRadius.horizontal(right: Radius.circular(4)),
+                        borderRadius: BorderRadius.horizontal(
+                          right: Radius.circular(4),
+                        ),
                       ),
                       child: const Text(
                         'Flash Sale',
@@ -87,6 +84,42 @@ class ProductCard extends StatelessWidget {
                       ),
                     ),
                   ),
+                Positioned(
+                  top: 4,
+                  right: 4,
+                  child: Container(
+                    decoration: const BoxDecoration(
+                      color: Colors.white,
+                      shape: BoxShape.circle,
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.black12,
+                          blurRadius: 4,
+                          offset: Offset(0, 2),
+                        ),
+                      ],
+                    ),
+                    child: IconButton(
+                      icon: Icon(
+                        isInWishlist ? Icons.favorite : Icons.favorite_border,
+                        color: isInWishlist ? Colors.red : Colors.grey,
+                        size: 20,
+                      ),
+                      onPressed: () {
+                        if (isInWishlist) {
+                          wishlistProvider.removeFromWishlist(product.id);
+                        } else {
+                          wishlistProvider.addToWishlist(product);
+                        }
+                      },
+                      padding: EdgeInsets.zero,
+                      constraints: const BoxConstraints(
+                        minWidth: 32,
+                        minHeight: 32,
+                      ),
+                    ),
+                  ),
+                ),
               ],
             ),
 
@@ -97,34 +130,44 @@ class ProductCard extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    title,
+                    product.title,
                     maxLines: 2,
                     overflow: TextOverflow.ellipsis,
                     style: AppTextStyles.body.copyWith(height: 1.2),
                   ),
                   const SizedBox(height: 4),
-                  
+
                   // Tags
-                  if (tags.isNotEmpty)
+                  if (product.tags.isNotEmpty)
                     Padding(
                       padding: const EdgeInsets.only(bottom: 4),
                       child: Wrap(
                         spacing: 4,
-                        children: tags.take(2).map((tag) => Container(
-                          padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 2),
-                          decoration: BoxDecoration(
-                            color: AppColors.primary.withOpacity(0.1),
-                            borderRadius: BorderRadius.circular(2),
-                            border: Border.all(color: AppColors.primary.withOpacity(0.3)),
-                          ),
-                          child: Text(
-                            tag,
-                            style: const TextStyle(
-                              fontSize: 9,
-                              color: AppColors.primary,
-                            ),
-                          ),
-                        )).toList(),
+                        children: product.tags
+                            .take(2)
+                            .map(
+                              (tag) => Container(
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 4,
+                                  vertical: 2,
+                                ),
+                                decoration: BoxDecoration(
+                                  color: AppColors.primary.withValues(alpha: 0.1),
+                                  borderRadius: BorderRadius.circular(2),
+                                  border: Border.all(
+                                    color: AppColors.primary.withValues(alpha: 0.3),
+                                  ),
+                                ),
+                                child: Text(
+                                  tag,
+                                  style: const TextStyle(
+                                    fontSize: 9,
+                                    color: AppColors.primary,
+                                  ),
+                                ),
+                              ),
+                            )
+                            .toList(),
                       ),
                     ),
 
@@ -134,23 +177,25 @@ class ProductCard extends StatelessWidget {
                     textBaseline: TextBaseline.alphabetic,
                     children: [
                       Text(
-                        settings.formatPrice(price),
+                        settings.formatPrice(product.price),
                         style: AppTextStyles.price.copyWith(fontSize: 16),
                       ),
                       const SizedBox(width: 4),
-                      if (originalPrice != null)
+                      if (product.originalPrice != null)
                         Text(
-                          settings.formatPrice(originalPrice!),
-                          style: AppTextStyles.originalPrice.copyWith(fontSize: 11),
+                          settings.formatPrice(product.originalPrice!),
+                          style: AppTextStyles.originalPrice.copyWith(
+                            fontSize: 11,
+                          ),
                         ),
                     ],
                   ),
-                  
-                  if (discountPercentage > 0)
+
+                  if (product.discountPercentage > 0)
                     Padding(
                       padding: const EdgeInsets.only(top: 2),
                       child: Text(
-                        '${discountPercentage.toStringAsFixed(0)}% OFF',
+                        '${product.discountPercentage.toStringAsFixed(0)}% OFF',
                         style: const TextStyle(
                           color: AppColors.primaryDark,
                           fontSize: 11,
@@ -161,13 +206,13 @@ class ProductCard extends StatelessWidget {
 
                   const SizedBox(height: 4),
                   Text(
-                    sales, // already formatted as "123 sold"
+                    '${product.sales} ${l10n?.sold ?? 'sold'}',
                     style: const TextStyle(
                       fontSize: 10,
                       color: AppColors.textSecondary,
                     ),
                   ),
-                  
+
                   const SizedBox(height: 8),
                   // Add to Cart Button (Small)
                   SizedBox(

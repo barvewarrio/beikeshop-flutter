@@ -1,13 +1,8 @@
-import 'dart:convert';
 import 'package:flutter/material.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import '../models/order_model.dart';
 import '../models/models.dart';
-import '../providers/cart_provider.dart';
 import '../models/address_model.dart';
-import '../models/cart_item_model.dart';
 import '../api/api_service.dart';
-import '../models/payment_method_model.dart';
 
 class OrderProvider extends ChangeNotifier {
   List<Order> _orders = [];
@@ -85,6 +80,20 @@ class OrderProvider extends ChangeNotifier {
       return newOrder;
     } catch (e) {
       debugPrint('Error placing order: $e');
+      rethrow;
+    }
+  }
+
+  Future<void> cancelOrder(String orderId) async {
+    try {
+      final updatedOrder = await _apiService.cancelOrder(orderId);
+      final index = _orders.indexWhere((o) => o.id == orderId);
+      if (index != -1) {
+        _orders[index] = updatedOrder;
+        notifyListeners();
+      }
+    } catch (e) {
+      debugPrint('Error cancelling order: $e');
       rethrow;
     }
   }

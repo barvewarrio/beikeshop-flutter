@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'dart:async';
 import 'package:provider/provider.dart';
 import 'package:beikeshop_flutter/l10n/app_localizations.dart';
 import '../../providers/cart_provider.dart';
@@ -22,10 +23,13 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
   Address? _selectedAddress;
   bool _isLoading = false;
   String _paymentMethod = '';
+  late Timer _timer;
+  int _timeLeft = 900; // 15 minutes
 
   @override
   void initState() {
     super.initState();
+    _startTimer();
     // Pre-select default address
     WidgetsBinding.instance.addPostFrameCallback((_) {
       final addressProvider = context.read<AddressProvider>();
@@ -33,6 +37,34 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
         _selectedAddress = addressProvider.defaultAddress;
       });
     });
+  }
+
+  @override
+  void dispose() {
+    if (_timer.isActive) {
+      _timer.cancel();
+    }
+    super.dispose();
+  }
+
+  void _startTimer() {
+    _timer = Timer.periodic(const Duration(seconds: 1), (timer) {
+      if (_timeLeft == 0) {
+        timer.cancel();
+      } else {
+        if (mounted) {
+          setState(() {
+            _timeLeft--;
+          });
+        }
+      }
+    });
+  }
+
+  String get _timerString {
+    final minutes = (_timeLeft / 60).floor();
+    final seconds = _timeLeft % 60;
+    return '${minutes.toString().padLeft(2, '0')}:${seconds.toString().padLeft(2, '0')}';
   }
 
   void _selectAddress() async {
@@ -181,6 +213,37 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.stretch,
                       children: [
+                        // Money Back Guarantee Banner
+                        Container(
+                          margin: const EdgeInsets.only(bottom: 12),
+                          padding: const EdgeInsets.all(12),
+                          decoration: BoxDecoration(
+                            color: const Color(0xFFFFF4E5),
+                            borderRadius: BorderRadius.circular(8),
+                            border: Border.all(color: const Color(0xFFFFD591)),
+                          ),
+                          child: Row(
+                            children: [
+                              const Icon(
+                                Icons.verified_user,
+                                color: AppColors.warning,
+                                size: 20,
+                              ),
+                              const SizedBox(width: 8),
+                              Expanded(
+                                child: Text(
+                                  l10n.moneyBackGuarantee,
+                                  style: const TextStyle(
+                                    color: AppColors.textPrimary,
+                                    fontWeight: FontWeight.w500,
+                                    fontSize: 13,
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+
                         // Address Section
                         _buildAddressSection(l10n),
                         const SizedBox(height: 12),
@@ -489,6 +552,41 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
               method.icon, // Passing icon URL/path
             ),
           ),
+          const SizedBox(height: 16),
+          // Trust Badges
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              const Icon(
+                Icons.lock_outline,
+                size: 16,
+                color: AppColors.success,
+              ),
+              const SizedBox(width: 4),
+              Text(
+                l10n.safePayment,
+                style: const TextStyle(
+                  fontSize: 12,
+                  color: AppColors.success,
+                  fontWeight: FontWeight.w500,
+                ),
+              ),
+              const SizedBox(width: 16),
+              const Icon(
+                Icons.security,
+                size: 16,
+                color: AppColors.textSecondary,
+              ),
+              const SizedBox(width: 4),
+              Text(
+                l10n.paymentSecurity,
+                style: const TextStyle(
+                  fontSize: 12,
+                  color: AppColors.textSecondary,
+                ),
+              ),
+            ],
+          ),
         ],
       ),
     );
@@ -584,9 +682,35 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
                 l10n.shipping,
                 style: const TextStyle(color: AppColors.textSecondary),
               ),
-              Text(
-                l10n.freeShipping, // Assuming free shipping for now or add localized string
-                style: const TextStyle(color: AppColors.success),
+              Row(
+                children: [
+                  Text(
+                    l10n.freeShipping,
+                    style: const TextStyle(
+                      color: AppColors.success,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  const SizedBox(width: 4),
+                  Container(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 4,
+                      vertical: 2,
+                    ),
+                    decoration: BoxDecoration(
+                      color: AppColors.error,
+                      borderRadius: BorderRadius.circular(4),
+                    ),
+                    child: Text(
+                      l10n.endsIn(_timerString),
+                      style: const TextStyle(
+                        color: Colors.white,
+                        fontSize: 10,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ),
+                ],
               ),
             ],
           ),
@@ -693,9 +817,9 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
   Widget _buildDiscretePackagingInfo(AppLocalizations l10n) {
     return Container(
       decoration: BoxDecoration(
-        color: Colors.grey.withOpacity(0.1),
+        color: Colors.grey.withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: Colors.grey.withOpacity(0.3)),
+        border: Border.all(color: Colors.grey.withValues(alpha: 0.3)),
       ),
       padding: const EdgeInsets.all(12),
       child: Row(

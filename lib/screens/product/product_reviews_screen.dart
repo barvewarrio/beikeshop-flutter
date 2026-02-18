@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:beikeshop_flutter/l10n/app_localizations.dart';
 import '../../api/api_service.dart';
 import '../../models/review_model.dart';
 import '../../theme/app_theme.dart';
@@ -45,13 +46,15 @@ class _ProductReviewsScreenState extends State<ProductReviewsScreen> {
         widget.productId,
         page: _currentPage,
       );
-      
+
       final List<dynamic> data = response['data'] ?? [];
-      final List<Review> newReviews = data.map((json) => Review.fromJson(json)).toList();
-      
+      final List<Review> newReviews = data
+          .map((json) => Review.fromJson(json))
+          .toList();
+
       // Pagination meta data from Laravel
       final int lastPage = response['last_page'] ?? 1;
-      
+
       if (mounted) {
         setState(() {
           _reviews.addAll(newReviews);
@@ -69,7 +72,11 @@ class _ProductReviewsScreenState extends State<ProductReviewsScreen> {
           _isLoading = false;
         });
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Failed to load reviews: $e')),
+          SnackBar(
+            content: Text(
+              AppLocalizations.of(context)!.failedToLoadReviews(e.toString()),
+            ),
+          ),
         );
       }
     }
@@ -77,23 +84,23 @@ class _ProductReviewsScreenState extends State<ProductReviewsScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Reviews'),
-      ),
+      appBar: AppBar(title: Text(l10n.reviewsTitle(_reviews.length))),
       floatingActionButton: FloatingActionButton.extended(
         onPressed: () async {
           final result = await Navigator.push(
             context,
             MaterialPageRoute(
-              builder: (context) => WriteReviewScreen(productId: widget.productId),
+              builder: (context) =>
+                  WriteReviewScreen(productId: widget.productId),
             ),
           );
           if (result == true) {
             _fetchReviews(refresh: true);
           }
         },
-        label: const Text('Write a Review'),
+        label: Text(l10n.writeReview),
         icon: const Icon(Icons.rate_review),
         backgroundColor: AppColors.primary,
       ),
@@ -101,9 +108,9 @@ class _ProductReviewsScreenState extends State<ProductReviewsScreen> {
         onRefresh: () => _fetchReviews(refresh: true),
         child: _reviews.isEmpty && !_isLoading
             ? ListView(
-                children: const [
-                  SizedBox(height: 100),
-                  Center(child: Text('No reviews yet. Be the first to review!')),
+                children: [
+                  const SizedBox(height: 100),
+                  Center(child: Text(l10n.noReviewsYet)),
                 ],
               )
             : ListView.separated(
@@ -115,9 +122,9 @@ class _ProductReviewsScreenState extends State<ProductReviewsScreen> {
                     return Center(
                       child: TextButton(
                         onPressed: () => _fetchReviews(),
-                        child: _isLoading 
-                          ? const CircularProgressIndicator() 
-                          : const Text('Load More'),
+                        child: _isLoading
+                            ? const CircularProgressIndicator()
+                            : Text(l10n.loadMore),
                       ),
                     );
                   }
@@ -132,8 +139,13 @@ class _ProductReviewsScreenState extends State<ProductReviewsScreen> {
                             radius: 20,
                             backgroundColor: Colors.grey[200],
                             child: Text(
-                              (review.customerName.isNotEmpty ? review.customerName[0] : '?').toUpperCase(),
-                              style: const TextStyle(fontWeight: FontWeight.bold),
+                              (review.customerName.isNotEmpty
+                                      ? review.customerName[0]
+                                      : '?')
+                                  .toUpperCase(),
+                              style: const TextStyle(
+                                fontWeight: FontWeight.bold,
+                              ),
                             ),
                           ),
                           const SizedBox(width: 12),
@@ -141,7 +153,9 @@ class _ProductReviewsScreenState extends State<ProductReviewsScreen> {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Text(
-                                review.customerName,
+                                review.customerName.isNotEmpty
+                                    ? review.customerName
+                                    : l10n.anonymous,
                                 style: const TextStyle(
                                   fontWeight: FontWeight.bold,
                                   fontSize: 16,
@@ -160,7 +174,9 @@ class _ProductReviewsScreenState extends State<ProductReviewsScreen> {
                           Row(
                             children: List.generate(5, (i) {
                               return Icon(
-                                i < review.rating ? Icons.star : Icons.star_border,
+                                i < review.rating
+                                    ? Icons.star
+                                    : Icons.star_border,
                                 size: 16,
                                 color: Colors.amber,
                               );
@@ -182,7 +198,8 @@ class _ProductReviewsScreenState extends State<ProductReviewsScreen> {
                             child: ListView.separated(
                               scrollDirection: Axis.horizontal,
                               itemCount: review.images.length,
-                              separatorBuilder: (_, __) => const SizedBox(width: 8),
+                              separatorBuilder: (_, __) =>
+                                  const SizedBox(width: 8),
                               itemBuilder: (context, imgIndex) {
                                 return ClipRRect(
                                   borderRadius: BorderRadius.circular(8),
@@ -191,8 +208,10 @@ class _ProductReviewsScreenState extends State<ProductReviewsScreen> {
                                     width: 80,
                                     height: 80,
                                     fit: BoxFit.cover,
-                                    placeholder: (_, __) => Container(color: Colors.grey[200]),
-                                    errorWidget: (_, __, ___) => const Icon(Icons.error),
+                                    placeholder: (_, __) =>
+                                        Container(color: Colors.grey[200]),
+                                    errorWidget: (_, __, ___) =>
+                                        const Icon(Icons.error),
                                   ),
                                 );
                               },

@@ -116,6 +116,15 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
+  String get viewCart => 'View Cart';
+
+  @override
+  String get writeReview => 'Write Review';
+
+  @override
+  String get requestRefund => 'Request Refund';
+
+  @override
   String get shoppingCart => 'Shopping Cart';
 
   @override
@@ -155,9 +164,6 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get buyAgain => 'Buy Again';
-
-  @override
-  String get writeReview => 'Write Review';
 
   @override
   String get returnRefund => 'Return/Refund';
@@ -238,7 +244,28 @@ class AppLocalizationsEn extends AppLocalizations {
   String get zipCode => 'Zip Code';
 
   @override
-  String get addressLine => 'Address Line';
+  String get buyerProtection => 'Buyer Protection';
+
+  @override
+  String get priceDrop => 'Price Drop';
+
+  @override
+  String get deliveryGuarantee => 'Delivery Guarantee';
+
+  @override
+  String get securePayment => 'Secure Payment';
+
+  @override
+  String get defaultAddress => 'Default';
+
+  @override
+  String get setDefault => 'Set Default';
+
+  @override
+  String get shippingFee => 'Shipping Fee';
+
+  @override
+  String get freeShipping => 'Free Shipping';
 
   @override
   String get setAsDefault => 'Set as Default Address';
@@ -297,9 +324,6 @@ class AppLocalizationsEn extends AppLocalizations {
   String get cancelOrder => 'Cancel Order';
 
   @override
-  String get freeShipping => 'Free';
-
-  @override
   String get discretePackaging => 'Discrete Packaging';
 
   @override
@@ -352,9 +376,6 @@ class AppLocalizationsEn extends AppLocalizations {
   String get copy => 'Copy';
 
   @override
-  String get requestRefund => 'Request Refund';
-
-  @override
   String get rmaReason => 'Reason for Refund';
 
   @override
@@ -386,4 +407,118 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get submitSuccess => 'Submitted successfully';
+
+  @override
+  String get cancelOrderConfirmation =>
+      'Are you sure you want to cancel this order?';
+
+  @override
+  String get orderCancelled => 'Order cancelled successfully';
+
+  @override
+  String get confirm => 'Confirm';
+
+  @override
+  String get error => 'Error';
+
+  @override
+  String get addToCart => 'Add to Cart';
+
+  @override
+  String get addedToCart => 'Added to Cart';
+
+  @override
+  String get buyNow => 'Buy Now';
+
+  @override
+  String get noCouponsAvailable => 'No coupons available';
+
+  @override
+  String minSpend(String amount) {
+    return 'Min. Spend: $amount';
+  }
+
+  @override
+  String expires(String date) {
+    return 'Expires: $date';
+  }
+
+  @override
+  String couponCode(String code) {
+    return 'Code: $code';
+  }
+
+  @override
+  String get off => 'OFF';
+
+  @override
+  String get addedToWishlist => 'Added to wishlist';
+
+  @override
+  String get removedFromWishlist => 'Removed from wishlist';
+
+  @override
+  String failedToUpdateWishlist(String error) {
+    return 'Failed to update wishlist: $error';
+  }
+
+  @override
+  String reviewsTitle(int count) {
+    return 'Reviews ($count)';
+  }
+
+  @override
+  String get noReviewsYet => 'No reviews yet. Be the first to review!';
+
+  @override
+  String get anonymous => 'Anonymous';
+
+  @override
+  String failedToLoadReviews(String error) {
+    return 'Failed to load reviews: $error';
+  }
+
+  @override
+  String get loadMore => 'Load More';
+
+  @override
+  String get secureCheckout => 'Secure Checkout';
+
+  @override
+  String get orderSummary => 'Order Summary';
+
+  @override
+  String get encryptedPayment => '256-bit SSL Encrypted Payment';
+
+  @override
+  String get paymentSecurity => 'Payment Security';
+
+  @override
+  String get moneyBackGuarantee => 'Money Back Guarantee';
+
+  @override
+  String get safePayment => 'Safe Payment';
+
+  @override
+  String deliveryBy(String date) {
+    return 'Delivery by $date';
+  }
+
+  @override
+  String get freeReturns => 'Free Returns within 90 days';
+
+  @override
+  String lowStock(int count) {
+    return 'Only $count left in stock!';
+  }
+
+  @override
+  String soldCount(String count) {
+    return '$count sold';
+  }
+
+  @override
+  String youSaved(String amount) {
+    return 'You saved $amount';
+  }
 }
