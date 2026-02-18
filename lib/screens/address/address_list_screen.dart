@@ -21,9 +21,12 @@ class AddressListScreen extends StatelessWidget {
     final l10n = AppLocalizations.of(context)!;
 
     return Scaffold(
-      backgroundColor: AppColors.background,
+      backgroundColor: const Color(0xFFF7F7F7),
       appBar: AppBar(
-        title: Text(selectMode ? l10n.selectShippingAddress : l10n.myAddresses),
+        title: Text(
+          selectMode ? l10n.selectShippingAddress : l10n.myAddresses,
+          style: const TextStyle(fontWeight: FontWeight.bold),
+        ),
         centerTitle: true,
         elevation: 0,
         backgroundColor: Colors.white,
@@ -40,12 +43,26 @@ class AddressListScreen extends StatelessWidget {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Icon(
-                    Icons.location_off_outlined,
-                    size: 80,
-                    color: AppColors.textHint.withValues(alpha: 0.5),
+                  Container(
+                    padding: const EdgeInsets.all(24),
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      shape: BoxShape.circle,
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.black.withValues(alpha: 0.05),
+                          blurRadius: 16,
+                          offset: const Offset(0, 4),
+                        ),
+                      ],
+                    ),
+                    child: Icon(
+                      Icons.location_off_outlined,
+                      size: 64,
+                      color: AppColors.textHint.withValues(alpha: 0.5),
+                    ),
                   ),
-                  const SizedBox(height: 16),
+                  const SizedBox(height: 24),
                   Text(
                     l10n.noAddressesFound,
                     style: const TextStyle(
@@ -53,22 +70,40 @@ class AddressListScreen extends StatelessWidget {
                       fontSize: 16,
                     ),
                   ),
-                  const SizedBox(height: 24),
-                  ElevatedButton(
-                    onPressed: () => _navigateToAddAddress(context),
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: AppColors.primary,
-                      foregroundColor: Colors.white,
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 32,
-                        vertical: 12,
+                  const SizedBox(height: 32),
+                  Container(
+                    decoration: BoxDecoration(
+                      gradient: const LinearGradient(
+                        colors: [Color(0xFFFF5000), Color(0xFFE02020)],
                       ),
-                      elevation: 0,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(24),
+                      borderRadius: BorderRadius.circular(24),
+                      boxShadow: [
+                        BoxShadow(
+                          color: AppColors.primary.withValues(alpha: 0.3),
+                          blurRadius: 8,
+                          offset: const Offset(0, 4),
+                        ),
+                      ],
+                    ),
+                    child: ElevatedButton(
+                      onPressed: () => _navigateToAddAddress(context),
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.transparent,
+                        foregroundColor: Colors.white,
+                        shadowColor: Colors.transparent,
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 32,
+                          vertical: 12,
+                        ),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(24),
+                        ),
+                      ),
+                      child: Text(
+                        l10n.addAddress,
+                        style: const TextStyle(fontWeight: FontWeight.bold),
                       ),
                     ),
-                    child: Text(l10n.addAddress),
                   ),
                 ],
               ),
@@ -79,7 +114,7 @@ class AddressListScreen extends StatelessWidget {
             children: [
               Expanded(
                 child: ListView.separated(
-                  padding: const EdgeInsets.all(16),
+                  padding: const EdgeInsets.all(12),
                   itemCount: provider.addresses.length,
                   separatorBuilder: (context, index) =>
                       const SizedBox(height: 12),
@@ -101,7 +136,7 @@ class AddressListScreen extends StatelessWidget {
                 ),
               ),
               Container(
-                padding: const EdgeInsets.all(16),
+                padding: const EdgeInsets.all(12),
                 decoration: BoxDecoration(
                   color: Colors.white,
                   boxShadow: [
@@ -113,14 +148,28 @@ class AddressListScreen extends StatelessWidget {
                   ],
                 ),
                 child: SafeArea(
-                  child: SizedBox(
+                  child: Container(
                     width: double.infinity,
                     height: 48,
+                    decoration: BoxDecoration(
+                      gradient: const LinearGradient(
+                        colors: [Color(0xFFFF5000), Color(0xFFE02020)],
+                      ),
+                      borderRadius: BorderRadius.circular(24),
+                      boxShadow: [
+                        BoxShadow(
+                          color: AppColors.primary.withValues(alpha: 0.3),
+                          blurRadius: 8,
+                          offset: const Offset(0, 4),
+                        ),
+                      ],
+                    ),
                     child: ElevatedButton(
                       onPressed: () => _navigateToAddAddress(context),
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: AppColors.primary,
+                        backgroundColor: Colors.transparent,
                         foregroundColor: Colors.white,
+                        shadowColor: Colors.transparent,
                         elevation: 0,
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(24),
@@ -214,7 +263,6 @@ class _AddressCard extends StatelessWidget {
   final VoidCallback onDelete;
 
   const _AddressCard({
-    super.key,
     required this.address,
     this.isSelectionMode = false,
     this.isSelected = false,
@@ -228,16 +276,15 @@ class _AddressCard extends StatelessWidget {
     final l10n = AppLocalizations.of(context)!;
 
     // Temu-style active border color
-    final borderColor = isSelected
-        ? AppColors.primary
-        : (address.isDefault
-              ? AppColors.primary.withValues(alpha: 0.5)
-              : Colors.grey[200]!);
+    final borderColor =
+        isSelected
+            ? AppColors.primary
+            : (address.isDefault
+                ? AppColors.primary.withValues(alpha: 0.5)
+                : Colors.transparent);
 
-    final borderWidth = isSelected ? 2.0 : (address.isDefault ? 1.0 : 1.0);
-    final backgroundColor = isSelected
-        ? AppColors.primary.withValues(alpha: 0.03)
-        : Colors.white;
+    final backgroundColor =
+        isSelected ? AppColors.primary.withValues(alpha: 0.03) : Colors.white;
 
     return GestureDetector(
       onTap: isSelectionMode ? onTap : null,
@@ -245,10 +292,13 @@ class _AddressCard extends StatelessWidget {
         decoration: BoxDecoration(
           color: backgroundColor,
           borderRadius: BorderRadius.circular(12),
-          border: Border.all(color: borderColor, width: borderWidth),
+          border: Border.all(
+            color: borderColor,
+            width: isSelected || address.isDefault ? 1.5 : 0,
+          ),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withValues(alpha: 0.03),
+              color: Colors.black.withValues(alpha: 0.05),
               blurRadius: 8,
               offset: const Offset(0, 2),
             ),
@@ -263,14 +313,12 @@ class _AddressCard extends StatelessWidget {
               children: [
                 if (isSelectionMode)
                   Padding(
-                    padding: const EdgeInsets.only(right: 12, top: 4),
+                    padding: const EdgeInsets.only(right: 12, top: 2),
                     child: Icon(
                       isSelected
                           ? Icons.check_circle
                           : Icons.radio_button_unchecked,
-                      color: isSelected
-                          ? AppColors.primary
-                          : AppColors.textHint,
+                      color: isSelected ? AppColors.primary : AppColors.textHint,
                       size: 22,
                     ),
                   ),
@@ -339,34 +387,42 @@ class _AddressCard extends StatelessWidget {
             const SizedBox(height: 8),
             Row(
               children: [
-                if (!address.isDefault && !isSelectionMode)
+                if (!address.isDefault)
                   InkWell(
                     onTap: () {
                       context.read<AddressProvider>().setDefaultAddress(
                         address.id,
                       );
                     },
-                    child: Row(
-                      children: [
-                        const Icon(
-                          Icons.check_circle_outline,
-                          size: 16,
-                          color: AppColors.textSecondary,
-                        ),
-                        const SizedBox(width: 4),
-                        Text(
-                          l10n.setDefault,
-                          style: const TextStyle(
-                            fontSize: 13,
+                    borderRadius: BorderRadius.circular(4),
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(
+                        vertical: 4,
+                        horizontal: 4,
+                      ),
+                      child: Row(
+                        children: [
+                          const Icon(
+                            Icons.check_circle_outline,
+                            size: 16,
                             color: AppColors.textSecondary,
                           ),
-                        ),
-                      ],
+                          const SizedBox(width: 4),
+                          Text(
+                            l10n.setDefault,
+                            style: const TextStyle(
+                              fontSize: 13,
+                              color: AppColors.textSecondary,
+                            ),
+                          ),
+                        ],
+                      ),
                     ),
                   ),
                 const Spacer(),
                 InkWell(
                   onTap: onEdit,
+                  borderRadius: BorderRadius.circular(4),
                   child: Padding(
                     padding: const EdgeInsets.symmetric(
                       horizontal: 8,
@@ -394,6 +450,7 @@ class _AddressCard extends StatelessWidget {
                 const SizedBox(width: 8),
                 InkWell(
                   onTap: onDelete,
+                  borderRadius: BorderRadius.circular(4),
                   child: Padding(
                     padding: const EdgeInsets.symmetric(
                       horizontal: 8,

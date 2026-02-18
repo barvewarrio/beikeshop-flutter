@@ -193,6 +193,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get shippingAddress => 'Shipping Address';
 
   @override
+  String get contactInfo => 'Contact Info';
+
+  @override
   String get paymentMethod => 'Payment Method';
 
   @override

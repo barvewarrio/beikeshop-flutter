@@ -57,6 +57,7 @@
   "statusDelivered": "已送达",
   "statusCancelled": "已取消",
   "shippingAddress": "收货地址",
+  "contactInfo": "联系方式",
   "paymentMethod": "支付方式",
   "items": "商品",
   "itemCount": "共 {count} 件商品",

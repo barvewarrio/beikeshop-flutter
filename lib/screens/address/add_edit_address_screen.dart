@@ -167,128 +167,121 @@ class _AddEditAddressScreenState extends State<AddEditAddressScreen> {
     final l10n = AppLocalizations.of(context)!;
 
     return Scaffold(
-      backgroundColor: AppColors.background,
+      backgroundColor: const Color(0xFFF7F7F7),
       appBar: AppBar(
         title: Text(
           widget.address == null ? l10n.addAddress : l10n.editAddress,
+          style: const TextStyle(
+            color: Colors.black,
+            fontSize: 18,
+            fontWeight: FontWeight.bold,
+          ),
         ),
         centerTitle: true,
         backgroundColor: Colors.white,
         elevation: 0,
-        foregroundColor: AppColors.textPrimary,
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back, color: Colors.black),
+          onPressed: () => Navigator.pop(context),
+        ),
       ),
       body: Column(
         children: [
           Expanded(
             child: SingleChildScrollView(
-              padding: const EdgeInsets.all(16),
+              padding: const EdgeInsets.all(12),
               child: Form(
                 key: _formKey,
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
                     _buildSection(
+                      title: l10n.contactInfo,
                       children: [
                         _buildTextField(
                           controller: _nameController,
                           label: l10n.fullName,
+                          icon: Icons.person_outline,
                         ),
-                        const Divider(height: 1),
+                        const Divider(height: 1, indent: 48),
                         _buildTextField(
                           controller: _phoneController,
                           label: l10n.phoneNumber,
                           keyboardType: TextInputType.phone,
+                          icon: Icons.phone_outlined,
                         ),
                       ],
                     ),
                     const SizedBox(height: 12),
                     _buildSection(
+                      title: l10n.shippingAddress,
                       children: [
-                        Row(
-                          children: [
-                            Expanded(
-                              child: _buildDropdown(
-                                label: l10n.country,
-                                value: _selectedCountryId,
-                                items: _countries
-                                    .map(
-                                      (c) => DropdownMenuItem(
-                                        value: c.id,
-                                        child: Text(
-                                          c.name,
-                                          overflow: TextOverflow.ellipsis,
-                                        ),
-                                      ),
-                                    )
-                                    .toList(),
-                                onChanged: (val) {
-                                  if (val != null) {
-                                    setState(() {
-                                      _selectedCountryId = val;
-                                      _selectedZoneId = null;
-                                      _zones = [];
-                                    });
-                                    _fetchZones(val);
-                                  }
-                                },
-                                isLoading: _isLoadingCountries,
-                              ),
-                            ),
-                            Container(
-                              width: 1,
-                              height: 24,
-                              color: AppColors.border,
-                            ),
-                            Expanded(
-                              child: _buildDropdown(
-                                label: l10n.provinceState,
-                                value: _selectedZoneId,
-                                items: _zones
-                                    .map(
-                                      (z) => DropdownMenuItem(
-                                        value: z.id,
-                                        child: Text(
-                                          z.name,
-                                          overflow: TextOverflow.ellipsis,
-                                        ),
-                                      ),
-                                    )
-                                    .toList(),
-                                onChanged: (val) =>
-                                    setState(() => _selectedZoneId = val),
-                                isLoading: _isLoadingZones,
-                              ),
-                            ),
-                          ],
+                        _buildDropdown(
+                          label: l10n.country,
+                          value: _selectedCountryId,
+                          items: _countries
+                              .map(
+                                (c) => DropdownMenuItem(
+                                  value: c.id,
+                                  child: Text(
+                                    c.name,
+                                    overflow: TextOverflow.ellipsis,
+                                  ),
+                                ),
+                              )
+                              .toList(),
+                          onChanged: (val) {
+                            if (val != null) {
+                              setState(() {
+                                _selectedCountryId = val;
+                                _selectedZoneId = null;
+                                _zones = [];
+                              });
+                              _fetchZones(val);
+                            }
+                          },
+                          isLoading: _isLoadingCountries,
+                          icon: Icons.public,
                         ),
-                        const Divider(height: 1),
-                        Row(
-                          children: [
-                            Expanded(
-                              child: _buildTextField(
-                                controller: _cityController,
-                                label: l10n.city,
-                              ),
-                            ),
-                            Container(
-                              width: 1,
-                              height: 24,
-                              color: AppColors.border,
-                            ),
-                            Expanded(
-                              child: _buildTextField(
-                                controller: _zipCodeController,
-                                label: l10n.zipCode,
-                                keyboardType: TextInputType.number,
-                              ),
-                            ),
-                          ],
+                        const Divider(height: 1, indent: 48),
+                        _buildDropdown(
+                          label: l10n.provinceState,
+                          value: _selectedZoneId,
+                          items: _zones
+                              .map(
+                                (z) => DropdownMenuItem(
+                                  value: z.id,
+                                  child: Text(
+                                    z.name,
+                                    overflow: TextOverflow.ellipsis,
+                                  ),
+                                ),
+                              )
+                              .toList(),
+                          onChanged: (val) =>
+                              setState(() => _selectedZoneId = val),
+                          isLoading: _isLoadingZones,
+                          icon: Icons.map_outlined,
                         ),
-                        const Divider(height: 1),
+                        const Divider(height: 1, indent: 48),
+                        _buildTextField(
+                          controller: _cityController,
+                          label: l10n.city,
+                          icon: Icons.location_city_outlined,
+                        ),
+                        const Divider(height: 1, indent: 48),
+                        _buildTextField(
+                          controller: _zipCodeController,
+                          label: l10n.zipCode,
+                          keyboardType: TextInputType.number,
+                          icon: Icons.numbers_outlined,
+                        ),
+                        const Divider(height: 1, indent: 48),
                         _buildTextField(
                           controller: _addressLineController,
                           label: l10n.address,
                           maxLines: 2,
+                          icon: Icons.home_outlined,
                         ),
                       ],
                     ),
@@ -300,7 +293,7 @@ class _AddEditAddressScreenState extends State<AddEditAddressScreen> {
                         boxShadow: [
                           BoxShadow(
                             color: Colors.black.withValues(alpha: 0.05),
-                            blurRadius: 10,
+                            blurRadius: 8,
                             offset: const Offset(0, 2),
                           ),
                         ],
@@ -311,10 +304,15 @@ class _AddEditAddressScreenState extends State<AddEditAddressScreen> {
                           style: const TextStyle(
                             fontSize: 15,
                             fontWeight: FontWeight.w500,
+                            color: AppColors.textPrimary,
                           ),
                         ),
+                        secondary: const Icon(
+                          Icons.check_circle_outline,
+                          color: AppColors.textSecondary,
+                        ),
                         value: _isDefault,
-                        activeTrackColor: AppColors.primary,
+                        activeColor: AppColors.primary,
                         onChanged: (val) => setState(() => _isDefault = val),
                         contentPadding: const EdgeInsets.symmetric(
                           horizontal: 16,
@@ -322,6 +320,7 @@ class _AddEditAddressScreenState extends State<AddEditAddressScreen> {
                         ),
                       ),
                     ),
+                    const SizedBox(height: 24),
                   ],
                 ),
               ),
@@ -340,14 +339,28 @@ class _AddEditAddressScreenState extends State<AddEditAddressScreen> {
               ],
             ),
             child: SafeArea(
-              child: SizedBox(
+              child: Container(
                 width: double.infinity,
                 height: 48,
+                decoration: BoxDecoration(
+                  gradient: const LinearGradient(
+                    colors: [Color(0xFFFF5000), Color(0xFFE02020)],
+                  ),
+                  borderRadius: BorderRadius.circular(24),
+                  boxShadow: [
+                    BoxShadow(
+                      color: AppColors.primary.withValues(alpha: 0.3),
+                      blurRadius: 8,
+                      offset: const Offset(0, 4),
+                    ),
+                  ],
+                ),
                 child: ElevatedButton(
                   onPressed: _saveAddress,
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: AppColors.primary,
+                    backgroundColor: Colors.transparent,
                     foregroundColor: Colors.white,
+                    shadowColor: Colors.transparent,
                     elevation: 0,
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(24),
@@ -356,7 +369,7 @@ class _AddEditAddressScreenState extends State<AddEditAddressScreen> {
                   child: Text(
                     l10n.save,
                     style: const TextStyle(
-                      fontSize: 16,
+                      fontSize: 18,
                       fontWeight: FontWeight.bold,
                     ),
                   ),
@@ -369,21 +382,37 @@ class _AddEditAddressScreenState extends State<AddEditAddressScreen> {
     );
   }
 
-  Widget _buildSection({required List<Widget> children}) {
-    return Container(
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(12),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withValues(alpha: 0.05),
-            blurRadius: 10,
-            offset: const Offset(0, 2),
+  Widget _buildSection({String? title, required List<Widget> children}) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        if (title != null)
+          Padding(
+            padding: const EdgeInsets.only(left: 4, bottom: 8),
+            child: Text(
+              title,
+              style: const TextStyle(
+                fontSize: 14,
+                fontWeight: FontWeight.bold,
+                color: AppColors.textPrimary,
+              ),
+            ),
           ),
-        ],
-      ),
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-      child: Column(children: children),
+        Container(
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(12),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withValues(alpha: 0.05),
+                blurRadius: 8,
+                offset: const Offset(0, 2),
+              ),
+            ],
+          ),
+          child: Column(children: children),
+        ),
+      ],
     );
   }
 
@@ -392,21 +421,28 @@ class _AddEditAddressScreenState extends State<AddEditAddressScreen> {
     required String label,
     TextInputType? keyboardType,
     int maxLines = 1,
+    IconData? icon,
   }) {
     final l10n = AppLocalizations.of(context)!;
-    return TextFormField(
-      controller: controller,
-      keyboardType: keyboardType,
-      maxLines: maxLines,
-      style: const TextStyle(fontSize: 15, color: AppColors.textPrimary),
-      decoration: InputDecoration(
-        labelText: label,
-        labelStyle: const TextStyle(color: AppColors.textSecondary),
-        border: InputBorder.none,
-        contentPadding: const EdgeInsets.symmetric(vertical: 12),
-        isDense: true,
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
+      child: TextFormField(
+        controller: controller,
+        keyboardType: keyboardType,
+        maxLines: maxLines,
+        style: const TextStyle(fontSize: 15, color: AppColors.textPrimary),
+        decoration: InputDecoration(
+          labelText: label,
+          labelStyle: const TextStyle(color: AppColors.textSecondary),
+          border: InputBorder.none,
+          icon: icon != null
+              ? Icon(icon, color: AppColors.textHint, size: 20)
+              : null,
+          contentPadding: const EdgeInsets.symmetric(vertical: 12),
+          isDense: true,
+        ),
+        validator: (value) => value!.isEmpty ? l10n.requiredField : null,
       ),
-      validator: (value) => value!.isEmpty ? l10n.requiredField : null,
     );
   }
 
@@ -416,6 +452,7 @@ class _AddEditAddressScreenState extends State<AddEditAddressScreen> {
     required List<DropdownMenuItem<int>> items,
     required ValueChanged<int?> onChanged,
     bool isLoading = false,
+    IconData? icon,
   }) {
     final l10n = AppLocalizations.of(context)!;
     // Ensure value is null if items is empty or value not in items
@@ -424,32 +461,39 @@ class _AddEditAddressScreenState extends State<AddEditAddressScreen> {
         ? null
         : value;
 
-    return DropdownButtonFormField<int>(
-      key: ValueKey(effectiveValue),
-      initialValue: effectiveValue,
-      decoration: InputDecoration(
-        labelText: label,
-        labelStyle: const TextStyle(color: AppColors.textSecondary),
-        border: InputBorder.none,
-        contentPadding: const EdgeInsets.symmetric(vertical: 12),
-        isDense: true,
-        suffixIcon: isLoading
-            ? const SizedBox(
-                width: 16,
-                height: 16,
-                child: Padding(
-                  padding: EdgeInsets.all(12.0),
-                  child: CircularProgressIndicator(strokeWidth: 2),
-                ),
-              )
-            : null,
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
+      child: DropdownButtonFormField<int>(
+        key: ValueKey(effectiveValue),
+        initialValue: effectiveValue,
+        decoration: InputDecoration(
+          labelText: label,
+          labelStyle: const TextStyle(color: AppColors.textSecondary),
+          border: InputBorder.none,
+          icon: icon != null
+              ? Icon(icon, color: AppColors.textHint, size: 20)
+              : null,
+          contentPadding: const EdgeInsets.symmetric(vertical: 12),
+          isDense: true,
+          suffixIcon: isLoading
+              ? const SizedBox(
+                  width: 16,
+                  height: 16,
+                  child: Padding(
+                    padding: EdgeInsets.all(12.0),
+                    child: CircularProgressIndicator(strokeWidth: 2),
+                  ),
+                )
+              : null,
+        ),
+        items: items,
+        onChanged: onChanged,
+        validator: (val) =>
+            val == null && items.isNotEmpty ? l10n.requiredField : null,
+        icon: const Icon(Icons.arrow_drop_down, color: AppColors.textSecondary),
+        style: const TextStyle(fontSize: 15, color: AppColors.textPrimary),
+        isExpanded: true,
       ),
-      items: items,
-      onChanged: onChanged,
-      validator: (val) => val == null && items.isNotEmpty ? l10n.requiredField : null,
-      icon: const Icon(Icons.arrow_drop_down, color: AppColors.textSecondary),
-      style: const TextStyle(fontSize: 15, color: AppColors.textPrimary),
-      isExpanded: true,
     );
   }
 }

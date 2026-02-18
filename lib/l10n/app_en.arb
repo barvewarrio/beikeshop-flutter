@@ -74,6 +74,7 @@
   "statusDelivered": "Delivered",
   "statusCancelled": "Cancelled",
   "shippingAddress": "Shipping Address",
+  "contactInfo": "Contact Info",
   "paymentMethod": "Payment Method",
   "items": "Items",
   "itemCount": "{count} items",

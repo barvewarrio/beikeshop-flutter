@@ -193,6 +193,9 @@ class AppLocalizationsZh extends AppLocalizations {
   String get shippingAddress => '收货地址';
 
   @override
+  String get contactInfo => '联系方式';
+
+  @override
   String get paymentMethod => '支付方式';
 
   @override

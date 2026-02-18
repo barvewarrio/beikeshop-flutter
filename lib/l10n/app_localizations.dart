@@ -458,6 +458,12 @@ abstract class AppLocalizations {
   /// **'Shipping Address'**
   String get shippingAddress;
 
+  /// No description provided for @contactInfo.
+  ///
+  /// In en, this message translates to:
+  /// **'Contact Info'**
+  String get contactInfo;
+
   /// No description provided for @paymentMethod.
   ///
   /// In en, this message translates to:
