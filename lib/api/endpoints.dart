@@ -1,9 +1,15 @@
+import 'dart:io';
+
 class ApiEndpoints {
   // Base URL (Replace with your actual backend URL)
   // Use 10.0.2.2 for Android Emulator, localhost for iOS Simulator
   // Use your machine's local IP for real device testing
-  static const String baseUrl =
-      'http://192.168.0.107:8000/api'; // Added /api prefix
+  static String get baseUrl {
+    if (Platform.isAndroid) {
+      return 'http://10.0.2.2:8000/api';
+    }
+    return 'http://127.0.0.1:8000/api';
+  }
 
   // Public Routes
   static const String home = '/';

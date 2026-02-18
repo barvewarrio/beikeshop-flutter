@@ -159,8 +159,8 @@ class ApiService {
   // Address
   Future<List<Address>> getAddresses() async {
     try {
-      final response = await _dio.get('${ApiEndpoints.baseUrl}/addresses');
-      final List<dynamic> data = response.data;
+      final response = await _dio.get(ApiEndpoints.addresses);
+      final List<dynamic> data = response.data['data'] ?? [];
       return data.map((json) => Address.fromJson(json)).toList();
     } catch (e) {
       debugPrint('Error fetching addresses: $e');
@@ -171,10 +171,10 @@ class ApiService {
   Future<Address> addAddress(Address address) async {
     try {
       final response = await _dio.post(
-        '${ApiEndpoints.baseUrl}/addresses',
+        ApiEndpoints.addresses,
         data: address.toJson(),
       );
-      return Address.fromJson(response.data);
+      return Address.fromJson(response.data['data']);
     } catch (e) {
       debugPrint('Error adding address: $e');
       rethrow;
@@ -184,10 +184,10 @@ class ApiService {
   Future<Address> updateAddress(Address address) async {
     try {
       final response = await _dio.put(
-        '${ApiEndpoints.baseUrl}/addresses/${address.id}',
+        ApiEndpoints.addressDetail(address.id!),
         data: address.toJson(),
       );
-      return Address.fromJson(response.data);
+      return Address.fromJson(response.data['data']);
     } catch (e) {
       debugPrint('Error updating address: $e');
       rethrow;
@@ -196,7 +196,7 @@ class ApiService {
 
   Future<void> deleteAddress(String id) async {
     try {
-      await _dio.delete('${ApiEndpoints.baseUrl}/addresses/$id');
+      await _dio.delete(ApiEndpoints.addressDetail(id));
     } catch (e) {
       debugPrint('Error deleting address: $e');
       rethrow;

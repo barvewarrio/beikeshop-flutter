@@ -47,6 +47,9 @@ class _MockHttpClient extends Fake implements HttpClient {
   bool autoUncompress = true;
 
   @override
+  Duration idleTimeout = const Duration(seconds: 15);
+
+  @override
   Future<HttpClientRequest> getUrl(Uri url) async {
     return _MockHttpClientRequest();
   }
