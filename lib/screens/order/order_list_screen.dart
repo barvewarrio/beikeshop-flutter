@@ -38,14 +38,45 @@ class OrderListScreen extends StatelessWidget {
       length: tabs.length,
       initialIndex: initialIndex,
       child: Scaffold(
+        backgroundColor: const Color(0xFFF7F7F7),
         appBar: AppBar(
-          title: Text(l10n.myOrders),
-          bottom: TabBar(
-            isScrollable: true,
-            labelColor: AppColors.primary,
-            unselectedLabelColor: AppColors.textSecondary,
-            indicatorColor: AppColors.primary,
-            tabs: tabs.map((t) => Tab(text: t['label'] as String)).toList(),
+          backgroundColor: Colors.white,
+          elevation: 0,
+          title: Text(
+            l10n.myOrders,
+            style: const TextStyle(
+              color: AppColors.textPrimary,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+          centerTitle: true,
+          iconTheme: const IconThemeData(color: AppColors.textPrimary),
+          bottom: PreferredSize(
+            preferredSize: const Size.fromHeight(44),
+            child: Container(
+              decoration: const BoxDecoration(
+                border: Border(
+                  bottom: BorderSide(color: AppColors.border, width: 0.5),
+                ),
+              ),
+              child: TabBar(
+                isScrollable: true,
+                labelColor: AppColors.primary,
+                unselectedLabelColor: AppColors.textSecondary,
+                indicatorColor: AppColors.primary,
+                indicatorWeight: 3,
+                indicatorSize: TabBarIndicatorSize.label,
+                labelStyle: const TextStyle(
+                  fontWeight: FontWeight.bold,
+                  fontSize: 14,
+                ),
+                unselectedLabelStyle: const TextStyle(
+                  fontWeight: FontWeight.normal,
+                  fontSize: 14,
+                ),
+                tabs: tabs.map((t) => Tab(text: t['label'] as String)).toList(),
+              ),
+            ),
           ),
         ),
         body: Consumer<OrderProvider>(
@@ -71,17 +102,55 @@ class OrderListScreen extends StatelessWidget {
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        const Icon(
-                          Icons.shopping_bag_outlined,
-                          size: 64,
-                          color: AppColors.textHint,
+                        Container(
+                          padding: const EdgeInsets.all(24),
+                          decoration: BoxDecoration(
+                            color: Colors.white,
+                            shape: BoxShape.circle,
+                            boxShadow: [
+                              BoxShadow(
+                                color: Colors.black.withValues(alpha: 0.05),
+                                blurRadius: 16,
+                                offset: const Offset(0, 4),
+                              ),
+                            ],
+                          ),
+                          child: const Icon(
+                            Icons.assignment_outlined,
+                            size: 48,
+                            color: AppColors.textHint,
+                          ),
                         ),
-                        const SizedBox(height: 16),
+                        const SizedBox(height: 24),
                         Text(
-                          l10n.cartEmpty, // Reuse empty cart message or add specific one
+                          l10n.noOrders,
                           style: const TextStyle(
                             color: AppColors.textSecondary,
+                            fontSize: 16,
                           ),
+                        ),
+                        const SizedBox(height: 32),
+                        OutlinedButton(
+                          onPressed: () {
+                            Navigator.pushReplacement(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => const CartScreen(),
+                              ),
+                            );
+                          },
+                          style: OutlinedButton.styleFrom(
+                            foregroundColor: AppColors.primary,
+                            side: const BorderSide(color: AppColors.primary),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(20),
+                            ),
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 32,
+                              vertical: 12,
+                            ),
+                          ),
+                          child: Text(l10n.startShopping),
                         ),
                       ],
                     ),
@@ -235,19 +304,20 @@ class _OrderCard extends StatelessWidget {
         );
       },
       child: Container(
-        margin: const EdgeInsets.only(bottom: 12),
+        margin: const EdgeInsets.only(bottom: 0), // Handled by ListView
         decoration: BoxDecoration(
           color: Colors.white,
           borderRadius: BorderRadius.circular(12),
+          border: Border.all(color: AppColors.border.withValues(alpha: 0.5)),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withValues(alpha: 0.05),
+              color: Colors.black.withValues(alpha: 0.03),
               blurRadius: 8,
               offset: const Offset(0, 2),
             ),
           ],
         ),
-        padding: const EdgeInsets.all(16),
+        padding: const EdgeInsets.all(12),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -257,14 +327,23 @@ class _OrderCard extends StatelessWidget {
               children: [
                 Row(
                   children: [
-                    Image.asset(
-                      'assets/images/logo.png',
-                      width: 20,
-                      height: 20,
-                      errorBuilder: (_, __, ___) => const Icon(
-                        Icons.store,
-                        size: 20,
-                        color: AppColors.textPrimary,
+                    Container(
+                      padding: const EdgeInsets.all(2),
+                      decoration: BoxDecoration(
+                        border: Border.all(
+                          color: AppColors.border.withValues(alpha: 0.5),
+                        ),
+                        borderRadius: BorderRadius.circular(4),
+                      ),
+                      child: Image.asset(
+                        'assets/images/logo.png',
+                        width: 16,
+                        height: 16,
+                        errorBuilder: (_, __, ___) => const Icon(
+                          Icons.store,
+                          size: 16,
+                          color: AppColors.textPrimary,
+                        ),
                       ),
                     ),
                     const SizedBox(width: 8),
@@ -272,7 +351,7 @@ class _OrderCard extends StatelessWidget {
                       'BeikeShop Official',
                       style: TextStyle(
                         fontWeight: FontWeight.bold,
-                        fontSize: 15,
+                        fontSize: 14,
                         color: AppColors.textPrimary,
                       ),
                     ),
@@ -283,12 +362,24 @@ class _OrderCard extends StatelessWidget {
                     ),
                   ],
                 ),
-                Text(
-                  _getStatusText(context, order.status),
-                  style: TextStyle(
-                    color: _getStatusColor(order.status),
-                    fontWeight: FontWeight.w600,
-                    fontSize: 14,
+                Container(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 6,
+                    vertical: 2,
+                  ),
+                  decoration: BoxDecoration(
+                    color: _getStatusColor(
+                      order.status,
+                    ).withValues(alpha: 0.05),
+                    borderRadius: BorderRadius.circular(4),
+                  ),
+                  child: Text(
+                    _getStatusText(context, order.status),
+                    style: TextStyle(
+                      color: _getStatusColor(order.status),
+                      fontWeight: FontWeight.w600,
+                      fontSize: 12,
+                    ),
                   ),
                 ),
               ],
@@ -301,7 +392,7 @@ class _OrderCard extends StatelessWidget {
             else
               _buildMultiItem(context, order.items),
 
-            const SizedBox(height: 16),
+            const SizedBox(height: 12),
 
             // Trust Badges (Temu Style)
             Row(
@@ -324,7 +415,7 @@ class _OrderCard extends StatelessWidget {
                 Text(
                   '${l10n.itemCount(totalItems)} ${l10n.total}: ',
                   style: const TextStyle(
-                    fontSize: 13,
+                    fontSize: 12,
                     color: AppColors.textSecondary,
                   ),
                 ),
@@ -475,7 +566,7 @@ class _OrderCard extends StatelessWidget {
             padding: const EdgeInsets.symmetric(horizontal: 16),
             minimumSize: const Size(0, 32),
           ),
-          child: Text(l10n.review, style: const TextStyle(fontSize: 13)),
+          child: Text(l10n.review, style: const TextStyle(fontSize: 12)),
         ),
       );
       buttons.add(const SizedBox(width: 8));
@@ -483,15 +574,15 @@ class _OrderCard extends StatelessWidget {
         OutlinedButton(
           onPressed: () => _buyAgain(context),
           style: OutlinedButton.styleFrom(
-            foregroundColor: AppColors.primary,
-            side: const BorderSide(color: AppColors.primary),
+            foregroundColor: AppColors.textPrimary,
+            side: const BorderSide(color: AppColors.border),
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(20),
             ),
             padding: const EdgeInsets.symmetric(horizontal: 16),
             minimumSize: const Size(0, 32),
           ),
-          child: Text(l10n.buyAgain, style: const TextStyle(fontSize: 13)),
+          child: Text(l10n.buyAgain, style: const TextStyle(fontSize: 12)),
         ),
       );
     } else if (order.status == 'Pending') {
@@ -507,33 +598,43 @@ class _OrderCard extends StatelessWidget {
             padding: const EdgeInsets.symmetric(horizontal: 16),
             minimumSize: const Size(0, 32),
           ),
-          child: Text(l10n.cancelOrder, style: const TextStyle(fontSize: 13)),
+          child: Text(l10n.cancelOrder, style: const TextStyle(fontSize: 12)),
         ),
       );
       buttons.add(const SizedBox(width: 8));
       buttons.add(
-        ElevatedButton(
-          onPressed: () {
-            Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (context) => PaymentScreen(order: order),
-              ),
-            );
-          },
-          style: ElevatedButton.styleFrom(
-            backgroundColor: AppColors.primary,
-            foregroundColor: Colors.white,
-            elevation: 0,
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(20),
+        Container(
+          height: 32,
+          decoration: BoxDecoration(
+            gradient: const LinearGradient(
+              colors: [Color(0xFFFF5000), Color(0xFFE02020)],
             ),
-            padding: const EdgeInsets.symmetric(horizontal: 20),
-            minimumSize: const Size(0, 32),
+            borderRadius: BorderRadius.circular(20),
           ),
-          child: Text(
-            l10n.payNow,
-            style: const TextStyle(fontSize: 13, fontWeight: FontWeight.bold),
+          child: ElevatedButton(
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => PaymentScreen(order: order),
+                ),
+              );
+            },
+            style: ElevatedButton.styleFrom(
+              backgroundColor: Colors.transparent,
+              foregroundColor: Colors.white,
+              shadowColor: Colors.transparent,
+              elevation: 0,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(20),
+              ),
+              padding: const EdgeInsets.symmetric(horizontal: 20),
+              minimumSize: const Size(0, 32),
+            ),
+            child: Text(
+              l10n.payNow,
+              style: const TextStyle(fontSize: 12, fontWeight: FontWeight.bold),
+            ),
           ),
         ),
       );
@@ -554,7 +655,7 @@ class _OrderCard extends StatelessWidget {
               padding: const EdgeInsets.symmetric(horizontal: 16),
               minimumSize: const Size(0, 32),
             ),
-            child: Text(l10n.trackOrder, style: const TextStyle(fontSize: 13)),
+            child: Text(l10n.trackOrder, style: const TextStyle(fontSize: 12)),
           ),
         );
         buttons.add(const SizedBox(width: 8));
@@ -572,7 +673,7 @@ class _OrderCard extends StatelessWidget {
             padding: const EdgeInsets.symmetric(horizontal: 16),
             minimumSize: const Size(0, 32),
           ),
-          child: Text(l10n.buyAgain, style: const TextStyle(fontSize: 13)),
+          child: Text(l10n.buyAgain, style: const TextStyle(fontSize: 12)),
         ),
       );
     }

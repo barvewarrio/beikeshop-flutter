@@ -243,6 +243,12 @@ class AppLocalizationsZh extends AppLocalizations {
   String get zipCode => '邮政编码';
 
   @override
+  String get noOrders => '暂无订单';
+
+  @override
+  String get startShopping => '去购物';
+
+  @override
   String get buyerProtection => '买家保护';
 
   @override

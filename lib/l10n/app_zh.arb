@@ -80,6 +80,8 @@
   "provinceState": "省/州",
   "city": "城市",
   "zipCode": "邮政编码",
+  "noOrders": "暂无订单",
+  "startShopping": "去购物",
   "buyerProtection": "买家保护",
   "priceDrop": "降价提醒",
   "deliveryGuarantee": "发货保证",

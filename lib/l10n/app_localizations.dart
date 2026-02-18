@@ -554,6 +554,18 @@ abstract class AppLocalizations {
   /// **'Zip Code'**
   String get zipCode;
 
+  /// No description provided for @noOrders.
+  ///
+  /// In en, this message translates to:
+  /// **'No orders found'**
+  String get noOrders;
+
+  /// No description provided for @startShopping.
+  ///
+  /// In en, this message translates to:
+  /// **'Start Shopping'**
+  String get startShopping;
+
   /// No description provided for @buyerProtection.
   ///
   /// In en, this message translates to:
@@ -767,7 +779,7 @@ abstract class AppLocalizations {
   /// No description provided for @discretePackagingNote.
   ///
   /// In en, this message translates to:
-  /// **'All orders are shipped in plain boxes with no branding.'**
+  /// **'All packages are discreetly packaged without any sensitive information.'**
   String get discretePackagingNote;
 
   /// No description provided for @paypal.

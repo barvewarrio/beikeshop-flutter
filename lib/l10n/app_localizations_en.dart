@@ -244,6 +244,12 @@ class AppLocalizationsEn extends AppLocalizations {
   String get zipCode => 'Zip Code';
 
   @override
+  String get noOrders => 'No orders found';
+
+  @override
+  String get startShopping => 'Start Shopping';
+
+  @override
   String get buyerProtection => 'Buyer Protection';
 
   @override
@@ -352,7 +358,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get discretePackagingNote =>
-      'All orders are shipped in plain boxes with no branding.';
+      'All packages are discreetly packaged without any sensitive information.';
 
   @override
   String get paypal => 'PayPal';

@@ -198,13 +198,22 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
     }
 
     return Scaffold(
-      backgroundColor: AppColors.background,
+      backgroundColor: const Color(0xFFF5F5F5),
       appBar: AppBar(
         title: Text(l10n.checkout),
         centerTitle: true,
         backgroundColor: Colors.white,
         elevation: 0,
         foregroundColor: AppColors.textPrimary,
+        actions: [
+          IconButton(
+            icon: const Icon(
+              Icons.verified_user_outlined,
+              color: Color(0xFF1B8D1F),
+            ),
+            onPressed: () {},
+          ),
+        ],
       ),
       body: _isLoading
           ? const Center(child: CircularProgressIndicator())
@@ -219,18 +228,21 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
                         // Money Back Guarantee Banner
                         Container(
                           margin: const EdgeInsets.only(bottom: 12),
-                          padding: const EdgeInsets.all(12),
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 12,
+                            vertical: 8,
+                          ),
                           decoration: BoxDecoration(
                             color: const Color(0xFFFFF4E5),
-                            borderRadius: BorderRadius.circular(8),
+                            borderRadius: BorderRadius.circular(4),
                             border: Border.all(color: const Color(0xFFFFD591)),
                           ),
                           child: Row(
                             children: [
                               const Icon(
-                                Icons.verified_user,
+                                Icons.security,
                                 color: AppColors.warning,
-                                size: 20,
+                                size: 16,
                               ),
                               const SizedBox(width: 8),
                               Expanded(
@@ -238,8 +250,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
                                   l10n.moneyBackGuarantee,
                                   style: const TextStyle(
                                     color: AppColors.textPrimary,
-                                    fontWeight: FontWeight.w500,
-                                    fontSize: 13,
+                                    fontSize: 12,
                                   ),
                                 ),
                               ),
@@ -280,84 +291,109 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
     return Container(
       decoration: BoxDecoration(
         color: Colors.white,
-        borderRadius: BorderRadius.circular(12),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withValues(alpha: 0.05),
-            blurRadius: 10,
-            offset: const Offset(0, 2),
-          ),
-        ],
+        borderRadius: BorderRadius.circular(8),
       ),
-      padding: const EdgeInsets.all(16),
       child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Row(
-            children: [
-              const Icon(
-                Icons.location_on_outlined,
-                color: AppColors.primary,
-                size: 20,
+          // Address Strip
+          Container(
+            height: 4,
+            decoration: const BoxDecoration(
+              gradient: LinearGradient(
+                colors: [
+                  Color(0xFF5D9CEC),
+                  Color(0xFFED5565),
+                  Color(0xFF5D9CEC),
+                  Color(0xFFED5565),
+                ],
+                stops: [0.0, 0.25, 0.5, 0.75],
+                begin: Alignment.centerLeft,
+                end: Alignment.centerRight,
               ),
-              const SizedBox(width: 8),
-              Text(
-                l10n.shippingAddress,
-                style: const TextStyle(
-                  fontSize: 16,
-                  fontWeight: FontWeight.bold,
-                  color: AppColors.textPrimary,
-                ),
-              ),
-              const Spacer(),
-              TextButton(
-                onPressed: _selectAddress,
-                style: TextButton.styleFrom(
-                  padding: EdgeInsets.zero,
-                  minimumSize: const Size(0, 0),
-                  tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                ),
-                child: Text(
-                  _selectedAddress == null ? l10n.addAddress : l10n.change,
-                  style: const TextStyle(color: AppColors.primary),
-                ),
-              ),
-            ],
+              borderRadius: BorderRadius.vertical(top: Radius.circular(8)),
+            ),
           ),
-          const Divider(height: 24),
-          if (_selectedAddress != null) ...[
-            Row(
+          Padding(
+            padding: const EdgeInsets.all(16),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(
-                  _selectedAddress!.name,
-                  style: const TextStyle(
-                    fontWeight: FontWeight.bold,
-                    fontSize: 16,
-                  ),
+                Row(
+                  children: [
+                    const Icon(
+                      Icons.location_on_outlined,
+                      color: AppColors.textPrimary,
+                      size: 20,
+                    ),
+                    const SizedBox(width: 8),
+                    Text(
+                      l10n.shippingAddress,
+                      style: const TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
+                        color: AppColors.textPrimary,
+                      ),
+                    ),
+                    const Spacer(),
+                    TextButton(
+                      onPressed: _selectAddress,
+                      style: TextButton.styleFrom(
+                        padding: EdgeInsets.zero,
+                        minimumSize: const Size(0, 0),
+                        tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                      ),
+                      child: Text(
+                        _selectedAddress == null
+                            ? l10n.addAddress
+                            : l10n.change,
+                        style: const TextStyle(
+                          color: AppColors.primary,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
-                const SizedBox(width: 12),
-                Text(
-                  _selectedAddress!.phone,
-                  style: const TextStyle(
-                    color: AppColors.textSecondary,
-                    fontSize: 14,
+                const Divider(height: 24),
+                if (_selectedAddress != null) ...[
+                  Row(
+                    children: [
+                      Text(
+                        _selectedAddress!.name,
+                        style: const TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontSize: 16,
+                        ),
+                      ),
+                      const SizedBox(width: 12),
+                      Text(
+                        _selectedAddress!.phone,
+                        style: const TextStyle(
+                          color: AppColors.textSecondary,
+                          fontSize: 14,
+                        ),
+                      ),
+                    ],
                   ),
-                ),
+                  const SizedBox(height: 8),
+                  Text(
+                    '${_selectedAddress!.province} ${_selectedAddress!.city} ${_selectedAddress!.addressLine}',
+                    style: const TextStyle(
+                      color: AppColors.textPrimary,
+                      height: 1.4,
+                    ),
+                  ),
+                ] else
+                  Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 12),
+                    child: Text(
+                      l10n.selectShippingAddress,
+                      style: const TextStyle(color: AppColors.warning),
+                    ),
+                  ),
               ],
             ),
-            const SizedBox(height: 8),
-            Text(
-              '${_selectedAddress!.province} ${_selectedAddress!.city} ${_selectedAddress!.addressLine}',
-              style: const TextStyle(color: AppColors.textPrimary, height: 1.4),
-            ),
-          ] else
-            Padding(
-              padding: const EdgeInsets.symmetric(vertical: 12),
-              child: Text(
-                l10n.selectShippingAddress,
-                style: const TextStyle(color: AppColors.warning),
-              ),
-            ),
+          ),
         ],
       ),
     );
@@ -371,26 +407,37 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
     return Container(
       decoration: BoxDecoration(
         color: Colors.white,
-        borderRadius: BorderRadius.circular(12),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withValues(alpha: 0.05),
-            blurRadius: 10,
-            offset: const Offset(0, 2),
-          ),
-        ],
+        borderRadius: BorderRadius.circular(8),
       ),
       padding: const EdgeInsets.all(16),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(
-            l10n.items,
-            style: const TextStyle(
-              fontSize: 16,
-              fontWeight: FontWeight.bold,
-              color: AppColors.textPrimary,
-            ),
+          Row(
+            children: [
+              const Icon(
+                Icons.store_outlined,
+                size: 20,
+                color: AppColors.textSecondary,
+              ),
+              const SizedBox(width: 8),
+              Text(
+                l10n.items,
+                style: const TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.bold,
+                  color: AppColors.textPrimary,
+                ),
+              ),
+              const Spacer(),
+              Text(
+                l10n.itemCount(items.length),
+                style: const TextStyle(
+                  fontSize: 13,
+                  color: AppColors.textSecondary,
+                ),
+              ),
+            ],
           ),
           const SizedBox(height: 16),
           ListView.separated(
@@ -401,12 +448,13 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
             itemBuilder: (context, index) {
               final item = items[index];
               return Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Container(
-                    width: 60,
-                    height: 60,
+                    width: 70,
+                    height: 70,
                     decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(8),
+                      borderRadius: BorderRadius.circular(4),
                       border: Border.all(color: AppColors.border),
                       image: DecorationImage(
                         image: NetworkImage(item.product.imageUrl),
@@ -429,11 +477,21 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
                           ),
                         ),
                         const SizedBox(height: 4),
-                        Text(
-                          'x${item.quantity}',
-                          style: const TextStyle(
-                            color: AppColors.textSecondary,
-                            fontSize: 13,
+                        Container(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 6,
+                            vertical: 2,
+                          ),
+                          decoration: BoxDecoration(
+                            color: Colors.grey[100],
+                            borderRadius: BorderRadius.circular(4),
+                          ),
+                          child: Text(
+                            'x${item.quantity}',
+                            style: const TextStyle(
+                              color: AppColors.textSecondary,
+                              fontSize: 12,
+                            ),
                           ),
                         ),
                       ],
@@ -480,28 +538,31 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
       return Container(
         decoration: BoxDecoration(
           color: Colors.white,
-          borderRadius: BorderRadius.circular(12),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withValues(alpha: 0.05),
-              blurRadius: 10,
-              offset: const Offset(0, 2),
-            ),
-          ],
+          borderRadius: BorderRadius.circular(8),
         ),
         padding: const EdgeInsets.all(16),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(
-              l10n.paymentMethod,
-              style: const TextStyle(
-                fontSize: 16,
-                fontWeight: FontWeight.bold,
-                color: AppColors.textPrimary,
-              ),
+            Row(
+              children: [
+                const Icon(
+                  Icons.payment,
+                  size: 20,
+                  color: AppColors.textPrimary,
+                ),
+                const SizedBox(width: 8),
+                Text(
+                  l10n.paymentMethod,
+                  style: const TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.bold,
+                    color: AppColors.textPrimary,
+                  ),
+                ),
+              ],
             ),
-            const SizedBox(height: 8),
+            const SizedBox(height: 12),
             _buildPaymentOption(
               'Test Payment (Stripe)',
               'stripe',
@@ -526,28 +587,27 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
     return Container(
       decoration: BoxDecoration(
         color: Colors.white,
-        borderRadius: BorderRadius.circular(12),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withValues(alpha: 0.05),
-            blurRadius: 10,
-            offset: const Offset(0, 2),
-          ),
-        ],
+        borderRadius: BorderRadius.circular(8),
       ),
       padding: const EdgeInsets.all(16),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(
-            l10n.paymentMethod,
-            style: const TextStyle(
-              fontSize: 16,
-              fontWeight: FontWeight.bold,
-              color: AppColors.textPrimary,
-            ),
+          Row(
+            children: [
+              const Icon(Icons.payment, size: 20, color: AppColors.textPrimary),
+              const SizedBox(width: 8),
+              Text(
+                l10n.paymentMethod,
+                style: const TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.bold,
+                  color: AppColors.textPrimary,
+                ),
+              ),
+            ],
           ),
-          const SizedBox(height: 8),
+          const SizedBox(height: 12),
           ...paymentMethods.map(
             (method) => _buildPaymentOption(
               method.name,
@@ -579,7 +639,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
   Widget _buildTrustBadge(IconData icon, String text) {
     return Column(
       children: [
-        Icon(icon, color: const Color(0xFF1B8D1F), size: 24),
+        Icon(icon, color: const Color(0xFF1B8D1F), size: 20),
         const SizedBox(height: 4),
         Text(
           text,
@@ -599,17 +659,20 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
     return InkWell(
       onTap: () => setState(() => _paymentMethod = value),
       child: Container(
-        padding: const EdgeInsets.symmetric(vertical: 12),
+        margin: const EdgeInsets.only(bottom: 8),
+        padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 12),
+        decoration: BoxDecoration(
+          border: Border.all(
+            color: isSelected ? AppColors.primary : AppColors.border,
+            width: isSelected ? 1.5 : 1,
+          ),
+          borderRadius: BorderRadius.circular(4),
+          color: isSelected
+              ? AppColors.primary.withValues(alpha: 0.05)
+              : Colors.transparent,
+        ),
         child: Row(
           children: [
-            Icon(
-              isSelected
-                  ? Icons.radio_button_checked
-                  : Icons.radio_button_unchecked,
-              color: isSelected ? AppColors.primary : AppColors.textHint,
-              size: 20,
-            ),
-            const SizedBox(width: 12),
             // Display icon from network or fallback
             SizedBox(
               width: 24,
@@ -627,15 +690,24 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
                     ),
             ),
             const SizedBox(width: 12),
-            Text(
-              label,
-              style: TextStyle(
-                fontSize: 15,
-                color: isSelected
-                    ? AppColors.textPrimary
-                    : AppColors.textSecondary,
-                fontWeight: isSelected ? FontWeight.w500 : FontWeight.normal,
+            Expanded(
+              child: Text(
+                label,
+                style: TextStyle(
+                  fontSize: 14,
+                  color: isSelected
+                      ? AppColors.textPrimary
+                      : AppColors.textSecondary,
+                  fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
+                ),
               ),
+            ),
+            Icon(
+              isSelected
+                  ? Icons.radio_button_checked
+                  : Icons.radio_button_unchecked,
+              color: isSelected ? AppColors.primary : AppColors.textHint,
+              size: 20,
             ),
           ],
         ),
@@ -651,14 +723,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
     return Container(
       decoration: BoxDecoration(
         color: Colors.white,
-        borderRadius: BorderRadius.circular(12),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withValues(alpha: 0.05),
-            blurRadius: 10,
-            offset: const Offset(0, 2),
-          ),
-        ],
+        borderRadius: BorderRadius.circular(8),
       ),
       padding: const EdgeInsets.all(16),
       child: Column(
@@ -668,11 +733,17 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
             children: [
               Text(
                 l10n.subtotal,
-                style: const TextStyle(color: AppColors.textSecondary),
+                style: const TextStyle(
+                  color: AppColors.textSecondary,
+                  fontSize: 13,
+                ),
               ),
               Text(
                 settings.formatPrice(total),
-                style: const TextStyle(color: AppColors.textPrimary),
+                style: const TextStyle(
+                  color: AppColors.textPrimary,
+                  fontSize: 13,
+                ),
               ),
             ],
           ),
@@ -682,7 +753,10 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
             children: [
               Text(
                 l10n.shipping,
-                style: const TextStyle(color: AppColors.textSecondary),
+                style: const TextStyle(
+                  color: AppColors.textSecondary,
+                  fontSize: 13,
+                ),
               ),
               Row(
                 children: [
@@ -691,6 +765,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
                     style: const TextStyle(
                       color: AppColors.success,
                       fontWeight: FontWeight.bold,
+                      fontSize: 13,
                     ),
                   ),
                   const SizedBox(width: 4),
@@ -751,7 +826,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
     SettingsProvider settings,
   ) {
     return Container(
-      padding: const EdgeInsets.all(16),
+      padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
         color: Colors.white,
         boxShadow: [
@@ -786,15 +861,15 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
                 ),
               ],
             ),
-            const SizedBox(width: 24),
+            const SizedBox(width: 16),
             Expanded(
               child: Container(
-                height: 48,
+                height: 44,
                 decoration: BoxDecoration(
                   gradient: const LinearGradient(
                     colors: [Color(0xFFFF5000), Color(0xFFE02020)],
                   ),
-                  borderRadius: BorderRadius.circular(24),
+                  borderRadius: BorderRadius.circular(22),
                   boxShadow: [
                     BoxShadow(
                       color: AppColors.primary.withValues(alpha: 0.3),
@@ -809,13 +884,13 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
                     backgroundColor: Colors.transparent,
                     shadowColor: Colors.transparent,
                     shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(24),
+                      borderRadius: BorderRadius.circular(22),
                     ),
                   ),
                   child: Text(
                     l10n.placeOrder,
                     style: const TextStyle(
-                      fontSize: 18,
+                      fontSize: 16,
                       fontWeight: FontWeight.bold,
                       color: Colors.white,
                     ),
@@ -832,15 +907,15 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
   Widget _buildDiscretePackagingInfo(AppLocalizations l10n) {
     return Container(
       decoration: BoxDecoration(
-        color: Colors.grey.withValues(alpha: 0.1),
-        borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: Colors.grey.withValues(alpha: 0.3)),
+        color: Colors.transparent,
+        borderRadius: BorderRadius.circular(8),
       ),
-      padding: const EdgeInsets.all(12),
+      padding: const EdgeInsets.symmetric(horizontal: 4),
       child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Icon(Icons.privacy_tip_outlined, color: Colors.grey),
-          const SizedBox(width: 12),
+          const Icon(Icons.privacy_tip_outlined, color: Colors.grey, size: 16),
+          const SizedBox(width: 8),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -849,14 +924,15 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
                   l10n.discretePackaging,
                   style: const TextStyle(
                     fontWeight: FontWeight.bold,
-                    color: AppColors.textPrimary,
+                    color: AppColors.textSecondary,
+                    fontSize: 12,
                   ),
                 ),
                 Text(
                   l10n.discretePackagingNote,
                   style: const TextStyle(
-                    fontSize: 12,
-                    color: AppColors.textSecondary,
+                    fontSize: 11,
+                    color: AppColors.textHint,
                   ),
                 ),
               ],
