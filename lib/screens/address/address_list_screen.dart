@@ -39,70 +39,87 @@ class AddressListScreen extends StatelessWidget {
           }
 
           if (provider.addresses.isEmpty) {
-            return Center(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
+            return RefreshIndicator(
+              onRefresh: () => provider.loadAddresses(),
+              child: Stack(
                 children: [
-                  Container(
-                    padding: const EdgeInsets.all(24),
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      shape: BoxShape.circle,
-                      boxShadow: [
-                        BoxShadow(
-                          color: Colors.black.withValues(alpha: 0.05),
-                          blurRadius: 16,
-                          offset: const Offset(0, 4),
+                  ListView(), // Required for RefreshIndicator to work
+                  Center(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Container(
+                          padding: const EdgeInsets.all(24),
+                          decoration: BoxDecoration(
+                            color: Colors.white,
+                            shape: BoxShape.circle,
+                            boxShadow: [
+                              BoxShadow(
+                                color: Colors.black.withValues(alpha: 0.05),
+                                blurRadius: 16,
+                                offset: const Offset(0, 4),
+                              ),
+                            ],
+                          ),
+                          child: Icon(
+                            Icons.location_off_outlined,
+                            size: 64,
+                            color: AppColors.textHint.withValues(alpha: 0.5),
+                          ),
+                        ),
+                        const SizedBox(height: 24),
+                        Text(
+                          l10n.noAddressesFound,
+                          style: const TextStyle(
+                            color: AppColors.textSecondary,
+                            fontSize: 16,
+                          ),
+                        ),
+                        const SizedBox(height: 32),
+                        Container(
+                          decoration: BoxDecoration(
+                            gradient: const LinearGradient(
+                              colors: [Color(0xFFFF5000), Color(0xFFE02020)],
+                            ),
+                            borderRadius: BorderRadius.circular(24),
+                            boxShadow: [
+                              BoxShadow(
+                                color: AppColors.primary.withValues(alpha: 0.3),
+                                blurRadius: 8,
+                                offset: const Offset(0, 4),
+                              ),
+                            ],
+                          ),
+                          child: ElevatedButton(
+                            onPressed: () => _navigateToAddAddress(context),
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: Colors.transparent,
+                              foregroundColor: Colors.white,
+                              shadowColor: Colors.transparent,
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 32,
+                                vertical: 12,
+                              ),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(24),
+                              ),
+                            ),
+                            child: Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                const Icon(Icons.add, size: 20),
+                                const SizedBox(width: 8),
+                                Text(
+                                  l10n.addAddress,
+                                  style: const TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
                         ),
                       ],
-                    ),
-                    child: Icon(
-                      Icons.location_off_outlined,
-                      size: 64,
-                      color: AppColors.textHint.withValues(alpha: 0.5),
-                    ),
-                  ),
-                  const SizedBox(height: 24),
-                  Text(
-                    l10n.noAddressesFound,
-                    style: const TextStyle(
-                      color: AppColors.textSecondary,
-                      fontSize: 16,
-                    ),
-                  ),
-                  const SizedBox(height: 32),
-                  Container(
-                    decoration: BoxDecoration(
-                      gradient: const LinearGradient(
-                        colors: [Color(0xFFFF5000), Color(0xFFE02020)],
-                      ),
-                      borderRadius: BorderRadius.circular(24),
-                      boxShadow: [
-                        BoxShadow(
-                          color: AppColors.primary.withValues(alpha: 0.3),
-                          blurRadius: 8,
-                          offset: const Offset(0, 4),
-                        ),
-                      ],
-                    ),
-                    child: ElevatedButton(
-                      onPressed: () => _navigateToAddAddress(context),
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.transparent,
-                        foregroundColor: Colors.white,
-                        shadowColor: Colors.transparent,
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 32,
-                          vertical: 12,
-                        ),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(24),
-                        ),
-                      ),
-                      child: Text(
-                        l10n.addAddress,
-                        style: const TextStyle(fontWeight: FontWeight.bold),
-                      ),
                     ),
                   ),
                 ],
@@ -110,90 +127,128 @@ class AddressListScreen extends StatelessWidget {
             );
           }
 
-          return Column(
-            children: [
-              Expanded(
-                child: ListView.separated(
-                  padding: const EdgeInsets.all(12),
-                  itemCount: provider.addresses.length,
-                  separatorBuilder: (context, index) =>
-                      const SizedBox(height: 12),
-                  itemBuilder: (context, index) {
-                    final address = provider.addresses[index];
-                    final isSelected =
-                        selectMode && address.id == selectedAddressId;
-                    return _AddressCard(
-                      address: address,
-                      isSelectionMode: selectMode,
-                      isSelected: isSelected,
-                      onTap: selectMode
-                          ? () => Navigator.pop(context, address)
-                          : null,
-                      onEdit: () => _navigateToEditAddress(context, address),
-                      onDelete: () => _confirmDelete(context, address),
-                    );
-                  },
-                ),
-              ),
-              Container(
-                padding: const EdgeInsets.all(12),
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.black.withValues(alpha: 0.05),
-                      blurRadius: 10,
-                      offset: const Offset(0, -4),
-                    ),
-                  ],
-                ),
-                child: SafeArea(
-                  child: Container(
+          return RefreshIndicator(
+            onRefresh: () => provider.loadAddresses(),
+            child: Column(
+              children: [
+                if (provider.error != null)
+                  Container(
                     width: double.infinity,
-                    height: 48,
-                    decoration: BoxDecoration(
-                      gradient: const LinearGradient(
-                        colors: [Color(0xFFFF5000), Color(0xFFE02020)],
-                      ),
-                      borderRadius: BorderRadius.circular(24),
-                      boxShadow: [
-                        BoxShadow(
-                          color: AppColors.primary.withValues(alpha: 0.3),
-                          blurRadius: 8,
-                          offset: const Offset(0, 4),
+                    color: Colors.red.shade50,
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 16,
+                      vertical: 8,
+                    ),
+                    child: Row(
+                      children: [
+                        const Icon(
+                          Icons.error_outline,
+                          color: Colors.red,
+                          size: 20,
+                        ),
+                        const SizedBox(width: 8),
+                        Expanded(
+                          child: Text(
+                            provider.error!,
+                            style: const TextStyle(color: Colors.red),
+                          ),
+                        ),
+                        IconButton(
+                          icon: const Icon(
+                            Icons.refresh,
+                            color: Colors.red,
+                            size: 20,
+                          ),
+                          onPressed: () => provider.loadAddresses(),
+                          padding: EdgeInsets.zero,
+                          constraints: const BoxConstraints(),
                         ),
                       ],
                     ),
-                    child: ElevatedButton(
-                      onPressed: () => _navigateToAddAddress(context),
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.transparent,
-                        foregroundColor: Colors.white,
-                        shadowColor: Colors.transparent,
-                        elevation: 0,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(24),
-                        ),
+                  ),
+                Expanded(
+                  child: ListView.separated(
+                    padding: const EdgeInsets.all(12),
+                    itemCount: provider.addresses.length,
+                    separatorBuilder: (context, index) =>
+                        const SizedBox(height: 12),
+                    itemBuilder: (context, index) {
+                      final address = provider.addresses[index];
+                      final isSelected =
+                          selectMode && address.id == selectedAddressId;
+                      return _AddressCard(
+                        address: address,
+                        isSelectionMode: selectMode,
+                        isSelected: isSelected,
+                        onTap: selectMode
+                            ? () => Navigator.pop(context, address)
+                            : null,
+                        onEdit: () => _navigateToEditAddress(context, address),
+                        onDelete: () => _confirmDelete(context, address),
+                      );
+                    },
+                  ),
+                ),
+                Container(
+                  padding: const EdgeInsets.all(12),
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black.withValues(alpha: 0.05),
+                        blurRadius: 10,
+                        offset: const Offset(0, -4),
                       ),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          const Icon(Icons.add, size: 20),
-                          const SizedBox(width: 8),
-                          Text(
-                            l10n.addAddress,
-                            style: const TextStyle(
-                              fontSize: 16,
-                              fontWeight: FontWeight.bold,
-                            ),
+                    ],
+                  ),
+                  child: SafeArea(
+                    child: Container(
+                      width: double.infinity,
+                      height: 48,
+                      decoration: BoxDecoration(
+                        gradient: const LinearGradient(
+                          colors: [Color(0xFFFF5000), Color(0xFFE02020)],
+                        ),
+                        borderRadius: BorderRadius.circular(24),
+                        boxShadow: [
+                          BoxShadow(
+                            color: AppColors.primary.withValues(alpha: 0.3),
+                            blurRadius: 8,
+                            offset: const Offset(0, 4),
                           ),
                         ],
+                      ),
+                      child: ElevatedButton(
+                        onPressed: () => _navigateToAddAddress(context),
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.transparent,
+                          foregroundColor: Colors.white,
+                          shadowColor: Colors.transparent,
+                          elevation: 0,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(24),
+                          ),
+                        ),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            const Icon(Icons.add, size: 20),
+                            const SizedBox(width: 8),
+                            Text(
+                              l10n.addAddress,
+                              style: const TextStyle(
+                                fontSize: 16,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ],
+                        ),
                       ),
                     ),
                   ),
                 ),
-              ),
-            ],
+              ],
+            ),
           );
         },
       ),
@@ -201,25 +256,17 @@ class AddressListScreen extends StatelessWidget {
   }
 
   void _navigateToAddAddress(BuildContext context) async {
-    final newAddress = await Navigator.push<Address>(
+    await Navigator.push<Address>(
       context,
       MaterialPageRoute(builder: (_) => const AddEditAddressScreen()),
     );
-
-    if (newAddress != null && context.mounted) {
-      context.read<AddressProvider>().addAddress(newAddress);
-    }
   }
 
   void _navigateToEditAddress(BuildContext context, Address address) async {
-    final updatedAddress = await Navigator.push<Address>(
+    await Navigator.push<Address>(
       context,
       MaterialPageRoute(builder: (_) => AddEditAddressScreen(address: address)),
     );
-
-    if (updatedAddress != null && context.mounted) {
-      context.read<AddressProvider>().updateAddress(updatedAddress);
-    }
   }
 
   void _confirmDelete(BuildContext context, Address address) {
@@ -276,15 +323,15 @@ class _AddressCard extends StatelessWidget {
     final l10n = AppLocalizations.of(context)!;
 
     // Temu-style active border color
-    final borderColor =
-        isSelected
-            ? AppColors.primary
-            : (address.isDefault
-                ? AppColors.primary.withValues(alpha: 0.5)
-                : Colors.transparent);
+    final borderColor = isSelected
+        ? AppColors.primary
+        : (address.isDefault
+              ? AppColors.primary.withValues(alpha: 0.5)
+              : Colors.transparent);
 
-    final backgroundColor =
-        isSelected ? AppColors.primary.withValues(alpha: 0.03) : Colors.white;
+    final backgroundColor = isSelected
+        ? AppColors.primary.withValues(alpha: 0.03)
+        : Colors.white;
 
     return GestureDetector(
       onTap: isSelectionMode ? onTap : null,
@@ -318,7 +365,9 @@ class _AddressCard extends StatelessWidget {
                       isSelected
                           ? Icons.check_circle
                           : Icons.radio_button_unchecked,
-                      color: isSelected ? AppColors.primary : AppColors.textHint,
+                      color: isSelected
+                          ? AppColors.primary
+                          : AppColors.textHint,
                       size: 22,
                     ),
                   ),
@@ -370,7 +419,7 @@ class _AddressCard extends StatelessWidget {
                       ),
                       const SizedBox(height: 8),
                       Text(
-                        '${address.province} ${address.city} ${address.addressLine}',
+                        '${address.addressLine}\n${address.city}, ${address.province} ${address.zipCode}\n${address.country}',
                         style: const TextStyle(
                           color: AppColors.textSecondary,
                           fontSize: 14,

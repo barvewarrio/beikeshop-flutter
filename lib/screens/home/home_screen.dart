@@ -77,7 +77,7 @@ class _HomeScreenState extends State<HomeScreen> {
     setState(() => _isLoading = true);
     try {
       final results = await Future.wait([
-        ApiService().getProducts(),
+        ApiService().getLatestProducts(limit: 20),
         ApiService().getCategories(),
       ]);
 
@@ -86,8 +86,6 @@ class _HomeScreenState extends State<HomeScreen> {
           _products = results[0] as List<Product>;
           _categories = results[1] as List<Category>;
           _isLoading = false;
-          if (_products.isEmpty) _generateMockProducts();
-          if (_categories.isEmpty) _generateMockCategories();
         });
       }
     } catch (e) {
@@ -95,49 +93,49 @@ class _HomeScreenState extends State<HomeScreen> {
       if (mounted) {
         setState(() {
           _isLoading = false;
-          // Use fallback mock data if API fails (e.g. server offline)
-          if (_products.isEmpty) _generateMockProducts();
-          if (_categories.isEmpty) _generateMockCategories();
         });
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text('Failed to load data: $e')));
       }
     }
   }
 
-  void _generateMockCategories() {
-    final names = [
-      'Women',
-      'Men',
-      'Home',
-      'Electronics',
-      'Beauty',
-      'Shoes',
-      'Bags',
-      'Kids',
-    ];
-    _categories = List.generate(
-      names.length,
-      (index) => Category(id: index.toString(), name: names[index]),
-    );
-  }
+  // void _generateMockCategories() {
+  //   final names = [
+  //     'Women',
+  //     'Men',
+  //     'Home',
+  //     'Electronics',
+  //     'Beauty',
+  //     'Shoes',
+  //     'Bags',
+  //     'Kids',
+  //   ];
+  //   _categories = List.generate(
+  //     names.length,
+  //     (index) => Category(id: index.toString(), name: names[index]),
+  //   );
+  // }
 
-  void _generateMockProducts() {
-    _products = List.generate(20, (index) {
-      final isFlash = index % 3 == 0;
-      final original = 20 + index * 3.0;
-      final price = isFlash ? original * 0.5 : original * 0.8;
-      return Product(
-        id: index.toString(),
-        title:
-            'High Quality Wireless Headphones with Noise Cancellation $index',
-        imageUrl: 'https://picsum.photos/300/300?random=$index',
-        price: price,
-        originalPrice: original,
-        sales: 100 + index * 10,
-        isFlashSale: isFlash,
-        tags: index % 2 == 0 ? ['Free Shipping', 'Low Stock'] : ['Best Seller'],
-      );
-    });
-  }
+  // void _generateMockProducts() {
+  //   _products = List.generate(20, (index) {
+  //     final isFlash = index % 3 == 0;
+  //     final original = 20 + index * 3.0;
+  //     final price = isFlash ? original * 0.5 : original * 0.8;
+  //     return Product(
+  //       id: index.toString(),
+  //       title:
+  //           'High Quality Wireless Headphones with Noise Cancellation $index',
+  //       imageUrl: 'https://picsum.photos/300/300?random=$index',
+  //       price: price,
+  //       originalPrice: original,
+  //       sales: 100 + index * 10,
+  //       isFlashSale: isFlash,
+  //       tags: index % 2 == 0 ? ['Free Shipping', 'Low Stock'] : ['Best Seller'],
+  //     );
+  //   });
+  // }
 
   void _onNavTap(int index) {
     setState(() {

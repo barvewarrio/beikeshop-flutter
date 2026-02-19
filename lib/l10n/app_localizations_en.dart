@@ -565,4 +565,10 @@ class AppLocalizationsEn extends AppLocalizations {
   String errorAddingToCart(String error) {
     return 'Error adding to cart: $error';
   }
+
+  @override
+  String get orderAlreadyPaid => 'Order already paid';
+
+  @override
+  String get paymentSuccess => 'Payment successful';
 }

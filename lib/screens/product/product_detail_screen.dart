@@ -71,10 +71,16 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
 
     try {
       final product = await ApiService().getProductDetail(widget.productId);
-      // Fetch reviews in parallel
-      final reviewsResponse = await ApiService().getReviews(widget.productId);
-      final List<dynamic> reviewsData = reviewsResponse['data'] ?? [];
-      final reviews = reviewsData.map((json) => Review.fromJson(json)).toList();
+
+      List<Review> reviews = [];
+      try {
+        final reviewsResponse = await ApiService().getReviews(widget.productId);
+        final List<dynamic> reviewsData = reviewsResponse['data'] ?? [];
+        reviews = reviewsData.map((json) => Review.fromJson(json)).toList();
+      } catch (e) {
+        debugPrint('Error fetching reviews: $e');
+        // Continue without reviews
+      }
 
       if (mounted) {
         setState(() {
@@ -86,24 +92,30 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
     } catch (e) {
       debugPrint('Error fetching product details: $e');
       if (mounted) {
-        // Fallback to mock data if API fails
         setState(() {
-          _product = Product(
-            id: widget.productId,
-            title: 'Mock Product Details for ${widget.productId}',
-            description:
-                'This is a detailed description of the product. It features high quality materials, excellent craftsmanship, and durable design. Perfect for daily use.',
-            imageUrl:
-                'https://picsum.photos/500/500?random=${widget.productId}',
-            price: 99.99,
-            originalPrice: 129.99,
-            sales: 500,
-            rating: 4.5,
-            isFlashSale: true,
-            tags: ['Free Shipping', 'Returns Accepted', 'Best Seller'],
-          );
           _isLoading = false;
         });
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text('Failed to load product: $e')));
+        // Fallback to mock data if API fails
+        // setState(() {
+        //   _product = Product(
+        //     id: widget.productId,
+        //     title: 'Mock Product Details for ${widget.productId}',
+        //     description:
+        //         'This is a detailed description of the product. It features high quality materials, excellent craftsmanship, and durable design. Perfect for daily use.',
+        //     imageUrl:
+        //         'https://picsum.photos/500/500?random=${widget.productId}',
+        //     price: 99.99,
+        //     originalPrice: 129.99,
+        //     sales: 500,
+        //     rating: 4.5,
+        //     isFlashSale: true,
+        //     tags: ['Free Shipping', 'Returns Accepted', 'Best Seller'],
+        //   );
+        //   _isLoading = false;
+        // });
       }
     }
   }

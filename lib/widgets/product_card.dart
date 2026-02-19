@@ -59,7 +59,7 @@ class ProductCard extends StatelessWidget {
                       ),
                     ),
                   ),
-                ),
+                  ),
                 if (product.isFlashSale)
                   Positioned(
                     top: 8,
@@ -85,6 +85,53 @@ class ProductCard extends StatelessWidget {
                       ),
                     ),
                   ),
+                Positioned(
+                  top: 8,
+                  right: 8,
+                  child: GestureDetector(
+                    onTap: () async {
+                      try {
+                        if (isInWishlist) {
+                          await context
+                              .read<WishlistProvider>()
+                              .removeFromWishlist(product.id);
+                        } else {
+                          await context
+                              .read<WishlistProvider>()
+                              .addToWishlist(product);
+                        }
+                      } catch (e) {
+                        if (context.mounted) {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(content: Text('Error: $e')),
+                          );
+                        }
+                      }
+                    },
+                    child: Container(
+                      width: 32,
+                      height: 32,
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        shape: BoxShape.circle,
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.black.withValues(alpha: 0.1),
+                            blurRadius: 4,
+                            offset: const Offset(0, 2),
+                          ),
+                        ],
+                      ),
+                      child: Icon(
+                        isInWishlist ? Icons.favorite : Icons.favorite_border,
+                        color: isInWishlist
+                            ? AppColors.primary
+                            : AppColors.textSecondary,
+                        size: 20,
+                      ),
+                    ),
+                  ),
+                ),
                 Positioned(
                   bottom: 8,
                   right: 8,

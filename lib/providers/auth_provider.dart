@@ -51,7 +51,7 @@ class AuthProvider extends ChangeNotifier {
     }
   }
 
-  Future<bool> login(String email, String password) async {
+  Future<void> login(String email, String password) async {
     try {
       final user = await _apiService.login(email, password);
       _user = user;
@@ -65,14 +65,13 @@ class AuthProvider extends ChangeNotifier {
       await prefs.setString('user_email', user.email);
 
       notifyListeners();
-      return true;
     } catch (e) {
       debugPrint('Login failed: $e');
-      return false;
+      rethrow;
     }
   }
 
-  Future<bool> register(String name, String email, String password) async {
+  Future<void> register(String name, String email, String password) async {
     try {
       final user = await _apiService.register(name, email, password);
       _user = user;
@@ -86,10 +85,9 @@ class AuthProvider extends ChangeNotifier {
       await prefs.setString('user_email', user.email);
 
       notifyListeners();
-      return true;
     } catch (e) {
       debugPrint('Registration failed: $e');
-      return false;
+      rethrow;
     }
   }
 

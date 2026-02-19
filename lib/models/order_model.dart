@@ -10,7 +10,8 @@ class Order {
   final DateTime date;
   final String
   status; // 'Pending', 'Processing', 'Shipped', 'Delivered', 'Cancelled'
-  final String paymentMethod; // 'Credit Card', 'PayPal', 'COD'
+  final String paymentMethod; // Display Name: 'Credit Card', 'PayPal', 'COD'
+  final String paymentMethodCode; // Code: 'cod', 'paypal_express', etc.
   final List<OrderShipment> shipments;
 
   Order({
@@ -22,6 +23,7 @@ class Order {
     required this.date,
     this.status = 'Pending',
     required this.paymentMethod,
+    this.paymentMethodCode = '',
     this.shipments = const [],
   });
 
@@ -88,6 +90,7 @@ class Order {
       status: json['status'] ?? 'Pending',
       paymentMethod:
           json['payment_method_name'] ?? json['paymentMethod'] ?? 'Credit Card',
+      paymentMethodCode: json['payment_method'] ?? json['payment_code'] ?? '',
       shipments: shipments,
     );
   }
@@ -102,6 +105,7 @@ class Order {
       'date': date.toIso8601String(),
       'status': status,
       'paymentMethod': paymentMethod,
+      'paymentMethodCode': paymentMethodCode,
       'shipments': shipments.map((item) => item.toJson()).toList(),
     };
   }

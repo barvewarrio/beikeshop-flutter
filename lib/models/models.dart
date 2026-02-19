@@ -1,5 +1,6 @@
 export 'payment_method_model.dart';
 export 'cart_item_model.dart';
+export 'wishlist_item_model.dart';
 export 'user_model.dart';
 export 'review_model.dart';
 export 'rma_model.dart';

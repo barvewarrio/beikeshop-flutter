@@ -4,9 +4,13 @@ class ApiEndpoints {
   // Base URL (Replace with your actual backend URL)
   // Use 10.0.2.2 for Android Emulator, localhost for iOS Simulator
   // Use your machine's local IP for real device testing
+  // e.g. return 'http://192.168.1.5:8000/api';
   static String get baseUrl {
     if (Platform.isAndroid) {
-      return 'http://10.0.2.2:8000/api';
+      // return 'http://10.0.2.2:8000/api';
+      // For real device (wireless debugging), use your LAN IP.
+      // Replace the IP below with your Mac's IP address.
+      return 'http://192.168.31.189:8000/api'; // Example IP, please update
     }
     return 'http://127.0.0.1:8000/api';
   }

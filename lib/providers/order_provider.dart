@@ -9,6 +9,7 @@ class OrderProvider extends ChangeNotifier {
   List<PaymentMethod> _paymentMethods = [];
   bool _isLoading = true;
   bool _isPaymentLoading = false;
+  String? _error;
   final ApiService _apiService = ApiService();
 
   OrderProvider() {
@@ -20,6 +21,7 @@ class OrderProvider extends ChangeNotifier {
   List<PaymentMethod> get paymentMethods => _paymentMethods;
   bool get isLoading => _isLoading;
   bool get isPaymentLoading => _isPaymentLoading;
+  String? get error => _error;
 
   Future<void> fetchPaymentMethods() async {
     _isPaymentLoading = true;
@@ -49,15 +51,33 @@ class OrderProvider extends ChangeNotifier {
 
   Future<void> loadOrders() async {
     _isLoading = true;
-    // notifyListeners(); // Avoid rebuilds during build phase
+    _error = null;
+    notifyListeners();
     try {
       _orders = await _apiService.getOrders();
     } catch (e) {
       debugPrint('Error loading orders: $e');
-      // Fallback to local storage if API fails? Or just empty.
+      _error = e.toString();
     } finally {
       _isLoading = false;
       notifyListeners();
+    }
+  }
+
+  Future<Order> getOrder(String id) async {
+    try {
+      final order = await _apiService.getOrder(id);
+      final index = _orders.indexWhere((o) => o.id == id);
+      if (index != -1) {
+        _orders[index] = order;
+      } else {
+        _orders.add(order);
+      }
+      notifyListeners();
+      return order;
+    } catch (e) {
+      debugPrint('Error fetching order detail: $e');
+      rethrow;
     }
   }
 

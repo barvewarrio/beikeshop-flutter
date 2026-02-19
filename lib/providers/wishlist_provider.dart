@@ -4,7 +4,7 @@ import '../models/models.dart';
 
 class WishlistProvider with ChangeNotifier {
   final ApiService _apiService = ApiService();
-  List<Product> _wishlist = [];
+  List<WishlistItem> _wishlist = [];
   bool _isLoading = false;
   String? _error;
 
@@ -12,7 +12,7 @@ class WishlistProvider with ChangeNotifier {
     fetchWishlist();
   }
 
-  List<Product> get wishlist => _wishlist;
+  List<WishlistItem> get wishlist => _wishlist;
   bool get isLoading => _isLoading;
   String? get error => _error;
 
@@ -33,42 +33,39 @@ class WishlistProvider with ChangeNotifier {
 
   Future<void> addToWishlist(Product product) async {
     try {
-      // Optimistic update
-      if (!_wishlist.any((p) => p.id == product.id)) {
-        _wishlist.add(product);
-        notifyListeners();
-      }
-
+      // Optimistic update - create a temporary item
+      // We don't have the ID yet, so we use a placeholder or wait for refresh
+      // For now, let's just add it and then refresh to get the ID
       await _apiService.addToWishlist(product.id);
+      await fetchWishlist();
     } catch (e) {
-      // Revert if failed
-      _wishlist.removeWhere((p) => p.id == product.id);
+      _error = e.toString();
       notifyListeners();
       rethrow;
     }
   }
 
   Future<void> removeFromWishlist(String productId) async {
-    final existingIndex = _wishlist.indexWhere((p) => p.id == productId);
+    final existingIndex = _wishlist.indexWhere((item) => item.product.id == productId);
     if (existingIndex == -1) return;
 
-    final removedProduct = _wishlist[existingIndex];
+    final removedItem = _wishlist[existingIndex];
 
     try {
       // Optimistic update
       _wishlist.removeAt(existingIndex);
       notifyListeners();
 
-      await _apiService.removeFromWishlist(productId);
+      await _apiService.removeFromWishlist(removedItem.id);
     } catch (e) {
       // Revert if failed
-      _wishlist.insert(existingIndex, removedProduct);
+      _wishlist.insert(existingIndex, removedItem);
       notifyListeners();
       rethrow;
     }
   }
 
   bool isInWishlist(String productId) {
-    return _wishlist.any((p) => p.id == productId);
+    return _wishlist.any((item) => item.product.id == productId);
   }
 }

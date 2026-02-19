@@ -26,22 +26,6 @@ class _CategoryScreenState extends State<CategoryScreen> {
   void initState() {
     super.initState();
     _fetchCategories();
-    _generateMockProducts();
-  }
-
-  void _generateMockProducts() {
-    _products = List.generate(10, (index) {
-      final original = 20 + index * 3.0;
-      return Product(
-        id: 'cat_prod_${_selectedIndex}_$index',
-        title: 'Category ${_selectedIndex + 1} Item $index',
-        imageUrl:
-            'https://picsum.photos/300/300?random=${_selectedIndex * 100 + index}',
-        price: original * 0.8,
-        originalPrice: original,
-        sales: 50 + index * 5,
-      );
-    });
   }
 
   Future<void> _fetchCategories() async {
@@ -53,37 +37,46 @@ class _CategoryScreenState extends State<CategoryScreen> {
           _categories = categories;
           _isLoading = false;
         });
+        if (_categories.isNotEmpty) {
+          _fetchCategoryProducts(_categories[0].id);
+        }
       }
     } catch (e) {
       debugPrint('Error fetching categories: $e');
       if (mounted) {
         setState(() {
           _isLoading = false;
-          _generateMockCategories();
         });
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Failed to load categories: $e')),
+        );
       }
     }
   }
 
-  void _generateMockCategories() {
-    final names = [
-      'Recommended',
-      'Women',
-      'Men',
-      'Home',
-      'Electronics',
-      'Beauty',
-      'Shoes',
-      'Bags',
-      'Kids',
-      'Sports',
-      'Automotive',
-      'Pets',
-    ];
-    _categories = List.generate(
-      names.length,
-      (index) => Category(id: index.toString(), name: names[index]),
-    );
+  Future<void> _fetchCategoryProducts(String categoryId) async {
+    // Only show loading for products if needed, or keep previous products
+    try {
+      final products = await ApiService().getProducts(categoryId: categoryId);
+      if (mounted) {
+        setState(() {
+          _products = products;
+        });
+      }
+    } catch (e) {
+      debugPrint('Error fetching products for category $categoryId: $e');
+      if (mounted) {
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text('Failed to load products: $e')));
+      }
+    }
+  }
+
+  void _onSearchTap() {
+    // Navigate to search screen or show search dialog
+    // For now, just print
+    debugPrint('Navigate to search');
   }
 
   @override
@@ -107,30 +100,41 @@ class _CategoryScreenState extends State<CategoryScreen> {
             borderRadius: BorderRadius.circular(20),
             border: Border.all(color: Colors.grey[300]!, width: 0.5),
           ),
-          child: Row(
-            children: [
-              const Icon(Icons.search, color: Colors.black54, size: 22),
-              const SizedBox(width: 8),
-              Expanded(
-                child: Text(
-                  l10n.searchCategories,
-                  style: const TextStyle(
-                    color: Colors.black38,
-                    fontSize: 15,
-                    fontWeight: FontWeight.normal,
+          child: GestureDetector(
+            onTap: _onSearchTap,
+            child: Row(
+              children: [
+                const Icon(Icons.search, color: Colors.black54, size: 22),
+                const SizedBox(width: 8),
+                Expanded(
+                  child: Text(
+                    l10n.searchCategories,
+                    style: const TextStyle(
+                      color: Colors.black38,
+                      fontSize: 15,
+                      fontWeight: FontWeight.normal,
+                    ),
+                    overflow: TextOverflow.ellipsis,
                   ),
-                  overflow: TextOverflow.ellipsis,
                 ),
-              ),
-              const Icon(Icons.camera_alt_outlined, color: Colors.black54, size: 22),
-            ],
+                const Icon(
+                  Icons.camera_alt_outlined,
+                  color: Colors.black54,
+                  size: 22,
+                ),
+              ],
+            ),
           ),
         ),
         backgroundColor: Colors.white,
         elevation: 0,
         actions: [
           IconButton(
-            icon: const Icon(Icons.mail_outline, color: Colors.black87, size: 26),
+            icon: const Icon(
+              Icons.mail_outline,
+              color: Colors.black87,
+              size: 26,
+            ),
             onPressed: () {},
           ),
           const SizedBox(width: 4),
@@ -151,8 +155,8 @@ class _CategoryScreenState extends State<CategoryScreen> {
                   onTap: () {
                     setState(() {
                       _selectedIndex = index;
-                      _generateMockProducts();
                     });
+                    _fetchCategoryProducts(category.id);
                   },
                   child: Container(
                     height: 50,
@@ -206,103 +210,127 @@ class _CategoryScreenState extends State<CategoryScreen> {
                   slivers: [
                     const SliverToBoxAdapter(child: SizedBox(height: 12)),
                     // Banner for Category
-                    SliverToBoxAdapter(
-                      child: Container(
-                        height: 100,
-                        margin: const EdgeInsets.only(bottom: 16),
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(8),
-                          image: DecorationImage(
-                            image: NetworkImage(
-                              'https://picsum.photos/400/150?random=$_selectedIndex',
-                            ),
-                            fit: BoxFit.cover,
-                          ),
-                        ),
+                    if (_categories.isNotEmpty &&
+                        _categories[_selectedIndex].imageUrl != null)
+                      SliverToBoxAdapter(
                         child: Container(
+                          height: 100,
+                          margin: const EdgeInsets.only(bottom: 16),
                           decoration: BoxDecoration(
                             borderRadius: BorderRadius.circular(8),
-                            gradient: LinearGradient(
-                              begin: Alignment.topCenter,
-                              end: Alignment.bottomCenter,
-                              colors: [
-                                Colors.transparent,
-                                Colors.black.withValues(alpha: 0.5),
-                              ],
+                            image: DecorationImage(
+                              image: NetworkImage(
+                                _categories[_selectedIndex].imageUrl!,
+                              ),
+                              fit: BoxFit.cover,
                             ),
                           ),
-                          alignment: Alignment.bottomLeft,
-                          padding: const EdgeInsets.all(12),
-                          child: Text(
-                            l10n.topPicksIn(
-                              _categories.isNotEmpty
-                                  ? _categories[_selectedIndex].name
-                                  : "",
+                          child: Container(
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(8),
+                              gradient: LinearGradient(
+                                begin: Alignment.topCenter,
+                                end: Alignment.bottomCenter,
+                                colors: [
+                                  Colors.transparent,
+                                  Colors.black.withValues(alpha: 0.5),
+                                ],
+                              ),
                             ),
-                            style: const TextStyle(
-                              color: Colors.white,
-                              fontWeight: FontWeight.bold,
-                              fontSize: 16,
+                            alignment: Alignment.bottomLeft,
+                            padding: const EdgeInsets.all(12),
+                            child: Text(
+                              l10n.topPicksIn(
+                                _categories.isNotEmpty
+                                    ? _categories[_selectedIndex].name
+                                    : "",
+                              ),
+                              style: const TextStyle(
+                                color: Colors.white,
+                                fontWeight: FontWeight.bold,
+                                fontSize: 16,
+                              ),
                             ),
                           ),
                         ),
                       ),
-                    ),
 
                     // Subcategories Grid
-                    SliverGrid(
-                      gridDelegate:
-                          const SliverGridDelegateWithFixedCrossAxisCount(
-                            crossAxisCount: 3,
-                            mainAxisSpacing: 8,
-                            crossAxisSpacing: 8,
-                            childAspectRatio: 0.8,
-                          ),
-                      delegate: SliverChildBuilderDelegate((context, index) {
-                        return GestureDetector(
-                          onTap: () {
-                            // Navigate to subcategory
-                          },
-                          child: Column(
-                            children: [
-                              Expanded(
-                                child: Container(
-                                  decoration: BoxDecoration(
-                                    borderRadius: BorderRadius.circular(8),
-                                    color: const Color(0xFFF5F5F5),
-                                  ),
-                                  child: ClipRRect(
-                                    borderRadius: BorderRadius.circular(8),
-                                    child: CachedNetworkImage(
-                                      imageUrl:
-                                          'https://picsum.photos/100/100?random=${_selectedIndex * 100 + index}',
-                                      fit: BoxFit.cover,
-                                      placeholder: (context, url) =>
-                                          Container(color: Colors.grey[200]),
-                                      errorWidget: (context, url, error) =>
-                                          const Icon(Icons.error),
+                    if (_categories.isNotEmpty &&
+                        _categories[_selectedIndex].children.isNotEmpty)
+                      SliverGrid(
+                        gridDelegate:
+                            const SliverGridDelegateWithFixedCrossAxisCount(
+                              crossAxisCount: 3,
+                              mainAxisSpacing: 8,
+                              crossAxisSpacing: 8,
+                              childAspectRatio: 0.8,
+                            ),
+                        delegate: SliverChildBuilderDelegate(
+                          (context, index) {
+                            final subCategory =
+                                _categories[_selectedIndex].children[index];
+                            return GestureDetector(
+                              onTap: () {
+                                _fetchCategoryProducts(subCategory.id);
+                              },
+                              child: Column(
+                                children: [
+                                  Expanded(
+                                    child: Container(
+                                      decoration: BoxDecoration(
+                                        borderRadius: BorderRadius.circular(8),
+                                        color: const Color(0xFFF5F5F5),
+                                      ),
+                                      child: ClipRRect(
+                                        borderRadius: BorderRadius.circular(8),
+                                        child: subCategory.imageUrl != null
+                                            ? CachedNetworkImage(
+                                                imageUrl: subCategory.imageUrl!,
+                                                fit: BoxFit.cover,
+                                                placeholder: (context, url) =>
+                                                    Container(
+                                                      color: Colors.grey[200],
+                                                    ),
+                                                errorWidget:
+                                                    (context, url, error) =>
+                                                        const Icon(
+                                                          Icons.category,
+                                                          color: Colors.grey,
+                                                        ),
+                                              )
+                                            : const Center(
+                                                child: Icon(
+                                                  Icons.category,
+                                                  color: Colors.grey,
+                                                ),
+                                              ),
+                                      ),
                                     ),
                                   ),
-                                ),
+                                  const SizedBox(height: 4),
+                                  Text(
+                                    subCategory.name,
+                                    style: const TextStyle(
+                                      fontSize: 11,
+                                      color: AppColors.textSecondary,
+                                    ),
+                                    textAlign: TextAlign.center,
+                                    maxLines: 1,
+                                    overflow: TextOverflow.ellipsis,
+                                  ),
+                                ],
                               ),
-                              const SizedBox(height: 4),
-                              Text(
-                                'Subcat $index',
-                                style: const TextStyle(
-                                  fontSize: 11,
-                                  color: AppColors.textSecondary,
-                                ),
-                                textAlign: TextAlign.center,
-                                maxLines: 1,
-                                overflow: TextOverflow.ellipsis,
-                              ),
-                            ],
-                          ),
-                        );
-                      }, childCount: 9),
-                    ),
+                            );
+                          },
+                          childCount:
+                              _categories[_selectedIndex].children.length,
+                        ),
+                      ),
 
-                    const SliverToBoxAdapter(child: SizedBox(height: 24)),
+                    if (_categories.isNotEmpty &&
+                        _categories[_selectedIndex].children.isNotEmpty)
+                      const SliverToBoxAdapter(child: SizedBox(height: 24)),
 
                     // Recommended Title
                     SliverToBoxAdapter(

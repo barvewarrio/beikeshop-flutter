@@ -85,16 +85,59 @@ class OrderListScreen extends StatelessWidget {
               return const Center(child: CircularProgressIndicator());
             }
 
+            if (orderProvider.error != null) {
+              return Center(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    const Icon(
+                      Icons.error_outline,
+                      size: 48,
+                      color: Colors.red,
+                    ),
+                    const SizedBox(height: 16),
+                    Text(
+                      'Failed to load orders',
+                      style: const TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    const SizedBox(height: 8),
+                    Text(
+                      orderProvider.error!,
+                      textAlign: TextAlign.center,
+                      style: const TextStyle(color: Colors.grey),
+                    ),
+                    const SizedBox(height: 24),
+                    ElevatedButton(
+                      onPressed: () => orderProvider.loadOrders(),
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: AppColors.primary,
+                        foregroundColor: Colors.white,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(20),
+                        ),
+                      ),
+                      child: const Text('Retry'),
+                    ),
+                  ],
+                ),
+              );
+            }
+
             return TabBarView(
               children: tabs.map((tab) {
                 final status = tab['status'];
                 final orders = status == null
                     ? orderProvider.orders
                     : orderProvider.orders.where((o) {
-                        if (status == 'Review' && o.status == 'Delivered') {
+                        if (status == 'Review' &&
+                            o.status.toLowerCase() == 'delivered') {
                           return true;
                         }
-                        return o.status == status;
+                        // Case-insensitive comparison
+                        return o.status.toLowerCase() == status!.toLowerCase();
                       }).toList();
 
                 if (orders.isEmpty) {

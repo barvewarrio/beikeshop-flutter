@@ -59,9 +59,44 @@ class _WishlistScreenState extends State<WishlistScreen> {
               if (wishlistProvider.error != null)
                 SliverFillRemaining(
                   child: Center(
-                    child: Text(
-                      'Error: ${wishlistProvider.error}',
-                      style: const TextStyle(color: Colors.red),
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        const Icon(
+                          Icons.error_outline,
+                          size: 48,
+                          color: Colors.red,
+                        ),
+                        const SizedBox(height: 16),
+                        Text(
+                          l10n?.error ?? 'Error loading wishlist',
+                          style: const TextStyle(
+                            fontSize: 18,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        const SizedBox(height: 8),
+                        Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 32),
+                          child: Text(
+                            wishlistProvider.error!,
+                            textAlign: TextAlign.center,
+                            style: const TextStyle(color: Colors.grey),
+                          ),
+                        ),
+                        const SizedBox(height: 24),
+                        ElevatedButton(
+                          onPressed: () => wishlistProvider.fetchWishlist(),
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: AppColors.primary,
+                            foregroundColor: Colors.white,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(20),
+                            ),
+                          ),
+                          child: const Text('Retry'),
+                        ),
+                      ],
                     ),
                   ),
                 )
@@ -140,7 +175,7 @@ class _WishlistScreenState extends State<WishlistScreen> {
                           mainAxisSpacing: 8,
                         ),
                     delegate: SliverChildBuilderDelegate((context, index) {
-                      final product = wishlistProvider.wishlist[index];
+                      final product = wishlistProvider.wishlist[index].product;
                       return ProductCard(
                         product: product,
                         onTap: () {

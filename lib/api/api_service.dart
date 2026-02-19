@@ -87,11 +87,23 @@ class ApiService {
     int page = 1,
     int limit = 20,
     String? keyword,
+    String? sort,
+    String? order,
+    String? categoryId,
   }) async {
     try {
       final Map<String, dynamic> queryParams = {'page': page, 'limit': limit};
       if (keyword != null && keyword.isNotEmpty) {
         queryParams['keyword'] = keyword;
+      }
+      if (sort != null) {
+        queryParams['sort'] = sort;
+      }
+      if (order != null) {
+        queryParams['order'] = order;
+      }
+      if (categoryId != null) {
+        queryParams['category_id'] = categoryId;
       }
 
       final response = await _dio.get(
@@ -104,6 +116,14 @@ class ApiService {
       debugPrint('Error fetching products: $e');
       rethrow;
     }
+  }
+
+  Future<List<Product>> getLatestProducts({int limit = 10}) async {
+    return getProducts(sort: 'created_at', order: 'desc', limit: limit);
+  }
+
+  Future<List<Product>> getBestSellingProducts({int limit = 10}) async {
+    return getProducts(sort: 'sold', order: 'desc', limit: limit);
   }
 
   Future<Product> getProductDetail(String id) async {
@@ -212,8 +232,11 @@ class ApiService {
   Future<List<Country>> getCountries() async {
     try {
       final response = await _dio.get(ApiEndpoints.countries);
-      final List<dynamic> data = response.data;
-      return data.map((json) => Country.fromJson(json)).toList();
+      final dynamic data = response.data;
+      final List<dynamic> list = (data is Map && data.containsKey('data'))
+          ? data['data']
+          : (data is List ? data : []);
+      return list.map((json) => Country.fromJson(json)).toList();
     } catch (e) {
       debugPrint('Error fetching countries: $e');
       rethrow;
@@ -223,8 +246,11 @@ class ApiService {
   Future<List<Zone>> getZones(int countryId) async {
     try {
       final response = await _dio.get(ApiEndpoints.countryZones(countryId));
-      final List<dynamic> zones = response.data;
-      return zones.map((json) => Zone.fromJson(json)).toList();
+      final dynamic data = response.data;
+      final List<dynamic> list = (data is Map && data.containsKey('data'))
+          ? data['data']
+          : (data is List ? data : []);
+      return list.map((json) => Zone.fromJson(json)).toList();
     } catch (e) {
       debugPrint('Error fetching zones: $e');
       rethrow;
@@ -240,6 +266,16 @@ class ApiService {
       return data.map((json) => Order.fromJson(json)).toList();
     } catch (e) {
       debugPrint('Error fetching orders: $e');
+      rethrow;
+    }
+  }
+
+  Future<Order> getOrder(String id) async {
+    try {
+      final response = await _dio.get(ApiEndpoints.orderDetail(id));
+      return Order.fromJson(response.data['data']);
+    } catch (e) {
+      debugPrint('Error fetching order detail: $e');
       rethrow;
     }
   }
@@ -344,18 +380,12 @@ class ApiService {
   }
 
   // --- Wishlist ---
-  Future<List<Product>> getWishlist() async {
+  Future<List<WishlistItem>> getWishlist() async {
     try {
       final response = await _dio.get(ApiEndpoints.wishlist);
       final List<dynamic> data = response.data['data'] ?? [];
       return data
-          .map((json) {
-            if (json['product'] != null) {
-              return Product.fromJson(json['product']);
-            }
-            return null;
-          })
-          .whereType<Product>()
+          .map((json) => WishlistItem.fromJson(json))
           .toList();
     } catch (e) {
       debugPrint('Error fetching wishlist: $e');
@@ -372,9 +402,9 @@ class ApiService {
     }
   }
 
-  Future<void> removeFromWishlist(String productId) async {
+  Future<void> removeFromWishlist(String wishlistItemId) async {
     try {
-      await _dio.delete('${ApiEndpoints.wishlist}/$productId');
+      await _dio.delete('${ApiEndpoints.wishlist}/$wishlistItemId');
     } catch (e) {
       debugPrint('Error removing from wishlist: $e');
       rethrow;

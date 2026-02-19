@@ -106,6 +106,50 @@ class _CartScreenState extends State<CartScreen> {
       ),
       body: Consumer<CartProvider>(
         builder: (context, cart, child) {
+          if (cart.isLoading) {
+            return const Center(child: CircularProgressIndicator());
+          }
+
+          if (cart.error != null) {
+            return Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  const Icon(Icons.error_outline, size: 48, color: Colors.red),
+                  const SizedBox(height: 16),
+                  Text(
+                    l10n.error ?? 'Error loading cart',
+                    style: const TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  const SizedBox(height: 8),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 32),
+                    child: Text(
+                      cart.error!,
+                      textAlign: TextAlign.center,
+                      style: const TextStyle(color: Colors.grey),
+                    ),
+                  ),
+                  const SizedBox(height: 24),
+                  ElevatedButton(
+                    onPressed: () => cart.loadCart(),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: AppColors.primary,
+                      foregroundColor: Colors.white,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(20),
+                      ),
+                    ),
+                    child: const Text('Retry'),
+                  ),
+                ],
+              ),
+            );
+          }
+
           if (cart.items.isEmpty) {
             return Center(
               child: Column(
@@ -244,10 +288,9 @@ class _CartScreenState extends State<CartScreen> {
                               ? '100%'
                               : '${(progress * 100).toInt()}%',
                           style: TextStyle(
-                            color:
-                                isFreeShipping
-                                    ? const Color(0xFF00A651)
-                                    : AppColors.primary,
+                            color: isFreeShipping
+                                ? const Color(0xFF00A651)
+                                : AppColors.primary,
                             fontSize: 12,
                             fontWeight: FontWeight.bold,
                           ),
@@ -374,8 +417,9 @@ class _CartScreenState extends State<CartScreen> {
                                   SizedBox(
                                     height: 36,
                                     child: ElevatedButton(
-                                      onPressed:
-                                          _isApplying ? null : _applyCoupon,
+                                      onPressed: _isApplying
+                                          ? null
+                                          : _applyCoupon,
                                       style: ElevatedButton.styleFrom(
                                         backgroundColor: Colors.white,
                                         foregroundColor: AppColors.primary,
@@ -392,35 +436,31 @@ class _CartScreenState extends State<CartScreen> {
                                           ),
                                         ),
                                       ),
-                                      child:
-                                          _isApplying
-                                              ? const SizedBox(
-                                                width: 16,
-                                                height: 16,
-                                                child:
-                                                    CircularProgressIndicator(
-                                                      strokeWidth: 2,
-                                                      color: AppColors.primary,
-                                                    ),
-                                              )
-                                              : const Text(
-                                                'Apply',
-                                                style: TextStyle(
-                                                  fontWeight: FontWeight.bold,
-                                                ),
+                                      child: _isApplying
+                                          ? const SizedBox(
+                                              width: 16,
+                                              height: 16,
+                                              child: CircularProgressIndicator(
+                                                strokeWidth: 2,
+                                                color: AppColors.primary,
                                               ),
+                                            )
+                                          : const Text(
+                                              'Apply',
+                                              style: TextStyle(
+                                                fontWeight: FontWeight.bold,
+                                              ),
+                                            ),
                                     ),
                                   )
                                 else
                                   SizedBox(
                                     height: 36,
                                     child: OutlinedButton.icon(
-                                      onPressed:
-                                          _isApplying ? null : _removeCoupon,
-                                      icon: const Icon(
-                                        Icons.close,
-                                        size: 16,
-                                      ),
+                                      onPressed: _isApplying
+                                          ? null
+                                          : _removeCoupon,
+                                      icon: const Icon(Icons.close, size: 16),
                                       label: const Text('Remove'),
                                       style: OutlinedButton.styleFrom(
                                         foregroundColor: Colors.red,
@@ -487,9 +527,7 @@ class _CartScreenState extends State<CartScreen> {
                               },
                               activeColor: AppColors.primary,
                               shape: const CircleBorder(),
-                              side: const BorderSide(
-                                color: Color(0xFFCCCCCC),
-                              ),
+                              side: const BorderSide(color: Color(0xFFCCCCCC)),
                             ),
                           ),
                           const SizedBox(width: 8),
@@ -504,8 +542,8 @@ class _CartScreenState extends State<CartScreen> {
                                   width: 90,
                                   height: 90,
                                   fit: BoxFit.cover,
-                                  errorWidget:
-                                      (context, url, error) => Container(
+                                  errorWidget: (context, url, error) =>
+                                      Container(
                                         width: 90,
                                         height: 90,
                                         color: Colors.grey[200],
@@ -561,10 +599,8 @@ class _CartScreenState extends State<CartScreen> {
                                     ),
                                     const SizedBox(width: 4),
                                     InkWell(
-                                      onTap:
-                                          () => cart.removeFromCart(
-                                            item.product.id,
-                                          ),
+                                      onTap: () =>
+                                          cart.removeFromCart(item.product.id),
                                       child: const Icon(
                                         Icons.close,
                                         size: 18,

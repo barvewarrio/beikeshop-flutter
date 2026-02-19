@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import 'package:intl/intl.dart';
 import 'package:cached_network_image/cached_network_image.dart';
@@ -7,30 +8,48 @@ import 'request_refund_screen.dart';
 import '../product/write_review_screen.dart';
 import '../../models/order_model.dart';
 import '../../models/cart_item_model.dart';
+import '../../providers/cart_provider.dart';
 import '../../providers/settings_provider.dart';
+import '../../providers/order_provider.dart';
+import '../cart/cart_screen.dart';
+import '../checkout/payment_screen.dart';
 import '../../theme/app_theme.dart';
 
-class OrderDetailScreen extends StatelessWidget {
+class OrderDetailScreen extends StatefulWidget {
   final Order order;
 
   const OrderDetailScreen({super.key, required this.order});
 
+  @override
+  State<OrderDetailScreen> createState() => _OrderDetailScreenState();
+}
+
+class _OrderDetailScreenState extends State<OrderDetailScreen> {
+  @override
+  void initState() {
+    super.initState();
+    // Refresh order details to get latest status
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      context.read<OrderProvider>().getOrder(widget.order.id);
+    });
+  }
+
   String _getStatusText(BuildContext context, String status) {
     final l10n = AppLocalizations.of(context)!;
-    switch (status) {
-      case 'Pending':
+    switch (status.toLowerCase()) {
+      case 'pending':
         return l10n.statusPending;
-      case 'Processing':
+      case 'processing':
         return l10n.statusProcessing;
-      case 'Shipped':
+      case 'shipped':
         return l10n.statusShipped;
-      case 'Delivered':
+      case 'delivered':
         return l10n.statusDelivered;
-      case 'Cancelled':
+      case 'cancelled':
         return l10n.statusCancelled;
-      case 'Review':
+      case 'review':
         return l10n.review;
-      case 'Returns':
+      case 'returns':
         return l10n.returns;
       default:
         return status;
@@ -38,16 +57,16 @@ class OrderDetailScreen extends StatelessWidget {
   }
 
   IconData _getStatusIcon(String status) {
-    switch (status) {
-      case 'Pending':
+    switch (status.toLowerCase()) {
+      case 'pending':
         return Icons.payment;
-      case 'Processing':
+      case 'processing':
         return Icons.inventory_2_outlined;
-      case 'Shipped':
+      case 'shipped':
         return Icons.local_shipping_outlined;
-      case 'Delivered':
+      case 'delivered':
         return Icons.check_circle_outline;
-      case 'Cancelled':
+      case 'cancelled':
         return Icons.cancel_outlined;
       default:
         return Icons.info_outline;
@@ -58,6 +77,13 @@ class OrderDetailScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     final settings = context.watch<SettingsProvider>();
     final l10n = AppLocalizations.of(context)!;
+
+    // Get latest order data from provider
+    final orderProvider = context.watch<OrderProvider>();
+    final order = orderProvider.orders.firstWhere(
+      (o) => o.id == widget.order.id,
+      orElse: () => widget.order,
+    );
 
     // Calculate subtotal
     double subtotal = 0;
@@ -93,7 +119,7 @@ class OrderDetailScreen extends StatelessWidget {
         child: SafeArea(
           child: Row(
             mainAxisAlignment: MainAxisAlignment.end,
-            children: _buildBottomActions(context, l10n),
+            children: _buildBottomActions(context, l10n, order),
           ),
         ),
       ),
@@ -156,7 +182,7 @@ class OrderDetailScreen extends StatelessWidget {
                   children: [
                     // Tracking Info (if available)
                     if (order.shipments.isNotEmpty)
-                      _buildTrackingCard(context, l10n),
+                      _buildTrackingCard(context, l10n, order),
 
                     if (order.shipments.isNotEmpty) const SizedBox(height: 12),
 
@@ -296,6 +322,7 @@ class OrderDetailScreen extends StatelessWidget {
                                 item,
                                 settings,
                                 l10n,
+                                order,
                               );
                             },
                           ),
@@ -370,7 +397,11 @@ class OrderDetailScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildTrackingCard(BuildContext context, AppLocalizations l10n) {
+  Widget _buildTrackingCard(
+    BuildContext context,
+    AppLocalizations l10n,
+    Order order,
+  ) {
     return Container(
       decoration: BoxDecoration(
         color: Colors.white,
@@ -434,11 +465,15 @@ class OrderDetailScreen extends StatelessWidget {
                     ),
                   ),
                   OutlinedButton(
-                    onPressed: () {
-                      // TODO: Copy to clipboard
-                      ScaffoldMessenger.of(
-                        context,
-                      ).showSnackBar(SnackBar(content: Text(l10n.copy)));
+                    onPressed: () async {
+                      await Clipboard.setData(
+                        ClipboardData(text: shipment.expressNumber),
+                      );
+                      if (context.mounted) {
+                        ScaffoldMessenger.of(
+                          context,
+                        ).showSnackBar(SnackBar(content: Text(l10n.copy)));
+                      }
                     },
                     style: OutlinedButton.styleFrom(
                       foregroundColor: AppColors.textSecondary,
@@ -471,6 +506,7 @@ class OrderDetailScreen extends StatelessWidget {
     CartItem item,
     SettingsProvider settings,
     AppLocalizations l10n,
+    Order order,
   ) {
     return Row(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -525,35 +561,76 @@ class OrderDetailScreen extends StatelessWidget {
                     ),
                   ),
                   // Item actions
-                  if (order.status == 'Delivered')
-                    GestureDetector(
-                      onTap: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) =>
-                                WriteReviewScreen(productId: item.product.id),
+                  if (order.status.toLowerCase() == 'delivered' ||
+                      order.status.toLowerCase() == 'review')
+                    Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        GestureDetector(
+                          onTap: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => RequestRefundScreen(
+                                  order: order,
+                                  item: item,
+                                ),
+                              ),
+                            );
+                          },
+                          child: Container(
+                            margin: const EdgeInsets.only(right: 8),
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 10,
+                              vertical: 4,
+                            ),
+                            decoration: BoxDecoration(
+                              border: Border.all(
+                                color: AppColors.textSecondary,
+                              ),
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                            child: Text(
+                              l10n.requestRefund,
+                              style: const TextStyle(
+                                color: AppColors.textSecondary,
+                                fontSize: 11,
+                                fontWeight: FontWeight.w500,
+                              ),
+                            ),
                           ),
-                        );
-                      },
-                      child: Container(
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 10,
-                          vertical: 4,
                         ),
-                        decoration: BoxDecoration(
-                          border: Border.all(color: AppColors.primary),
-                          borderRadius: BorderRadius.circular(12),
-                        ),
-                        child: Text(
-                          l10n.writeReview,
-                          style: const TextStyle(
-                            color: AppColors.primary,
-                            fontSize: 11,
-                            fontWeight: FontWeight.w500,
+                        GestureDetector(
+                          onTap: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => WriteReviewScreen(
+                                  productId: item.product.id,
+                                ),
+                              ),
+                            );
+                          },
+                          child: Container(
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 10,
+                              vertical: 4,
+                            ),
+                            decoration: BoxDecoration(
+                              border: Border.all(color: AppColors.primary),
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                            child: Text(
+                              l10n.writeReview,
+                              style: const TextStyle(
+                                color: AppColors.primary,
+                                fontSize: 11,
+                                fontWeight: FontWeight.w500,
+                              ),
+                            ),
                           ),
                         ),
-                      ),
+                      ],
                     ),
                 ],
               ),
@@ -591,11 +668,13 @@ class OrderDetailScreen extends StatelessWidget {
             if (canCopy && context != null && l10n != null) ...[
               const SizedBox(width: 8),
               InkWell(
-                onTap: () {
-                  // TODO: Implement copy
-                  ScaffoldMessenger.of(
-                    context,
-                  ).showSnackBar(SnackBar(content: Text(l10n.copy)));
+                onTap: () async {
+                  await Clipboard.setData(ClipboardData(text: value));
+                  if (context.mounted) {
+                    ScaffoldMessenger.of(
+                      context,
+                    ).showSnackBar(SnackBar(content: Text(l10n.copy)));
+                  }
                 },
                 child: const Icon(
                   Icons.copy,
@@ -637,14 +716,52 @@ class OrderDetailScreen extends StatelessWidget {
   List<Widget> _buildBottomActions(
     BuildContext context,
     AppLocalizations l10n,
+    Order order,
   ) {
     final List<Widget> buttons = [];
 
-    if (order.status == 'Pending') {
+    // Check status case-insensitive
+    final status = order.status.toLowerCase();
+
+    if (status == 'pending') {
       buttons.add(
         OutlinedButton(
-          onPressed: () {
-            // Cancel logic
+          onPressed: () async {
+            final confirmed = await showDialog<bool>(
+              context: context,
+              builder: (context) => AlertDialog(
+                title: Text(l10n.cancelOrder),
+                content: Text(l10n.cancelOrderConfirmation),
+                actions: [
+                  TextButton(
+                    onPressed: () => Navigator.pop(context, false),
+                    child: Text(l10n.cancel),
+                  ),
+                  TextButton(
+                    onPressed: () => Navigator.pop(context, true),
+                    child: Text(l10n.confirm),
+                  ),
+                ],
+              ),
+            );
+
+            if (confirmed == true && context.mounted) {
+              try {
+                await context.read<OrderProvider>().cancelOrder(order.id);
+                if (context.mounted) {
+                  ScaffoldMessenger.of(
+                    context,
+                  ).showSnackBar(SnackBar(content: Text(l10n.orderCancelled)));
+                  Navigator.pop(context);
+                }
+              } catch (e) {
+                if (context.mounted) {
+                  ScaffoldMessenger.of(
+                    context,
+                  ).showSnackBar(SnackBar(content: Text('Error: $e')));
+                }
+              }
+            }
           },
           style: OutlinedButton.styleFrom(
             foregroundColor: AppColors.textSecondary,
@@ -675,7 +792,10 @@ class OrderDetailScreen extends StatelessWidget {
           ),
           child: ElevatedButton(
             onPressed: () {
-              // Pay logic
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (_) => PaymentScreen(order: order)),
+              );
             },
             style: ElevatedButton.styleFrom(
               backgroundColor: Colors.transparent,
@@ -693,10 +813,91 @@ class OrderDetailScreen extends StatelessWidget {
           ),
         ),
       );
-    } else if (order.status == 'Shipped') {
+    } else if (status == 'shipped') {
       buttons.add(
         OutlinedButton(
-          onPressed: () {},
+          onPressed: () {
+            if (order.shipments.isEmpty) {
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(
+                  content: Text('No tracking information available yet.'),
+                ),
+              );
+              return;
+            }
+
+            showModalBottomSheet(
+              context: context,
+              backgroundColor: Colors.transparent,
+              builder: (context) => Container(
+                decoration: const BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+                ),
+                padding: const EdgeInsets.all(20),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      l10n.trackOrder,
+                      style: const TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    const SizedBox(height: 16),
+                    ...order.shipments.map(
+                      (shipment) => Padding(
+                        padding: const EdgeInsets.only(bottom: 12),
+                        child: Row(
+                          children: [
+                            Expanded(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    shipment.expressCompany,
+                                    style: const TextStyle(
+                                      fontWeight: FontWeight.w500,
+                                      fontSize: 16,
+                                    ),
+                                  ),
+                                  const SizedBox(height: 4),
+                                  Text(
+                                    shipment.expressNumber,
+                                    style: const TextStyle(
+                                      color: AppColors.textSecondary,
+                                      fontSize: 14,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                            OutlinedButton(
+                              onPressed: () async {
+                                await Clipboard.setData(
+                                  ClipboardData(text: shipment.expressNumber),
+                                );
+                                if (context.mounted) {
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    SnackBar(content: Text(l10n.copy)),
+                                  );
+                                  Navigator.pop(context);
+                                }
+                              },
+                              child: Text(l10n.copy),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: 16),
+                  ],
+                ),
+              ),
+            );
+          },
           style: OutlinedButton.styleFrom(
             foregroundColor: AppColors.textPrimary,
             side: const BorderSide(color: AppColors.textPrimary),
@@ -708,10 +909,37 @@ class OrderDetailScreen extends StatelessWidget {
           child: Text(l10n.trackOrder),
         ),
       );
-    } else if (order.status == 'Delivered') {
+    } else if (status == 'delivered') {
       buttons.add(
         OutlinedButton(
-          onPressed: () {},
+          onPressed: () async {
+            if (order.items.isEmpty) return;
+            final cart = context.read<CartProvider>();
+            final messenger = ScaffoldMessenger.of(context);
+
+            try {
+              for (var item in order.items) {
+                // Add each item to cart
+                await cart.addToCart(item.product, quantity: item.quantity);
+              }
+
+              if (context.mounted) {
+                messenger.showSnackBar(
+                  SnackBar(content: Text(l10n.addedToCart)),
+                );
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (_) => const CartScreen()),
+                );
+              }
+            } catch (e) {
+              if (context.mounted) {
+                messenger.showSnackBar(
+                  SnackBar(content: Text('Error adding to cart: $e')),
+                );
+              }
+            }
+          },
           style: OutlinedButton.styleFrom(
             foregroundColor: AppColors.primary,
             side: const BorderSide(color: AppColors.primary),

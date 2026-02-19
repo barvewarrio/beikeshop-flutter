@@ -1,3 +1,4 @@
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -26,22 +27,43 @@ class _LoginScreenState extends State<LoginScreen> {
     super.dispose();
   }
 
+  String _getErrorMessage(dynamic error) {
+    if (error is DioException) {
+      if (error.response?.data != null && error.response!.data is Map) {
+        final data = error.response!.data as Map;
+        if (data['message'] != null) return data['message'].toString();
+        if (data['error'] != null) return data['error'].toString();
+      }
+      if (error.response?.statusCode == 401) {
+        return 'Invalid email or password';
+      }
+      return 'Connection error: ${error.message}';
+    }
+    return error.toString();
+  }
+
   void _handleLogin() async {
     if (_formKey.currentState!.validate()) {
       setState(() => _isLoading = true);
 
-      final success = await context.read<AuthProvider>().login(
-            _emailController.text,
-            _passwordController.text,
-          );
+      try {
+        await context.read<AuthProvider>().login(
+          _emailController.text,
+          _passwordController.text,
+        );
 
-      if (mounted) {
-        setState(() => _isLoading = false);
-        if (success) {
+        if (mounted) {
+          setState(() => _isLoading = false);
           Navigator.pop(context);
-        } else {
+        }
+      } catch (e) {
+        if (mounted) {
+          setState(() => _isLoading = false);
           ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('Login failed. Please try again.')),
+            SnackBar(
+              content: Text(_getErrorMessage(e)),
+              backgroundColor: Colors.red,
+            ),
           );
         }
       }
@@ -224,10 +246,7 @@ class _LoginScreenState extends State<LoginScreen> {
                     padding: const EdgeInsets.symmetric(horizontal: 16),
                     child: Text(
                       'Or continue with',
-                      style: TextStyle(
-                        color: Colors.grey[600],
-                        fontSize: 12,
-                      ),
+                      style: TextStyle(color: Colors.grey[600], fontSize: 12),
                     ),
                   ),
                   const Expanded(child: Divider(color: Color(0xFFEEEEEE))),
@@ -278,7 +297,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   ),
                 ],
               ),
-              
+
               const SizedBox(height: 24),
               const Text(
                 'By continuing, you agree to our Terms of Use and Privacy Policy.',

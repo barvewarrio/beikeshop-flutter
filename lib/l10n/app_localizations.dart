@@ -1141,6 +1141,18 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Error adding to cart: {error}'**
   String errorAddingToCart(String error);
+
+  /// No description provided for @orderAlreadyPaid.
+  ///
+  /// In en, this message translates to:
+  /// **'Order already paid'**
+  String get orderAlreadyPaid;
+
+  /// No description provided for @paymentSuccess.
+  ///
+  /// In en, this message translates to:
+  /// **'Payment successful'**
+  String get paymentSuccess;
 }
 
 class _AppLocalizationsDelegate

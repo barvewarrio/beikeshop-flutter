@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:beikeshop_flutter/l10n/app_localizations.dart';
+import '../../providers/address_provider.dart';
 import '../../models/address_model.dart';
 import '../../models/region_models.dart';
 import '../../api/api_service.dart';
@@ -111,7 +113,8 @@ class _AddEditAddressScreenState extends State<AddEditAddressScreen> {
     super.dispose();
   }
 
-  void _saveAddress() {
+  Future<void> _saveAddress() async {
+    final l10n = AppLocalizations.of(context)!;
     if (_formKey.currentState!.validate()) {
       if (_selectedCountryId == null) {
         ScaffoldMessenger.of(context).showSnackBar(
@@ -120,7 +123,6 @@ class _AddEditAddressScreenState extends State<AddEditAddressScreen> {
         return;
       }
 
-      // Some countries might not have zones, so only enforce if zones are available
       if (_zones.isNotEmpty && _selectedZoneId == null) {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text('Please select a province/state')),
@@ -145,7 +147,7 @@ class _AddEditAddressScreenState extends State<AddEditAddressScreen> {
       }
 
       final newAddress = Address(
-        id: widget.address?.id ?? DateTime.now().toString(),
+        id: widget.address?.id ?? '',
         name: _nameController.text,
         phone: _phoneController.text,
         country: countryName,
@@ -158,7 +160,31 @@ class _AddEditAddressScreenState extends State<AddEditAddressScreen> {
         isDefault: _isDefault,
       );
 
-      Navigator.pop(context, newAddress);
+      final provider = context.read<AddressProvider>();
+
+      try {
+        if (widget.address == null) {
+          await provider.addAddress(newAddress);
+        } else {
+          await provider.updateAddress(newAddress);
+        }
+
+        if (!mounted) return;
+
+        if (provider.error != null) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text(provider.error!)),
+          );
+        } else {
+          Navigator.pop(context, newAddress);
+        }
+      } catch (e) {
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text('Error: $e')),
+          );
+        }
+      }
     }
   }
 
@@ -355,24 +381,39 @@ class _AddEditAddressScreenState extends State<AddEditAddressScreen> {
                     ),
                   ],
                 ),
-                child: ElevatedButton(
-                  onPressed: _saveAddress,
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.transparent,
-                    foregroundColor: Colors.white,
-                    shadowColor: Colors.transparent,
-                    elevation: 0,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(24),
-                    ),
-                  ),
-                  child: Text(
-                    l10n.save,
-                    style: const TextStyle(
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
+                child: Consumer<AddressProvider>(
+                  builder: (context, provider, child) {
+                    return ElevatedButton(
+                      onPressed: provider.isLoading ? null : _saveAddress,
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.transparent,
+                        foregroundColor: Colors.white,
+                        shadowColor: Colors.transparent,
+                        elevation: 0,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(24),
+                        ),
+                        disabledForegroundColor: Colors.white.withValues(alpha: 0.7),
+                        disabledBackgroundColor: Colors.grey,
+                      ),
+                      child: provider.isLoading
+                          ? const SizedBox(
+                              width: 24,
+                              height: 24,
+                              child: CircularProgressIndicator(
+                                color: Colors.white,
+                                strokeWidth: 2,
+                              ),
+                            )
+                          : Text(
+                              l10n.save,
+                              style: const TextStyle(
+                                fontSize: 18,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                    );
+                  },
                 ),
               ),
             ),

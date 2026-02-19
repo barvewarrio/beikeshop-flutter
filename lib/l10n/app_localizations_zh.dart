@@ -561,4 +561,10 @@ class AppLocalizationsZh extends AppLocalizations {
   String errorAddingToCart(String error) {
     return '加入购物车失败: $error';
   }
+
+  @override
+  String get orderAlreadyPaid => '订单已支付';
+
+  @override
+  String get paymentSuccess => '支付成功';
 }

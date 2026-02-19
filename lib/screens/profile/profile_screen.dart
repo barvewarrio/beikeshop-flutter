@@ -12,8 +12,23 @@ import '../order/order_list_screen.dart';
 import '../settings/settings_screen.dart';
 import '../wishlist/wishlist_screen.dart';
 
-class ProfileScreen extends StatelessWidget {
+class ProfileScreen extends StatefulWidget {
   const ProfileScreen({super.key});
+
+  @override
+  State<ProfileScreen> createState() => _ProfileScreenState();
+}
+
+class _ProfileScreenState extends State<ProfileScreen> {
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (context.read<AuthProvider>().isAuthenticated) {
+        context.read<OrderProvider>().loadOrders();
+      }
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -325,19 +340,23 @@ class ProfileScreen extends StatelessWidget {
           Consumer<OrderProvider>(
             builder: (context, orderProvider, _) {
               final unpaidCount = orderProvider.orders
-                  .where((o) => o.status == 'Pending')
+                  .where((o) => o.status.toLowerCase() == 'pending')
                   .length;
               final processingCount = orderProvider.orders
-                  .where((o) => o.status == 'Processing')
+                  .where((o) => o.status.toLowerCase() == 'processing')
                   .length;
               final shippedCount = orderProvider.orders
-                  .where((o) => o.status == 'Shipped')
+                  .where((o) => o.status.toLowerCase() == 'shipped')
                   .length;
               final reviewCount = orderProvider.orders
-                  .where((o) => o.status == 'Review')
+                  .where(
+                    (o) =>
+                        o.status.toLowerCase() == 'review' ||
+                        o.status.toLowerCase() == 'delivered',
+                  )
                   .length;
               final returnsCount = orderProvider.orders
-                  .where((o) => o.status == 'Returns')
+                  .where((o) => o.status.toLowerCase() == 'returns')
                   .length;
 
               return Row(

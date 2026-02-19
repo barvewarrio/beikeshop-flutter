@@ -5,6 +5,7 @@ import '../api/api_service.dart';
 class CartProvider extends ChangeNotifier {
   List<CartItem> _items = [];
   bool _isLoading = true;
+  String? _error;
   double _subtotal = 0.0;
   double _total = 0.0;
   double _discount = 0.0;
@@ -13,10 +14,11 @@ class CartProvider extends ChangeNotifier {
   final ApiService _apiService = ApiService();
 
   CartProvider() {
-    _loadCart();
+    loadCart();
   }
 
   bool get isLoading => _isLoading;
+  String? get error => _error;
   List<CartItem> get items => _items;
   double get subtotal => _subtotal;
   double get total => _total;
@@ -29,14 +31,16 @@ class CartProvider extends ChangeNotifier {
   // Use backend total instead of local calculation
   double get totalAmount => _total;
 
-  Future<void> _loadCart() async {
+  Future<void> loadCart() async {
     _isLoading = true;
+    _error = null;
     notifyListeners();
     try {
       final data = await _apiService.getCart();
       _parseCartData(data);
     } catch (e) {
       debugPrint('Error loading cart: $e');
+      _error = e.toString();
     } finally {
       _isLoading = false;
       notifyListeners();
@@ -60,7 +64,7 @@ class CartProvider extends ChangeNotifier {
     try {
       final skuId = product.defaultSkuId ?? product.id;
       await _apiService.addToCart(skuId, quantity);
-      await _loadCart();
+      await loadCart();
     } catch (e) {
       debugPrint('Error adding to cart: $e');
       rethrow;
@@ -72,7 +76,6 @@ class CartProvider extends ChangeNotifier {
       (item) => item.product.id == productId,
       orElse: () => CartItem(
         product: Product(id: '', title: '', imageUrl: '', price: 0),
-        id: '',
       ),
     );
 
@@ -83,11 +86,11 @@ class CartProvider extends ChangeNotifier {
         _items.removeWhere((i) => i.id == item.id);
         notifyListeners();
         // Reload to get correct totals
-        await _loadCart();
+        await loadCart();
       } catch (e) {
         debugPrint('Error removing from cart: $e');
         // Revert if needed, or just reload
-        await _loadCart();
+        await loadCart();
       }
     }
   }
@@ -97,24 +100,23 @@ class CartProvider extends ChangeNotifier {
       (item) => item.product.id == productId,
       orElse: () => CartItem(
         product: Product(id: '', title: '', imageUrl: '', price: 0),
-        id: '',
       ),
     );
 
     if (item.id != null) {
-      if (quantity <= 0) {
-        await removeFromCart(productId);
-      } else {
-        try {
-          await _apiService.updateCart(item.id!, quantity);
-          // Optimistically update
-          item.quantity = quantity;
+      try {
+        // Optimistically update
+        final index = _items.indexWhere((i) => i.id == item.id);
+        if (index != -1) {
+          _items[index].quantity = quantity;
           notifyListeners();
-          // Reload to get correct totals
-          await _loadCart();
-        } catch (e) {
-          debugPrint('Error updating cart quantity: $e');
         }
+
+        await _apiService.updateCart(item.id!, quantity);
+        await loadCart();
+      } catch (e) {
+        debugPrint('Error updating quantity: $e');
+        await loadCart();
       }
     }
   }

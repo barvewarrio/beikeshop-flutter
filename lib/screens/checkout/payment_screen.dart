@@ -19,6 +19,7 @@ class PaymentScreen extends StatefulWidget {
 }
 
 class _PaymentScreenState extends State<PaymentScreen> {
+  late Order _order;
   bool _isLoading = false;
   late Timer _timer;
   int _timeLeft = 900; // 15 minutes in seconds
@@ -26,7 +27,24 @@ class _PaymentScreenState extends State<PaymentScreen> {
   @override
   void initState() {
     super.initState();
+    _order = widget.order;
     _startTimer();
+    _refreshOrder();
+  }
+
+  Future<void> _refreshOrder() async {
+    try {
+      final updatedOrder = await context.read<OrderProvider>().getOrder(
+        widget.order.id,
+      );
+      if (mounted) {
+        setState(() {
+          _order = updatedOrder;
+        });
+      }
+    } catch (e) {
+      debugPrint('Error refreshing order: $e');
+    }
   }
 
   @override
@@ -55,16 +73,38 @@ class _PaymentScreenState extends State<PaymentScreen> {
 
   Future<void> _processPayment() async {
     final l10n = AppLocalizations.of(context)!;
+
+    // Check if already paid
+    if (_order.status.toLowerCase() == 'processing' ||
+        _order.status.toLowerCase() == 'completed' ||
+        _order.status.toLowerCase() == 'paid') {
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text(l10n.orderAlreadyPaid)));
+      Navigator.of(context).pushAndRemoveUntil(
+        MaterialPageRoute(
+          builder: (context) => OrderDetailScreen(order: _order),
+        ),
+        (route) => route.isFirst,
+      );
+      return;
+    }
+
     setState(() => _isLoading = true);
 
     try {
+      final code = _order.paymentMethodCode.isNotEmpty
+          ? _order.paymentMethodCode
+          : 'cod';
+
       final result = await context.read<OrderProvider>().payOrder(
-            widget.order.id,
-            widget.order.paymentMethod,
-          );
+        _order.id,
+        code,
+      );
 
       // Handle Stripe
-      if (widget.order.paymentMethod == 'stripe') {
+      if (code == 'stripe' ||
+          _order.paymentMethod.toLowerCase().contains('stripe')) {
         if (result['client_secret'] != null) {
           // Mock Stripe success for now
           if (mounted) {
@@ -78,15 +118,21 @@ class _PaymentScreenState extends State<PaymentScreen> {
       }
 
       if (mounted) {
-        ScaffoldMessenger.of(
-          context,
-        ).showSnackBar(SnackBar(content: Text(l10n.orderPlaced)));
-        Navigator.of(context).pushAndRemoveUntil(
-          MaterialPageRoute(
-            builder: (context) => OrderDetailScreen(order: widget.order),
-          ),
-          (route) => route.isFirst,
-        );
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(l10n.paymentSuccess)),
+        ); // Changed from orderPlaced
+
+        // Refresh order to get updated status
+        await _refreshOrder();
+
+        if (mounted) {
+          Navigator.of(context).pushAndRemoveUntil(
+            MaterialPageRoute(
+              builder: (context) => OrderDetailScreen(order: _order),
+            ),
+            (route) => route.isFirst,
+          );
+        }
       }
     } catch (e) {
       if (mounted) {
@@ -105,7 +151,7 @@ class _PaymentScreenState extends State<PaymentScreen> {
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
     final settings = context.watch<SettingsProvider>();
-    final formattedPrice = settings.formatPrice(widget.order.totalAmount);
+    final formattedPrice = settings.formatPrice(_order.totalAmount);
 
     return Scaffold(
       backgroundColor: const Color(0xFFF7F7F7),
@@ -245,16 +291,16 @@ class _PaymentScreenState extends State<PaymentScreen> {
                               vertical: 4,
                             ),
                             leading: Icon(
-                              widget.order.paymentMethod == 'stripe'
+                              _order.paymentMethod == 'stripe'
                                   ? Icons.credit_card
-                                  : widget.order.paymentMethod == 'paypal'
-                                      ? Icons.paypal
-                                      : Icons.money,
+                                  : _order.paymentMethod == 'paypal'
+                                  ? Icons.paypal
+                                  : Icons.money,
                               color: AppColors.primary,
                               size: 28,
                             ),
                             title: Text(
-                              widget.order.paymentMethod.toUpperCase(),
+                              _order.paymentMethod.toUpperCase(),
                               style: const TextStyle(
                                 fontWeight: FontWeight.bold,
                                 color: AppColors.textPrimary,
@@ -308,7 +354,7 @@ class _PaymentScreenState extends State<PaymentScreen> {
                         const SizedBox(height: 16),
                         _buildInfoRow(
                           l10n.orderId,
-                          '#${widget.order.number}',
+                          '#${_order.number}',
                           isBold: true,
                         ),
                         const Padding(
@@ -317,7 +363,7 @@ class _PaymentScreenState extends State<PaymentScreen> {
                         ),
                         _buildInfoRow(
                           l10n.items,
-                          '${widget.order.items.length}',
+                          '${_order.items.length}',
                           isBold: true,
                         ),
                       ],

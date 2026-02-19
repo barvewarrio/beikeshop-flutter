@@ -98,6 +98,15 @@
   "provinceState": "Province/State",
   "city": "City",
   "zipCode": "Zip Code",
+  "emptyWishlist": "Your wishlist is empty",
+  "errorAddingToCart": "Error adding to cart: {error}",
+  "@errorAddingToCart": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
   "noOrders": "No orders found",
   "startShopping": "Start Shopping",
   "buyerProtection": "Buyer Protection",
@@ -264,7 +273,9 @@
     "placeholders": {
       "error": { "type": "String" }
     }
-  }
+  },
+  "orderAlreadyPaid": "Order already paid",
+  "paymentSuccess": "Payment successful"
 }
 
 

@@ -1,3 +1,4 @@
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -30,24 +31,52 @@ class _RegisterScreenState extends State<RegisterScreen> {
     super.dispose();
   }
 
+  String _getErrorMessage(dynamic error) {
+    if (error is DioException) {
+      if (error.response?.data != null && error.response!.data is Map) {
+        final data = error.response!.data as Map;
+        // Laravel validation errors
+        if (data['errors'] != null && data['errors'] is Map) {
+          final errors = data['errors'] as Map;
+          if (errors.isNotEmpty) {
+            // Return the first error message
+            final firstKey = errors.keys.first;
+            final firstError = errors[firstKey];
+            if (firstError is List && firstError.isNotEmpty) {
+              return firstError.first.toString();
+            }
+            return firstError.toString();
+          }
+        }
+        if (data['message'] != null) return data['message'].toString();
+      }
+      return 'Connection error: ${error.message}';
+    }
+    return error.toString();
+  }
+
   void _handleRegister() async {
     if (_formKey.currentState!.validate()) {
       setState(() => _isLoading = true);
 
-      final success = await context.read<AuthProvider>().register(
-            _nameController.text,
-            _emailController.text,
-            _passwordController.text,
-          );
+      try {
+        await context.read<AuthProvider>().register(
+          _nameController.text,
+          _emailController.text,
+          _passwordController.text,
+        );
 
-      if (mounted) {
-        setState(() => _isLoading = false);
-        if (success) {
+        if (mounted) {
+          setState(() => _isLoading = false);
           Navigator.pop(context); // Go back to profile or login
-        } else {
+        }
+      } catch (e) {
+        if (mounted) {
+          setState(() => _isLoading = false);
           ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
-              content: Text('Registration failed. Please try again.'),
+            SnackBar(
+              content: Text(_getErrorMessage(e)),
+              backgroundColor: Colors.red,
             ),
           );
         }
@@ -288,10 +317,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                     padding: const EdgeInsets.symmetric(horizontal: 16),
                     child: Text(
                       'Or continue with',
-                      style: TextStyle(
-                        color: Colors.grey[600],
-                        fontSize: 12,
-                      ),
+                      style: TextStyle(color: Colors.grey[600], fontSize: 12),
                     ),
                   ),
                   const Expanded(child: Divider(color: Color(0xFFEEEEEE))),
