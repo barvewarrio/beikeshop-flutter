@@ -247,6 +247,14 @@ class AppLocalizationsEn extends AppLocalizations {
   String get zipCode => 'Zip Code';
 
   @override
+  String get emptyWishlist => 'Your wishlist is empty';
+
+  @override
+  String errorAddingToCart(String error) {
+    return 'Error adding to cart: $error';
+  }
+
+  @override
   String get noOrders => 'No orders found';
 
   @override
@@ -557,14 +565,6 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get requiredField => 'Required';
-
-  @override
-  String get emptyWishlist => 'Your wishlist is empty';
-
-  @override
-  String errorAddingToCart(String error) {
-    return 'Error adding to cart: $error';
-  }
 
   @override
   String get orderAlreadyPaid => 'Order already paid';

@@ -6,13 +6,9 @@ class ApiEndpoints {
   // Use your machine's local IP for real device testing
   // e.g. return 'http://192.168.1.5:8000/api';
   static String get baseUrl {
-    if (Platform.isAndroid) {
-      // return 'http://10.0.2.2:8000/api';
-      // For real device (wireless debugging), use your LAN IP.
-      // Replace the IP below with your Mac's IP address.
-      return 'http://192.168.31.189:8000/api'; // Example IP, please update
-    }
-    return 'http://127.0.0.1:8000/api';
+    // For real device testing (Android/iOS), use your machine's LAN IP.
+    // Ensure the backend server is running on 0.0.0.0 (e.g., php artisan serve --host=0.0.0.0 --port=8000)
+    return 'http://192.168.0.107:8000/api';
   }
 
   // Public Routes

@@ -246,6 +246,14 @@ class AppLocalizationsZh extends AppLocalizations {
   String get zipCode => '邮政编码';
 
   @override
+  String get emptyWishlist => '您的心愿单是空的';
+
+  @override
+  String errorAddingToCart(String error) {
+    return '加入购物车失败: $error';
+  }
+
+  @override
   String get noOrders => '暂无订单';
 
   @override
@@ -553,14 +561,6 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get requiredField => '必填';
-
-  @override
-  String get emptyWishlist => '您的心愿单是空的';
-
-  @override
-  String errorAddingToCart(String error) {
-    return '加入购物车失败: $error';
-  }
 
   @override
   String get orderAlreadyPaid => '订单已支付';

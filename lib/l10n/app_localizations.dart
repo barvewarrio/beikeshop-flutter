@@ -560,6 +560,18 @@ abstract class AppLocalizations {
   /// **'Zip Code'**
   String get zipCode;
 
+  /// No description provided for @emptyWishlist.
+  ///
+  /// In en, this message translates to:
+  /// **'Your wishlist is empty'**
+  String get emptyWishlist;
+
+  /// No description provided for @errorAddingToCart.
+  ///
+  /// In en, this message translates to:
+  /// **'Error adding to cart: {error}'**
+  String errorAddingToCart(String error);
+
   /// No description provided for @noOrders.
   ///
   /// In en, this message translates to:
@@ -1129,18 +1141,6 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Required'**
   String get requiredField;
-
-  /// No description provided for @emptyWishlist.
-  ///
-  /// In en, this message translates to:
-  /// **'Your wishlist is empty'**
-  String get emptyWishlist;
-
-  /// No description provided for @errorAddingToCart.
-  ///
-  /// In en, this message translates to:
-  /// **'Error adding to cart: {error}'**
-  String errorAddingToCart(String error);
 
   /// No description provided for @orderAlreadyPaid.
   ///
