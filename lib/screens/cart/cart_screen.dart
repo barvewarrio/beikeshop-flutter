@@ -6,7 +6,6 @@ import '../../theme/app_theme.dart';
 import '../../providers/cart_provider.dart';
 import '../../providers/settings_provider.dart';
 import '../checkout/checkout_screen.dart';
-import '../coupon/coupon_list_screen.dart';
 
 class CartScreen extends StatefulWidget {
   const CartScreen({super.key});
@@ -118,7 +117,7 @@ class _CartScreenState extends State<CartScreen> {
                   const Icon(Icons.error_outline, size: 48, color: Colors.red),
                   const SizedBox(height: 16),
                   Text(
-                    l10n.error ?? 'Error loading cart',
+                    l10n.error,
                     style: const TextStyle(
                       fontSize: 18,
                       fontWeight: FontWeight.bold,

@@ -45,6 +45,18 @@
     *   使用 `provider` 进行高效的响应式状态更新。
     *   使用 `shared_preferences` 进行本地持久化。
 
+## 待优化功能 (Pending Optimizations)
+
+以下功能目前处于开发阶段或需要进一步完善：
+
+1.  **支付集成**: 目前使用模拟支付流程，需接入真实支付网关（如 Stripe, PayPal, 微信支付, 支付宝）。
+2.  **推送通知**: 需集成 Firebase Cloud Messaging (FCM) 以支持订单状态更新和促销推送。
+3.  **高级数据分析**: 需集成 Google Analytics 或其他分析工具以追踪用户行为。
+4.  **社交登录**: 需支持 Google, Facebook, Apple 等第三方登录方式。
+5.  **深色模式**: 目前仅部分支持，需全面适配深色主题。
+6.  **性能优化**: 图片加载策略和列表滚动性能仍有提升空间。
+7.  **错误处理**: 需增强网络异常和服务器错误的全局处理机制。
+
 ## 项目结构
 
 ```
@@ -94,4 +106,3 @@ lib/
 
 **风格 3：生活方式 (Lifestyle)**
 > A lifestyle photography shot for a fashion app, young woman smiling and holding shopping bags in a modern city street, blurred background, natural sunlight, lens flare, "PureDesire" logo overlay at top, welcoming and warm vibe, 4k, high detail --ar 9:16
-

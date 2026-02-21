@@ -23,7 +23,7 @@ class _SearchScreenState extends State<SearchScreen> {
   bool _hasSearched = false;
 
   // Mock history for now
-  List<String> _recentSearches = ['iPhone', 'Shoes', 'Dress', 'Watch'];
+  final List<String> _recentSearches = ['iPhone', 'Shoes', 'Dress', 'Watch'];
   final List<String> _trending = [
     'Wireless Earbuds',
     'Smart Watch',
