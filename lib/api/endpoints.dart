@@ -8,7 +8,8 @@ class ApiEndpoints {
   static String get baseUrl {
     // For real device testing (Android/iOS), use your machine's LAN IP.
     // Ensure the backend server is running on 0.0.0.0 (e.g., php artisan serve --host=0.0.0.0 --port=8000)
-    return 'http://192.168.0.107:8000/api';
+    // return 'http://192.168.0.107:8000/api';
+    return 'https://puredesire.hejichuang.com/api';
   }
 
   // Public Routes

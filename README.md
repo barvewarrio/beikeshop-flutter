@@ -81,3 +81,17 @@ lib/
 *   **Cached Network Image**: 高效图片加载
 *   **Intl**: 日期格式化
 *   **Font Awesome**: 图标库
+
+## 启动图生成提示词 (Midjourney / Stable Diffusion)
+
+以下是用于生成高质量 App 启动图的提示词参考：
+
+**风格 1：极简时尚 (Minimalist Fashion)**
+> A high-end fashion app splash screen, minimalist design, elegant model wearing couture, white background with soft shadows, "PureDesire" typography in gold serif font, clean layout, 8k resolution, photorealistic, cinematic lighting --ar 9:16
+
+**风格 2：活力电商 (Vibrant E-commerce)**
+> A vibrant shopping app launch screen, colorful abstract 3d shapes, floating shopping bags and gift boxes, orange and red color palette (Temu style), energetic atmosphere, "PureDesire" bold modern logo in center, high quality 3d render, octane render --ar 9:16
+
+**风格 3：生活方式 (Lifestyle)**
+> A lifestyle photography shot for a fashion app, young woman smiling and holding shopping bags in a modern city street, blurred background, natural sunlight, lens flare, "PureDesire" logo overlay at top, welcoming and warm vibe, 4k, high detail --ar 9:16
+
